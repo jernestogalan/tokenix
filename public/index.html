@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tokenix — LLM Token Calculator & Cost Estimator</title>
+  <meta name="description" content="Count tokens and estimate API costs across Anthropic, OpenAI, Google, Meta and Mistral models. No signup required." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Navbar ─────────────────────────────────────────────────────────── -->
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="/" class="logo" aria-label="Tokenix home">
+        <span class="logo-bracket">&lt;</span>T<span class="logo-bracket">&gt;</span>
+        <span class="logo-name">tokenix</span>
+        <span class="logo-badge">beta</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#how-it-works">How it works</a>
+        <a href="#pro-tools" class="nav-pro">Pro tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── Hero ───────────────────────────────────────────────────────────── -->
+    <section class="hero">
+      <div class="container">
+        <h1>Count tokens.<br><span class="accent">Estimate costs.</span> Ship smarter.</h1>
+        <p class="hero-sub">
+          Paste text or upload a file to see exact and estimated token counts
+          across all major LLM APIs — with real-time cost projections.
+        </p>
+        <div class="hero-badges">
+          <span class="badge badge-green">✓ No signup</span>
+          <span class="badge badge-green">✓ OpenAI exact via tiktoken</span>
+          <span class="badge badge-yellow">~ Others clearly estimated</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Input card ──────────────────────────────────────────────────────── -->
+    <section class="input-section">
+      <div class="container">
+        <div class="card input-card">
+
+          <!-- Tabs -->
+          <div class="input-tabs" role="tablist">
+            <button class="tab active" data-tab="text" role="tab" aria-selected="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Paste Text
+            </button>
+            <button class="tab" data-tab="file" role="tab" aria-selected="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload File
+            </button>
+          </div>
+
+          <!-- Text tab -->
+          <div id="tab-text" class="tab-content active" role="tabpanel">
+            <div class="textarea-wrap">
+              <textarea
+                id="text-input"
+                placeholder="Paste your prompt, system instruction, document, or code here…"
+                spellcheck="false"
+                rows="10"
+              ></textarea>
+              <div class="textarea-meta">
+                <span id="char-count" class="meta-stat">0 chars</span>
+                <span class="meta-sep">·</span>
+                <span id="word-count" class="meta-stat">0 words</span>
+                <span class="meta-sep">·</span>
+                <span id="line-count" class="meta-stat">0 lines</span>
+              </div>
+            </div>
+            <div class="input-actions">
+              <button id="btn-clear-text" class="btn-ghost" disabled>Clear</button>
+              <button id="btn-analyze-text" class="btn-primary" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Calculate Tokens
+              </button>
+            </div>
+          </div>
+
+          <!-- File tab -->
+          <div id="tab-file" class="tab-content" role="tabpanel">
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="file-input" hidden
+                accept=".txt,.md,.pdf,.docx,.doc,.js,.ts,.jsx,.tsx,.py,.rb,.go,.rs,.java,.kt,.swift,.c,.cpp,.cs,.php,.sh,.bash,.sql,.html,.css,.scss,.json,.yaml,.yml,.xml,.toml,.r" />
+              <div class="dropzone-body">
+                <svg class="drop-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <p class="drop-label">Drop a file here or <button class="link-btn" id="btn-browse">browse</button></p>
+                <p class="drop-hint">
+                  .txt · .md · .pdf · .docx · .py · .js · .ts · .go · .rs · .java<br>
+                  and 20+ more code &amp; text formats · max 10 MB
+                </p>
+              </div>
+            </div>
+
+            <div id="file-info" class="file-info hidden">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+              <span id="file-name"></span>
+              <span id="file-size" class="file-size-label"></span>
+              <button id="btn-remove-file" class="btn-icon" title="Remove file">✕</button>
+            </div>
+
+            <div class="input-actions">
+              <button id="btn-analyze-file" class="btn-primary" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Calculate Tokens
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /input-card -->
+      </div>
+    </section>
+
+    <!-- ── Loading spinner (hidden by default) ────────────────────────────── -->
+    <div id="loading" class="loading hidden" aria-live="polite">
+      <div class="spinner"></div>
+      <span>Counting tokens…</span>
+    </div>
+
+    <!-- ── Error message ──────────────────────────────────────────────────── -->
+    <div id="error-banner" class="error-banner hidden" role="alert">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="error-text"></span>
+      <button id="btn-dismiss-error" class="btn-icon">✕</button>
+    </div>
+
+    <!-- ── Results ─────────────────────────────────────────────────────────── -->
+    <section id="results-section" class="results-section hidden">
+      <div class="container">
+
+        <!-- Summary bar -->
+        <div class="results-summary" id="results-summary">
+          <div class="summary-stat">
+            <span class="summary-label">Characters</span>
+            <span class="summary-value mono" id="s-chars">—</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-label">Words</span>
+            <span class="summary-value mono" id="s-words">—</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-label">Lines</span>
+            <span class="summary-value mono" id="s-lines">—</span>
+          </div>
+          <div class="summary-stat" id="s-file-block" style="display:none">
+            <span class="summary-label">File</span>
+            <span class="summary-value mono" id="s-file">—</span>
+          </div>
+        </div>
+
+        <!-- Provider filter pills -->
+        <div class="provider-filter" id="provider-filter" role="group" aria-label="Filter by provider">
+          <button class="filter-pill active" data-provider="all">All</button>
+          <!-- dynamic pills injected by JS -->
+        </div>
+
+        <!-- Results table -->
+        <div class="table-wrap card">
+          <table class="results-table" id="results-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th class="col-tokens">Tokens <span class="th-hint">input</span></th>
+                <th class="col-context">Context used</th>
+                <th class="col-cost">Input cost <span class="th-hint">sending this text</span></th>
+                <th class="col-cost">Output cost <span class="th-hint">if reply ≈ same length</span></th>
+                <th class="col-accuracy">Accuracy</th>
+              </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+          </table>
+        </div>
+
+        <p class="table-footnote">
+          * "Output cost" assumes the model response is the same token length as the input — a rough estimate.
+          Costs based on publicly listed API prices and may be outdated.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- ── How it works ───────────────────────────────────────────────────── -->
+    <section id="how-it-works" class="how-section">
+      <div class="container">
+        <h2>How tokenization works</h2>
+        <div class="how-grid">
+          <div class="how-card">
+            <div class="how-icon">🔢</div>
+            <h3>What are tokens?</h3>
+            <p>Tokens are the chunks LLMs process — roughly 3–4 characters of English text. "tokenization" splits to <code>token</code>, <code>ization</code> = 2 tokens. Code and non-Latin scripts often produce more tokens per character.</p>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">✓</div>
+            <h3>Exact vs. estimated</h3>
+            <p>OpenAI uses the open-source <strong>tiktoken</strong> library — we run the same tokenizer server-side, so counts are exact. Anthropic, Google and others use proprietary tokenizers; we use a calibrated character-density estimate and label it clearly.</p>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">💰</div>
+            <h3>Cost formula</h3>
+            <p>Cost = (tokens ÷ 1,000,000) × price-per-million-tokens. Input and output tokens are billed separately by most providers. We show both, assuming output ≈ input length as a working estimate.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         PRO TOOLS — Format Cleaner & Smart Retrieval
+         ════════════════════════════════════════════════════════════════════ -->
+    <section id="pro-tools" class="pro-tools-section">
+      <div class="container">
+
+        <div class="pro-tools-header">
+          <h2>Pro tools</h2>
+          <span class="pro-chip-sm">Beta</span>
+          <span id="pro-status-label" style="font-size:.8rem;color:var(--muted);margin-left:4px"></span>
+        </div>
+
+        <!-- Shown when ENABLE_PAID_FEATURES=false AND billing is OFF (dev message) -->
+        <div id="pro-locked" class="pro-locked-banner hidden">
+          <div class="lock-icon">🔒</div>
+          <h3>Pro features are disabled</h3>
+          <p>
+            To enable locally, add <code>ENABLE_PAID_FEATURES=true</code> to your
+            <code>.env</code> file and restart the server.
+            These features are free to use locally — the flag is only there to
+            separate the billing boundary before going to production.
+          </p>
+        </div>
+
+        <!-- Shown when ENABLE_PAID_FEATURES=false AND billing is ON (live upgrade CTA) -->
+        <div id="pro-upgrade" class="pro-upgrade-banner hidden">
+          <div class="upgrade-left">
+            <div class="lock-icon">⚡</div>
+            <div>
+              <h3>Unlock Pro features</h3>
+              <p>Format Cleaner and Smart Retrieval — reduce token costs on every API call.</p>
+              <ul class="upgrade-features">
+                <li>✓ Format Cleaner — strip layout noise, save 10–40% tokens</li>
+                <li>✓ Smart Retrieval — send only the relevant passages to the LLM</li>
+                <li>✓ Full REST API access for both features</li>
+              </ul>
+            </div>
+          </div>
+          <div class="upgrade-right">
+            <button id="btn-upgrade" class="btn-upgrade">Upgrade to Pro →</button>
+            <p class="upgrade-error hidden" id="upgrade-error"></p>
+          </div>
+        </div>
+
+        <!-- Shown when ENABLE_PAID_FEATURES=true -->
+        <div id="pro-tools-grid" class="pro-tools-grid hidden">
+
+          <!-- ── TOOL 1: Format Cleaner ─────────────────────────────────── -->
+          <div class="pro-tool-card">
+            <div class="pro-tool-card-header">
+              <div class="pro-tool-icon">🧹</div>
+              <div>
+                <h3>Format Cleaner</h3>
+                <p>Removes layout noise from PDFs, DOCX and HTML without touching meaning.</p>
+                <span class="accuracy-note">⚠ Lossless formatting only — no paraphrase or summarisation.</span>
+              </div>
+            </div>
+            <div class="pro-tool-body">
+
+              <!-- Mini dropzone -->
+              <div class="mini-dropzone" id="clean-dropzone">
+                <input type="file" id="clean-file-input" hidden
+                  accept=".pdf,.docx,.doc,.html,.htm,.txt,.md" />
+                <p class="mini-dropzone-label">
+                  Drop a file or <strong id="clean-browse">browse</strong>
+                </p>
+                <p class="mini-dropzone-hint">.pdf · .docx · .html · .txt · max 10 MB</p>
+              </div>
+
+              <!-- Selected file info -->
+              <div id="clean-file-info" class="file-info hidden" style="margin-bottom:12px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                <span id="clean-file-name"></span>
+                <span id="clean-file-size" class="file-size-label"></span>
+                <button id="clean-remove-file" class="btn-icon" title="Remove">✕</button>
+              </div>
+
+              <div class="input-actions">
+                <button id="btn-clean" class="btn-primary btn-sm" disabled>
+                  Clean Text
+                </button>
+              </div>
+
+              <!-- Result -->
+              <div id="clean-result" class="pro-result hidden">
+                <!-- Savings summary -->
+                <div class="savings-summary" id="clean-savings"></div>
+
+                <!-- Model comparison (collapsed by default) -->
+                <button class="cmp-toggle" id="clean-cmp-toggle">Show per-model savings ▾</button>
+                <div id="clean-cmp-table-wrap" class="cmp-table-wrap hidden"></div>
+
+                <!-- Clean text output -->
+                <p style="font-size:.8rem;color:var(--muted);margin-bottom:6px">
+                  Clean text — ready to paste into your LLM prompt:
+                </p>
+                <div class="clean-text-block" id="clean-text-output"></div>
+                <div class="clean-text-actions">
+                  <button class="btn-ghost btn-sm" id="btn-copy-clean">Copy clean text</button>
+                  <button class="btn-ghost btn-sm" id="btn-download-clean">Download .txt</button>
+                </div>
+              </div>
+
+              <!-- Inline error -->
+              <div id="clean-error" class="error-banner hidden" style="margin-top:12px" role="alert">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="clean-error-text"></span>
+                <button class="btn-icon" onclick="this.parentElement.classList.add('hidden')">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOOL 2: Smart Retrieval ────────────────────────────────── -->
+          <div class="pro-tool-card">
+            <div class="pro-tool-card-header">
+              <div class="pro-tool-icon">🔍</div>
+              <div>
+                <h3>Smart Retrieval</h3>
+                <p>Uploads a large doc + your question — returns only the relevant chunks.</p>
+                <span class="accuracy-note">⚠ Keyword-based (TF-IDF). Best for focused queries, not broad summaries.</span>
+              </div>
+            </div>
+            <div class="pro-tool-body">
+
+              <!-- Mini dropzone -->
+              <div class="mini-dropzone" id="retrieve-dropzone">
+                <input type="file" id="retrieve-file-input" hidden
+                  accept=".pdf,.docx,.doc,.txt,.md,.html,.htm" />
+                <p class="mini-dropzone-label">
+                  Drop a document or <strong id="retrieve-browse">browse</strong>
+                </p>
+                <p class="mini-dropzone-hint">.pdf · .docx · .txt · .md · max 10 MB</p>
+              </div>
+
+              <!-- Selected file info -->
+              <div id="retrieve-file-info" class="file-info hidden" style="margin-bottom:12px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                <span id="retrieve-file-name"></span>
+                <span id="retrieve-file-size" class="file-size-label"></span>
+                <button id="retrieve-remove-file" class="btn-icon" title="Remove">✕</button>
+              </div>
+
+              <!-- Query -->
+              <textarea
+                id="retrieve-query"
+                class="query-input"
+                placeholder="What do you want to know? e.g. 'What are the termination clauses?' or 'authentication flow'"
+              ></textarea>
+
+              <!-- Top-K -->
+              <div class="topk-row">
+                <label for="retrieve-topk">Return top</label>
+                <select id="retrieve-topk" class="topk-select">
+                  <option value="3">3 chunks</option>
+                  <option value="5" selected>5 chunks</option>
+                  <option value="8">8 chunks</option>
+                  <option value="10">10 chunks</option>
+                </select>
+                <span>most relevant passages</span>
+              </div>
+
+              <div class="input-actions">
+                <button id="btn-retrieve" class="btn-primary btn-sm" disabled>
+                  Find Relevant Chunks
+                </button>
+              </div>
+
+              <!-- Result -->
+              <div id="retrieve-result" class="pro-result hidden">
+                <!-- Meta info -->
+                <p id="retrieve-meta" style="font-size:.78rem;color:var(--muted);margin-bottom:10px"></p>
+
+                <!-- Savings summary -->
+                <div class="savings-summary" id="retrieve-savings"></div>
+
+                <!-- Model comparison (collapsed) -->
+                <button class="cmp-toggle" id="retrieve-cmp-toggle">Show per-model savings ▾</button>
+                <div id="retrieve-cmp-table-wrap" class="cmp-table-wrap hidden"></div>
+
+                <!-- Chunks -->
+                <p style="font-size:.8rem;color:var(--muted);margin:10px 0 6px">
+                  Relevant passages (sorted by relevance):
+                </p>
+                <div class="chunks-list" id="chunks-list"></div>
+
+                <div class="clean-text-actions">
+                  <button class="btn-ghost btn-sm" id="btn-copy-chunks">Copy all chunks</button>
+                </div>
+              </div>
+
+              <!-- Inline error -->
+              <div id="retrieve-error" class="error-banner hidden" style="margin-top:12px" role="alert">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="retrieve-error-text"></span>
+                <button class="btn-icon" onclick="this.parentElement.classList.add('hidden')">✕</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /pro-tools-grid -->
+      </div>
+    </section>
+
+    <!-- ── Pro teaser (shows when locked, for future Stripe integration) ── -->
+    <section id="pro-features" class="pro-section hidden">
+      <div class="container">
+        <div class="pro-header">
+          <span class="pro-chip">Coming soon</span>
+          <h2>Pro features</h2>
+          <p>Everything above is free forever. Pro is for teams shipping at scale.</p>
+        </div>
+        <div class="pro-grid">
+          <div class="pro-card">
+            <div class="pro-icon">🧹</div>
+            <h3>Format Cleaner</h3>
+            <p>Remove layout noise from PDFs and DOCX files. Typical savings: 10–40% fewer tokens.</p>
+          </div>
+          <div class="pro-card">
+            <div class="pro-icon">🔍</div>
+            <h3>Smart Retrieval</h3>
+            <p>Upload large documents, ask a question — get only the relevant passages. Cut costs by 70–95% for large docs.</p>
+          </div>
+          <div class="pro-card">
+            <div class="pro-icon">📁</div>
+            <h3>Batch processing</h3>
+            <p>Upload 100 files at once. Download a CSV of token counts and cost projections per file.</p>
+          </div>
+          <div class="pro-card">
+            <div class="pro-icon">🔌</div>
+            <h3>REST API</h3>
+            <p>Integrate token counting into your CI pipeline, cost dashboards, or pre-flight checks.</p>
+          </div>
+        </div>
+        <button class="btn-notify" id="btn-notify">Notify me when Pro launches →</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <span class="logo-bracket">&lt;</span>T<span class="logo-bracket">&gt;</span>
+        <span class="logo-name">tokenix</span>
+        <span class="footer-copy">— token calculator for LLM developers</span>
+      </div>
+      <div class="footer-right">
+        <span>Prices and counts are for estimation purposes. Not affiliated with any LLM provider.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Notify modal ───────────────────────────────────────────────────── -->
+  <div id="notify-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Get notified">
+    <div class="modal">
+      <h3>Get notified when Pro launches</h3>
+      <p>We'll send one email when Pro goes live. No spam.</p>
+      <div class="modal-form">
+        <input type="email" id="notify-email" placeholder="you@company.com" />
+        <button class="btn-primary" id="btn-notify-submit">Notify me</button>
+      </div>
+      <button class="modal-close" id="btn-modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
