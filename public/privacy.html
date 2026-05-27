@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Tokenia</title>
+  <meta name="description" content="Tokenia privacy policy — how we handle your data during the beta period." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface:  '#161b22',
+            surface2: '#21262d',
+            border:   '#30363d',
+            muted:    '#8b949e',
+            accent:   '#6366f1',
+          },
+          fontFamily: { mono: ['JetBrains Mono', 'Fira Code', 'monospace'] },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#0d1117] text-[#e6edf3] min-h-screen">
+
+<!-- Nav -->
+<nav class="sticky top-0 z-40 bg-[#0d1117]/95 backdrop-blur border-b border-[#30363d]">
+  <div class="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-1 font-mono font-semibold text-[#e6edf3] no-underline">
+      <span class="text-[#6366f1]">&lt;</span>T<span class="text-[#6366f1]">&gt;</span>
+      <span class="ml-1">Tokenia</span>
+    </a>
+    <div class="flex items-center gap-5 text-sm">
+      <a href="/" class="text-[#8b949e] hover:text-white transition-colors">Home</a>
+      <a href="/pricing.html" class="text-[#8b949e] hover:text-white transition-colors">Pricing</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Content -->
+<main class="max-w-3xl mx-auto px-6 py-16">
+
+  <!-- Header -->
+  <div class="mb-12">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#6366f1] text-xs font-mono mb-6">
+      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      Beta Privacy Notice
+    </div>
+    <h1 class="text-4xl font-bold text-[#e6edf3] mb-4">Privacy Policy</h1>
+    <p class="text-[#8b949e] text-sm">Effective date: <span id="effective-date">June 2025</span> &nbsp;·&nbsp; Last updated: <span id="updated-date">June 2025</span></p>
+    <div class="mt-4 p-4 rounded-lg border border-yellow-500/30 bg-yellow-500/5 text-yellow-200 text-sm">
+      <strong>Beta notice:</strong> Tokenia is currently in private beta. This policy reflects our current minimal data practices. We will notify registered users of any material changes before they take effect.
+    </div>
+  </div>
+
+  <div class="prose prose-invert max-w-none space-y-10 text-[#c9d1d9] leading-relaxed">
+
+    <!-- 1 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">01</span> Who we are
+      </h2>
+      <p>
+        Tokenia is an independent developer tool for estimating and reducing token costs
+        when working with large language model APIs. It is not affiliated with, endorsed by,
+        or sponsored by Anthropic, OpenAI, Google, or any other AI provider.
+      </p>
+      <p class="mt-3">
+        For questions about this policy, contact: <a href="mailto:privacy@tokenia.live" class="text-[#6366f1] hover:underline">privacy@tokenia.live</a>
+      </p>
+    </section>
+
+    <!-- 2 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">02</span> What data we collect
+      </h2>
+
+      <h3 class="text-base font-semibold text-[#e6edf3] mt-5 mb-2">Text and files you submit</h3>
+      <p>
+        When you paste text or upload a file for token counting or analysis, that content is processed
+        in memory on our server to perform the calculation. <strong>We do not store the full contents
+        of your text or files.</strong> Files are discarded immediately after processing; they are never
+        written to permanent storage.
+      </p>
+
+      <h3 class="text-base font-semibold text-[#e6edf3] mt-5 mb-2">Account data (registered users)</h3>
+      <p>When you create an account we collect:</p>
+      <ul class="list-disc list-inside mt-2 space-y-1 text-[#8b949e]">
+        <li>Email address (used for login and product updates)</li>
+        <li>Hashed password (managed by Supabase Auth — we never see your plaintext password)</li>
+        <li>Plan tier (<code class="text-[#6366f1]">free</code>, <code class="text-[#6366f1]">pro</code>, or <code class="text-[#6366f1]">team</code>)</li>
+        <li>Monthly token usage counter (a number — not your actual text)</li>
+      </ul>
+
+      <h3 class="text-base font-semibold text-[#e6edf3] mt-5 mb-2">Usage events (history feature)</h3>
+      <p>
+        When you are signed in and the history feature is enabled, we log metadata about each
+        operation: the event type, approximate token count, estimated cost, the model you selected,
+        your plan at the time, and the filename (if you uploaded a file). <strong>We do not log
+        the actual text content.</strong>
+      </p>
+
+      <h3 class="text-base font-semibold text-[#e6edf3] mt-5 mb-2">Server logs</h3>
+      <p>
+        Our server logs standard HTTP request metadata: IP address, timestamp, URL path, HTTP method,
+        and response status code. Logs are retained for up to 30 days for security and debugging
+        purposes.
+      </p>
+    </section>
+
+    <!-- 3 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">03</span> What we do not collect
+      </h2>
+      <ul class="space-y-2">
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>We do not use tracking pixels, third-party analytics (Google Analytics, Mixpanel, etc.), or advertising scripts.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>We do not sell, rent, or share your data with third parties for marketing purposes.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>We do not store or read the text you paste or the files you upload beyond the moment of processing.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>We do not use cookies for tracking. Session state is managed via a JWT stored in your browser's local storage (Supabase Auth default).</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 4 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">04</span> How we use your data
+      </h2>
+      <ul class="list-disc list-inside space-y-2 text-[#8b949e]">
+        <li>To authenticate you and enforce your plan's usage limits</li>
+        <li>To display your token usage history (if the feature is enabled and you are signed in)</li>
+        <li>To send critical product or security announcements to registered users</li>
+        <li>To debug errors and maintain the reliability of the service</li>
+      </ul>
+      <p class="mt-3">We will never use your data to train AI models or sell it to data brokers.</p>
+    </section>
+
+    <!-- 5 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">05</span> Data storage and security
+      </h2>
+      <p>
+        Account data and usage metadata are stored in <a href="https://supabase.com" target="_blank" rel="noopener" class="text-[#6366f1] hover:underline">Supabase</a>,
+        a managed PostgreSQL database hosted on AWS. Data at rest is encrypted.
+        All connections are made over HTTPS/TLS.
+      </p>
+      <p class="mt-3">
+        Our server runs on <a href="https://railway.app" target="_blank" rel="noopener" class="text-[#6366f1] hover:underline">Railway</a>.
+        We apply row-level security (RLS) policies in Supabase so that each user can only access
+        their own rows — even application-level bugs cannot expose other users' data.
+      </p>
+      <p class="mt-3">
+        <strong>Service role key:</strong> The Supabase service role key (which bypasses RLS) is stored
+        only as a server-side environment variable on Railway. It is never exposed to the browser
+        or included in any public API response.
+      </p>
+    </section>
+
+    <!-- 6 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">06</span> Your rights
+      </h2>
+      <p>You may at any time:</p>
+      <ul class="list-disc list-inside mt-2 space-y-2 text-[#8b949e]">
+        <li><strong class="text-[#c9d1d9]">Request your data</strong> — email us and we will provide a JSON export of your profile and usage events.</li>
+        <li><strong class="text-[#c9d1d9]">Delete your account</strong> — email us and we will permanently delete your profile, usage history, and all associated data within 30 days.</li>
+        <li><strong class="text-[#c9d1d9]">Opt out of announcements</strong> — reply to any email we send with "unsubscribe" and we will stop sending non-critical messages.</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">07</span> Anonymous users
+      </h2>
+      <p>
+        You can use the core token counting and cost estimation features without creating an account.
+        Anonymous usage is subject to IP-based rate limiting. We log the IP address and request
+        metadata for rate limiting and abuse prevention purposes only. We do not link anonymous
+        requests to any persistent identity.
+      </p>
+    </section>
+
+    <!-- 8 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">08</span> Changes to this policy
+      </h2>
+      <p>
+        During the beta period, this policy may change. If we make material changes — particularly
+        changes that affect how we store or share your content or personal data — we will notify
+        registered users by email at least 7 days before the change takes effect.
+        The "Last updated" date at the top of this page will reflect the most recent revision.
+      </p>
+    </section>
+
+    <!-- 9 -->
+    <section>
+      <h2 class="text-xl font-semibold text-[#e6edf3] mb-3 flex items-center gap-2">
+        <span class="text-[#6366f1] font-mono text-sm">09</span> Contact
+      </h2>
+      <p>
+        Questions, data requests, or deletion requests:
+        <a href="mailto:privacy@tokenia.live" class="text-[#6366f1] hover:underline">privacy@tokenia.live</a>
+      </p>
+    </section>
+
+  </div><!-- /prose -->
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-[#30363d] py-8 px-6 mt-8">
+  <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#8b949e]">
+    <div class="flex items-center gap-2 font-mono">
+      <span class="text-[#6366f1]">&lt;</span>T<span class="text-[#6366f1]">&gt;</span>
+      <span class="ml-1">Tokenia</span>
+    </div>
+    <div class="flex gap-4 text-xs">
+      <a href="/" class="hover:text-white transition-colors">Home</a>
+      <a href="/pricing.html" class="hover:text-white transition-colors">Pricing</a>
+      <span class="text-[#30363d]">|</span>
+      <span>Not affiliated with OpenAI, Anthropic, or Google.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

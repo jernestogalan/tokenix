@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tokenia Pricing — Simple, Transparent Plans</title>
+  <meta name="description" content="Tokenia pricing — Free, Pro ($12/mo), and Team ($39/mo). Know what your AI calls will cost before you make them." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface: '#161b22', surface2: '#21262d',
+            border: '#30363d', muted: '#8b949e', accent: '#6366f1',
+          },
+          fontFamily: { mono: ['JetBrains Mono', 'Fira Code', 'monospace'] },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#0d1117] text-[#e6edf3] min-h-screen">
+
+<!-- Waitlist modal -->
+<div id="waitlist-modal" style="display:none" class="fixed inset-0 bg-black/70 backdrop-blur z-50 flex items-center justify-center">
+  <div class="modal-box max-w-sm w-[90%]">
+    <div class="flex justify-between items-start mb-4">
+      <div>
+        <h2 class="text-lg font-semibold" id="modal-plan-title">Join the waitlist</h2>
+        <p class="text-sm text-[#8b949e] mt-1">We'll reach out when billing goes live.</p>
+      </div>
+      <button id="modal-close" class="text-[#8b949e] hover:text-white text-xl">&times;</button>
+    </div>
+    <div class="flex gap-2">
+      <input id="modal-email" type="email" placeholder="your@email.com"
+        class="flex-1 bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-white placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]" />
+      <button id="modal-submit"
+        class="bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
+        Join
+      </button>
+    </div>
+    <p id="modal-msg" class="text-xs text-[#3fb950] mt-2 hidden"></p>
+    <p id="modal-err" class="text-xs text-[#f85149] mt-2 hidden"></p>
+  </div>
+</div>
+
+<!-- Nav -->
+<nav class="sticky top-0 z-40 bg-[#0d1117]/95 backdrop-blur border-b border-[#30363d]">
+  <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-1 font-mono font-semibold text-[#e6edf3] no-underline">
+      <span class="text-[#6366f1]">&lt;</span>T<span class="text-[#6366f1]">&gt;</span>
+      <span class="ml-1">Tokenia</span>
+    </a>
+    <div class="flex items-center gap-5 text-sm">
+      <a href="/" class="text-[#8b949e] hover:text-white transition-colors">Home</a>
+      <a href="#faq" class="text-[#8b949e] hover:text-white transition-colors hidden sm:block">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="py-16 px-6 text-center">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-4xl font-bold tracking-tight mb-3">Simple, transparent pricing</h1>
+    <p class="text-[#8b949e] text-lg">Start free. Upgrade when you need more power.</p>
+  </div>
+</section>
+
+<!-- Pricing cards -->
+<section class="px-6 pb-16">
+  <div class="max-w-5xl mx-auto grid sm:grid-cols-3 gap-6">
+
+    <!-- Free -->
+    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-7 flex flex-col">
+      <div class="mb-5">
+        <span class="text-xs font-semibold uppercase tracking-wider text-[#8b949e]">Free</span>
+        <div class="flex items-end gap-1 mt-2">
+          <span class="text-4xl font-bold">$0</span>
+          <span class="text-[#8b949e] text-sm mb-1">/month</span>
+        </div>
+        <p class="text-xs text-[#8b949e] mt-2">Great for occasional token counting and cost estimation.</p>
+      </div>
+      <ul class="space-y-2.5 text-sm flex-1 mb-6">
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Token counting across all models</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Paste text (up to 1M chars)</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>File uploads up to 2 MB</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Cleaning demo (first 5,000 chars)</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Retrieval demo (top 3 chunks)</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Full document cleaning</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">CSV export</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Batch upload</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Credits</span></li>
+      </ul>
+      <a href="/" class="border border-[#30363d] text-[#8b949e] hover:text-white hover:border-[#6366f1] rounded-lg py-2.5 text-sm font-medium transition-colors text-center">
+        Start Free
+      </a>
+    </div>
+
+    <!-- Pro (highlighted) -->
+    <div class="bg-[#161b22] border-2 border-[#6366f1] rounded-xl p-7 flex flex-col relative pricing-card-pro">
+      <div class="mb-5">
+        <span class="text-xs font-semibold uppercase tracking-wider text-[#6366f1]">Pro</span>
+        <div class="flex items-end gap-1 mt-2">
+          <span class="text-4xl font-bold">$12</span>
+          <span class="text-[#8b949e] text-sm mb-1">/month</span>
+        </div>
+        <p class="text-xs text-[#8b949e] mt-2">For developers who regularly work with large documents and APIs.</p>
+      </div>
+      <ul class="space-y-2.5 text-sm flex-1 mb-6">
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Everything in Free</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Files up to 20 MB</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Full document cleaning (unlimited chars)</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Smart retrieval up to 20 chunks</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Download cleaned text</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>CSV export reports</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Batch upload (10 files)</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>500 credits / month</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Budget alerts</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Team collaboration</span></li>
+      </ul>
+      <button class="plan-cta bg-[#6366f1] hover:bg-[#818cf8] text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
+        data-plan="pro" data-billing-url="">
+        Upgrade to Pro
+      </button>
+    </div>
+
+    <!-- Team -->
+    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-7 flex flex-col">
+      <div class="mb-5">
+        <span class="text-xs font-semibold uppercase tracking-wider text-[#0ea5e9]">Team</span>
+        <div class="flex items-end gap-1 mt-2">
+          <span class="text-4xl font-bold">$39</span>
+          <span class="text-[#8b949e] text-sm mb-1">/month</span>
+        </div>
+        <p class="text-xs text-[#8b949e] mt-2">For teams that need shared projects, API access, and budget controls.</p>
+      </div>
+      <ul class="space-y-2.5 text-sm flex-1 mb-6">
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Everything in Pro</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Files up to 50 MB</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Batch upload (50 files)</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Retrieval up to 50 chunks</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Budget alerts</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>2,000 credits / month</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Team collaboration</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Saved projects</span></li>
+        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Priority support</span></li>
+      </ul>
+      <button class="plan-cta border border-[#30363d] text-[#8b949e] hover:text-white hover:border-[#0ea5e9] rounded-lg py-2.5 text-sm font-medium transition-colors"
+        data-plan="team">
+        Get Team
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- Credits section -->
+<section class="py-12 px-6 border-t border-[#30363d]">
+  <div class="max-w-3xl mx-auto">
+    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-6">
+      <div class="flex items-start gap-4">
+        <div class="text-3xl">⚡</div>
+        <div>
+          <h2 class="text-lg font-semibold mb-1">Credits — coming soon</h2>
+          <p class="text-sm text-[#8b949e] mb-3">Buy extra processing capacity when you need it, without upgrading plans. Credits are consumed for paid operations like full document cleaning and retrieval.</p>
+          <div class="grid sm:grid-cols-3 gap-3 text-sm">
+            <div class="bg-[#21262d] rounded-lg p-3">
+              <p class="font-semibold mb-1">Cleaning (full)</p>
+              <p class="text-[#8b949e]">5 credits / document</p>
+            </div>
+            <div class="bg-[#21262d] rounded-lg p-3">
+              <p class="font-semibold mb-1">Retrieval (full)</p>
+              <p class="text-[#8b949e]">3 credits / query</p>
+            </div>
+            <div class="bg-[#21262d] rounded-lg p-3">
+              <p class="font-semibold mb-1">CSV export</p>
+              <p class="text-[#8b949e]">2 credits / export</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-14 px-6 border-t border-[#30363d]">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-10">Frequently asked questions</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="font-semibold mb-2">What counts as a token?</h3>
+        <p class="text-sm text-[#8b949e]">A token is a chunk of text as processed by a language model. For English text, one token is roughly 3–4 characters or 0.75 words. For OpenAI models, we use the official tiktoken tokenizer for exact counts. For other providers, we use a calibrated heuristic and clearly label results as "~Estimated".</p>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">How accurate are the cost estimates?</h3>
+        <p class="text-sm text-[#8b949e]">Cost estimates are based on publicly listed API pricing. We update prices regularly, but providers can change rates without notice. Always verify against your provider's pricing page before making financial decisions. Token counts for non-OpenAI models can vary ±5–15% from actual counts.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">Can I use my own API key?</h3>
+        <p class="text-sm text-[#8b949e]">Not yet — this is planned as a Pro/Team feature. Using your own key would allow us to run the provider's official tokenizer for exact counts on all models.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">Is my text stored or used for training?</h3>
+        <p class="text-sm text-[#8b949e]">No. All text and files are processed in-memory and discarded immediately after analysis. We never store, log, or use your content.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">What file formats are supported?</h3>
+        <p class="text-sm text-[#8b949e]">PDF, DOCX, TXT, Markdown, and most programming language files (.py, .js, .ts, .go, .rs, .java, .kt, .swift, .c, .cpp, .cs, .php, etc.). HTML and JSON are also supported. Max file size: 2 MB on Free, 20 MB on Pro, 50 MB on Team.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-[#30363d] py-8 px-6">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#8b949e]">
+    <div class="flex items-center gap-2 font-mono">
+      <span class="text-[#6366f1]">&lt;</span>T<span class="text-[#6366f1]">&gt;</span>
+      <span class="ml-1">Tokenia</span>
+    </div>
+    <div class="flex gap-4 text-xs">
+      <a href="/" class="hover:text-white">Home</a>
+      <a href="/privacy.html" class="hover:text-white">Privacy</a>
+      <span>MIT License</span>
+      <span>Not affiliated with OpenAI, Anthropic, or Google.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(async function() {
+  // Detect billing state
+  let billingEnabled = false;
+  try {
+    const f = await fetch('/api/features').then(r => r.json());
+    billingEnabled = f.billingEnabled;
+  } catch (_) {}
+
+  const modal       = document.getElementById('waitlist-modal');
+  const modalClose  = document.getElementById('modal-close');
+  const modalSubmit = document.getElementById('modal-submit');
+  const modalEmail  = document.getElementById('modal-email');
+  const modalMsg    = document.getElementById('modal-msg');
+  const modalErr    = document.getElementById('modal-err');
+  const modalTitle  = document.getElementById('modal-plan-title');
+
+  let currentPlan = 'pro';
+
+  document.querySelectorAll('.plan-cta').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentPlan = btn.dataset.plan || 'pro';
+      if (billingEnabled) {
+        // Redirect to Stripe checkout
+        fetch('/api/billing/checkout', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({})
+        }).then(r => r.json()).then(d => { if (d.url) window.location.href = d.url; });
+      } else {
+        modalTitle.textContent = `Join waitlist — ${currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}`;
+        modal.style.display = 'flex';
+        modalEmail.focus();
+      }
+    });
+  });
+
+  modalClose.addEventListener('click', () => { modal.style.display = 'none'; });
+  modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+  modalSubmit.addEventListener('click', async () => {
+    const email = modalEmail.value.trim();
+    if (!email || !email.includes('@')) { modalErr.textContent = 'Please enter a valid email.'; modalErr.classList.remove('hidden'); return; }
+    modalErr.classList.add('hidden');
+    modalSubmit.disabled = true; modalSubmit.textContent = 'Joining…';
+    try {
+      await fetch('/api/lead', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, desiredPlan: currentPlan, featureClicked: 'pricing_page' }),
+      });
+      modalMsg.textContent = "You're on the list! We'll reach out when billing goes live.";
+      modalMsg.classList.remove('hidden');
+      modalSubmit.textContent = 'Done!';
+    } catch (_) {
+      modalErr.textContent = 'Something went wrong. Try again.';
+      modalErr.classList.remove('hidden');
+      modalSubmit.disabled = false; modalSubmit.textContent = 'Join';
+    }
+  });
+})();
+</script>
+</body>
+</html>

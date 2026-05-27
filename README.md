@@ -1,24 +1,22 @@
-# <T> tokenix
+# Tokenia — Token Calculator & Cost Optimizer for LLM APIs
 
-**LLM Token Calculator, Cost Estimator & Pro Optimizer**
+> **Know what your AI calls will cost before you make them.**
 
-Count tokens, estimate API costs, and reduce what you send — across all major LLM providers.
+Count tokens, estimate API costs, and reduce what you send — across all major LLM providers. No signup required.
 
 ---
 
-## Stack rationale
+## Features
 
-| Concern | Choice | Why |
-|---|---|---|
-| Runtime | Node.js 18+ | Zero build step, universal deployment |
-| Framework | Express | Minimal, well-understood, easy to self-host |
-| OpenAI tokenizer | `gpt-tokenizer` | Pure-JS tiktoken port — exact counts, no WASM |
-| Anthropic / Google / others | Calibrated heuristic | Proprietary tokenizers not public; estimate clearly labelled |
-| PDF parsing | `pdf-parse` | Extracts text layer reliably |
-| DOCX parsing | `mammoth` | Clean markdown from Word documents |
-| File uploads | `multer` (memoryStorage) | No disk writes, 10 MB limit |
-| TF-IDF retrieval | Custom (zero deps) | No API keys, no model downloads, works offline |
-| Frontend | Vanilla HTML/CSS/JS | No build step, loads instantly, zero framework overhead |
+- **Exact token counts** for OpenAI models via `gpt-tokenizer` (the official tiktoken JS port)
+- **Calibrated estimates** for Anthropic, Google, Meta, and Mistral — clearly labelled "~Estimated"
+- **Real-time cost projection** — input and output cost per model, per million tokens
+- **Multi-model comparison** — compare GPT-4o, Claude Sonnet 4, Gemini 2.5 Flash, Llama and more side-by-side
+- **Format Cleaner** (Pro) — strips layout noise from PDFs, DOCX and HTML; typical savings 10–40%
+- **Smart Retrieval** (Pro) — TF-IDF keyword search; returns only relevant document chunks
+- **Plan gates** — Free / Pro / Team tiers with enforceable limits (file size, chunk count, etc.)
+- **CSV export** (Pro) — download token and cost comparison reports
+- **No data stored** — text processed in-memory and discarded immediately
 
 ---
 
@@ -29,440 +27,289 @@ git clone <repo>
 cd tokenix
 npm install
 cp .env.example .env
-npm start
+npm run dev
 ```
 
 Open **http://localhost:3000**
 
-For development with auto-reload:
+For production:
 ```bash
-npm run dev
+npm start
 ```
 
 ---
 
-## Project structure
+## Environment variables
 
-```
-tokenix/
-├── server.js                     # Express server (all routes, production-hardened)
-├── src/
-│   ├── config/
-│   │   └── models.js             # ★ Edit this to update prices
-│   ├── tokenizers/
-│   │   └── index.js              # Exact (OpenAI) + heuristic counts
-│   ├── parsers/
-│   │   └── index.js              # PDF / DOCX / HTML / text extraction
-│   ├── cleaner/
-│   │   └── index.js              # Format cleaning (Pro feature)
-│   └── retriever/
-│       └── index.js              # TF-IDF chunking + retrieval (Pro feature)
-├── test/
-│   ├── cleaner.test.js           # Unit tests — cleaner
-│   ├── retriever.test.js         # Unit tests — retriever
-│   ├── tokenizers.test.js        # Unit tests — tokenizers
-│   └── api.test.js               # Integration tests — all HTTP endpoints
-├── public/
-│   ├── index.html
-│   ├── css/style.css
-│   └── js/app.js
-├── .github/workflows/ci.yml      # GitHub Actions CI (Node 18/20/22 + Docker)
-├── Dockerfile                    # Multi-stage production image
-├── docker-compose.yml            # Local docker-compose
-├── nginx.conf                    # nginx reverse-proxy template
-├── .dockerignore
-├── .env.example
-└── README.md
-```
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `NODE_ENV` | `development` | No | Set `production` for production deploys |
+| `PORT` | `3000` | No | HTTP server port |
+| `ENABLE_PAID_FEATURES` | `false` | No | Unlocks cleaning and retrieval endpoints |
+| `ENABLE_BILLING` | `false` | No | Activates Stripe checkout + webhook routes |
+| `ENABLE_CREDITS` | `true` | No | Soft-enforces credit costs per operation |
+| `ENABLE_AI_OPTIMIZATION` | `false` | No | Reserved for future AI-powered prompt optimization |
+| `ALLOW_USER_API_KEYS` | `false` | No | Reserved for BYOK (bring your own key) feature |
+| `API_KEY` | _(empty)_ | No | If set, all `/api/*` routes require `X-API-Key` header |
+| `CORS_ORIGIN` | `*` | No | CORS allowed origin. Set to your domain in production |
+| `RATE_LIMIT_MAX` | `200` | No | General rate limit: requests per 15 min per IP |
+| `RATE_LIMIT_HEAVY_MAX` | `30` | No | Heavy route limit (tokenize, clean, retrieve) |
+| `STRIPE_SECRET_KEY` | _(empty)_ | Billing | Stripe secret key |
+| `STRIPE_WEBHOOK_SECRET` | _(empty)_ | Billing | Stripe webhook signing secret |
+| `STRIPE_PRO_MONTHLY_PRICE_ID` | _(empty)_ | Billing | Pro monthly Stripe Price ID |
+| `STRIPE_PRO_ANNUAL_PRICE_ID` | _(empty)_ | Billing | Pro annual Stripe Price ID |
+| `STRIPE_TEAM_MONTHLY_PRICE_ID` | _(empty)_ | Billing | Team monthly Stripe Price ID |
+| `SUPABASE_URL` | _(empty)_ | Production | Supabase project URL (future auth/DB) |
+| `SUPABASE_ANON_KEY` | _(empty)_ | Production | Supabase anon key |
+| `OPENAI_API_KEY` | _(empty)_ | Optional | Official token count API / AI optimization |
+| `ANTHROPIC_API_KEY` | _(empty)_ | Optional | Official Anthropic API |
+| `GEMINI_API_KEY` | _(empty)_ | Optional | Official Google API |
 
 ---
 
-## Updating model prices
+## How to update model prices
 
-**Only edit `src/config/models.js`** — nowhere else.
+1. Open `src/config/models.js`
+2. Find the provider and model
+3. Update `inputPer1M` and `outputPer1M` (USD per million tokens)
+4. Restart the server — no other changes needed
 
 ```js
-// Example: update GPT-4o pricing
 'gpt-4o': {
   name: 'GPT-4o',
-  inputPer1M:  2.50,   // ← USD per 1M input tokens
-  outputPer1M: 10.00,  // ← USD per 1M output tokens
-  contextWindow: 128000,
+  inputPer1M:  2.50,   // ← update this
+  outputPer1M: 10.00,  // ← and this
+  contextWindow: 128_000,
   encoding: 'o200k_base',
+  precision: 'exact',
+  active: true,
 },
 ```
 
-Restart the server after edits. The frontend fetches `/api/models` on first use.
+---
+
+## How to test plans locally
+
+Append `?plan=free|pro|team` to any URL to simulate a plan tier without authentication:
+
+```
+http://localhost:3000/?plan=pro
+http://localhost:3000/?plan=team
+http://localhost:3000/?plan=free
+```
+
+The frontend reads this parameter and passes it as the `X-Plan` header on all API requests. The server's entitlements module uses it to gate features.
 
 ---
 
-## Tokenizer accuracy
+## How to enable paid features
 
-| Provider | Method | Accuracy |
-|---|---|---|
-| OpenAI (all models) | `gpt-tokenizer` (tiktoken) | **Exact** |
-| Anthropic | Char/word heuristic (ratio ~3.8) | ~Estimated ±5–10% |
-| Google | Char/word heuristic (ratio ~4.0) | ~Estimated ±5–10% |
-| Meta / Llama | Char/word heuristic (ratio ~3.9) | ~Estimated ±5–10% |
-| Mistral | Char/word heuristic (ratio ~4.0) | ~Estimated ±5–10% |
+In your `.env`:
 
-Code detection: if special-char ratio > 8%, the heuristic switches to a denser ratio (~20% more tokens per character). Always labelled in the UI.
+```
+ENABLE_PAID_FEATURES=true
+```
+
+This sets the default plan to `pro` for all requests that don't specify `X-Plan`. Use this for local development and self-hosting.
 
 ---
 
-## REST API
+## How to activate billing
 
-All endpoints return `Content-Type: application/json`.  
-Errors return `{ "error": "message" }` with an appropriate HTTP status.
+1. Create a Stripe account at https://dashboard.stripe.com
+2. Create products and prices (Pro Monthly, Pro Annual, Team Monthly)
+3. Set up a webhook pointing to `https://yourdomain.com/api/billing/webhook`
+4. Copy the keys to your `.env`:
 
-### Free endpoints
-
-#### `GET /api/health`
-```json
-{ "status": "ok", "version": "1.0.0", "env": "production", "uptime": 42 }
+```
+ENABLE_BILLING=true
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRO_MONTHLY_PRICE_ID=price_...
 ```
 
-#### `GET /api/features`
+5. Restart the server. The "Upgrade to Pro" buttons will now redirect to Stripe Checkout.
+
+---
+
+## API endpoints
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/health` | None | Server health, version, uptime, feature flags |
+| `GET` | `/api/features` | None | Feature flag state |
+| `GET` | `/api/models` | None | All model configs with pricing |
+| `GET` | `/api/plans` | None | All plan definitions |
+| `POST` | `/api/count` | None | Count tokens + calculate cost; accepts text or file |
+| `POST` | `/api/tokenize` | None | Legacy compat — text only |
+| `POST` | `/api/tokenize/file` | None | Legacy compat — file upload |
+| `POST` | `/api/clean` | Plan gate | Clean a document; demo for free, full for Pro |
+| `POST` | `/api/retrieve` | Plan gate | TF-IDF retrieval; demo (top 3) for free, full for Pro |
+| `POST` | `/api/report` | Pro | Download CSV comparison report |
+| `POST` | `/api/lead` | None | Store email + plan interest for waitlist |
+| `GET` | `/api/leads` | API_KEY | View all captured leads |
+| `POST` | `/api/credits/check` | None | Get credits summary for a user/plan |
+| `POST` | `/api/billing/checkout` | None | Create Stripe checkout session |
+| `POST` | `/api/billing/webhook` | Stripe sig | Stripe webhook receiver |
+
+### POST /api/count
+
+Accepts multipart (file upload) or JSON body:
+
+```json
+{ "text": "your text here" }
+```
+
+Returns:
 ```json
 {
-  "paidFeaturesEnabled": true,
-  "features": { "cleaner": true, "retriever": true }
-}
-```
-
-#### `GET /api/models`
-Returns the full pricing config from `src/config/models.js`.
-
-#### `POST /api/tokenize`
-Count tokens for pasted text.
-
-**Request** (JSON body):
-```json
-{ "text": "Your prompt or document text here…" }
-```
-
-**Response:**
-```json
-{
-  "charCount": 44,
-  "wordCount": 9,
-  "lineCount": 1,
+  "charCount": 1234,
+  "wordCount": 234,
+  "lineCount": 12,
+  "plan": "free",
   "results": [
     {
       "provider": "openai",
-      "providerName": "OpenAI",
-      "providerColor": "#10b981",
       "model": "gpt-4o",
-      "modelName": "GPT-4o",
-      "tokens": 10,
-      "exact": true,
-      "inputCost": 0.000025,
-      "outputCost": 0.0001,
-      "inputPer1M": 2.5,
-      "outputPer1M": 10,
-      "contextWindow": 128000,
-      "contextPct": 0.0078,
-      "fitsContext": true,
-      "note": null,
-      "tokenizerNote": "Uses the official tiktoken tokenizer. Token counts are exact."
+      "tokens": 312,
+      "inputCost": 0.000780,
+      "outputCost": 0.003120,
+      "precision": "exact"
     }
-    // … 17 more models
   ]
 }
 ```
 
-```bash
-curl -X POST http://localhost:3000/api/tokenize \
-  -H "Content-Type: application/json" \
-  -d '{"text":"The quick brown fox jumps over the lazy dog."}'
-```
+### POST /api/clean
 
-#### `POST /api/tokenize/file`
-Count tokens for an uploaded file.
+Accepts multipart file or `{ text }` JSON. Returns cleaned text with token comparison.
 
-**Request** (multipart/form-data, field name `file`):
-```bash
-curl -X POST http://localhost:3000/api/tokenize/file \
-  -F "file=@/path/to/document.pdf"
-```
+Add `X-Plan: pro` header to get full cleaning. Without it, free plan gets demo (first 5,000 chars).
 
-**Response:** same as `/api/tokenize` plus `filename` and `filesize`.
+### POST /api/retrieve
+
+Accepts multipart file + form fields `query` and `topK`, or JSON `{ text, query, topK }`.
 
 ---
 
-### Pro endpoints (require `ENABLE_PAID_FEATURES=true`)
+## Database schema (future production)
 
-Calling these when the flag is off returns:
-```json
-{ "error": "This feature requires Pro. Set ENABLE_PAID_FEATURES=true…", "code": "FEATURE_LOCKED" }
-```
+```sql
+-- Users
+CREATE TABLE users (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email       TEXT UNIQUE NOT NULL,
+  plan_id     TEXT NOT NULL DEFAULT 'free',
+  stripe_customer_id TEXT,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
 
-#### `POST /api/clean`
-Extract clean text from a PDF/DOCX/HTML file, stripping layout noise without touching content.
+-- Credits ledger
+CREATE TABLE credits_ledger (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID REFERENCES users(id),
+  amount     INTEGER NOT NULL,
+  type       TEXT NOT NULL,  -- grant | consume | refund | purchase
+  reason     TEXT,
+  metadata   JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-**What gets removed:**
-- Page numbers (`Page 1`, `- 1 -`, lone integers on a line)
-- Repeated headers/footers (any short line appearing ≥ 3 times)
-- Decorative separators (`────`, `====`)
-- Redundant blank lines (collapsed to max 1 blank line)
-- Hyphenated line-breaks (`hy-\nphen` → `hyphen`)
-- HTML tags and entities (for `.html` input)
-
-**What is preserved:** all semantic content.
-
-**Expected savings:** 10–40% depending on how much layout noise the source file has.
-
-**Request** (multipart/form-data):
-```bash
-curl -X POST http://localhost:3000/api/clean \
-  -F "file=@/path/to/report.pdf"
-```
-
-**Response:**
-```json
-{
-  "filename": "report.pdf",
-  "filesize": 245000,
-  "originalText": "Page 1\n\nCompany Confidential\n\nActual content…",
-  "cleanText": "Actual content…",
-  "originalStats": { "charCount": 12000, "wordCount": 2100, "lineCount": 480 },
-  "cleanStats":    { "charCount": 8800,  "wordCount": 1900, "lineCount": 310 },
-  "cleanerStats": {
-    "originalChars": 12000,
-    "cleanChars": 8800,
-    "charsSaved": 3200,
-    "boilerplateLineTypes": 3
-  },
-  "tokenComparison": [
-    {
-      "provider": "openai",
-      "providerName": "OpenAI",
-      "model": "gpt-4o",
-      "modelName": "GPT-4o",
-      "originalTokens": 3100,
-      "cleanTokens": 2200,
-      "tokensSaved": 900,
-      "pctSaved": 29.0,
-      "moneySaved": 0.00225,
-      "exact": true,
-      "inputPer1M": 2.5
-    }
-    // … one row per model
-  ]
-}
+-- Leads
+CREATE TABLE leads (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email          TEXT NOT NULL,
+  desired_plan   TEXT,
+  feature_clicked TEXT,
+  created_at     TIMESTAMPTZ DEFAULT NOW()
+);
 ```
 
 ---
 
-#### `POST /api/retrieve`
-Split a large document into chunks and return only the passages most relevant to your query (TF-IDF cosine similarity).
+## Deployment (Railway)
 
-**Important:** this returns *only the content relevant to your specific question* — not a summary of the whole document. Use it when you have a focused query against a large document.
+1. Push to GitHub
+2. Create a new Railway project → Deploy from GitHub repo
+3. Add environment variables in Railway dashboard
+4. Set `NODE_ENV=production`
+5. Railway auto-detects Node.js and runs `npm start`
 
-**Parameters:**
-- `file` — the document (multipart field)
-- `query` — your question or search string (form field or JSON field)
-- `topK` — number of chunks to return, 1–20 (default 5)
-
-**Request** (multipart/form-data):
-```bash
-curl -X POST http://localhost:3000/api/retrieve \
-  -F "file=@/path/to/large_doc.pdf" \
-  -F "query=What are the termination clauses?" \
-  -F "topK=5"
-```
-
-**Request** (JSON body with pre-extracted text):
-```bash
-curl -X POST http://localhost:3000/api/retrieve \
-  -H "Content-Type: application/json" \
-  -d '{"text":"Full document text…","query":"termination clauses","topK":5}'
-```
-
-**Response:**
-```json
-{
-  "query": "What are the termination clauses?",
-  "filename": "contract.pdf",
-  "totalChunks": 47,
-  "returnedChunks": 5,
-  "chunkSize": 800,
-  "overlap": 150,
-  "retrievedText": "Chunk 1 text…\n\n---\n\nChunk 2 text…",
-  "chunks": [
-    { "text": "Either party may terminate…", "index": 12, "score": 0.4821 },
-    { "text": "Termination for cause requires…", "index": 13, "score": 0.3904 }
-    // … up to topK
-  ],
-  "tokenComparison": [
-    {
-      "provider": "openai",
-      "model": "gpt-4o",
-      "modelName": "GPT-4o",
-      "fullTokens": 18400,
-      "retrievedTokens": 850,
-      "tokensSaved": 17550,
-      "pctSaved": 95.4,
-      "moneySaved": 0.0439,
-      "exact": true,
-      "inputPer1M": 2.5
-    }
-    // … one row per model
-  ]
-}
-```
+For custom domain: add in Railway → Settings → Domains.
 
 ---
 
-## Enabling Pro features locally
+## Tech stack
 
-```bash
-# .env
-ENABLE_PAID_FEATURES=true
-```
-
-Then restart the server. No payment required — the flag exists to mark the billing boundary before going to production.
-
----
-
-## Running tests
-
-```bash
-npm test                   # all 29 tests (unit + integration)
-npm run test:unit          # cleaner + retriever + tokenizers only
-npm run test:api           # HTTP endpoint integration tests
-```
-
-Tests use Node's built-in `node:test` runner — no extra packages needed.
-
----
-
-## Deployment
-
-### Environment variables
-
-| Variable | Default | Description |
+| Concern | Choice | Why |
 |---|---|---|
-| `PORT` | `3000` | HTTP port |
-| `NODE_ENV` | `development` | Set `production` in prod |
-| `ENABLE_PAID_FEATURES` | `false` | Unlock `/api/clean` and `/api/retrieve` |
-| `ENABLE_BILLING` | `false` | Activate Stripe billing routes |
-| `STRIPE_SECRET_KEY` | — | Stripe secret key (billing only) |
-| `STRIPE_WEBHOOK_SECRET` | — | Stripe webhook signing secret |
-| `STRIPE_PRO_MONTHLY_PRICE_ID` | — | Stripe price ID for Pro subscription |
-| `API_KEY` | — | Optional API key gate for all `/api` routes |
-| `CORS_ORIGIN` | `*` | Restrict CORS in production (e.g. `https://yourdomain.com`) |
-| `RATE_LIMIT_MAX` | `200` | General rate limit per 15 min |
-| `RATE_LIMIT_HEAVY_MAX` | `30` | Heavy-route limit per 15 min |
-
-### Docker (recommended for production)
-
-```bash
-# Build
-docker build -t tokenix .
-
-# Run
-docker run -d --name tokenix   -p 3000:3000   -e NODE_ENV=production   -e ENABLE_PAID_FEATURES=true   tokenix
-
-# Or with docker-compose (reads from .env automatically)
-docker-compose up -d
-```
-
-The multi-stage `Dockerfile` runs as a non-root user (`tokenix`) and includes a health check at `/api/health`.
-
-### Railway / Render / Fly.io
-
-These platforms auto-detect `package.json` and run `npm start`. Set environment variables in the platform dashboard:
-
-```
-NODE_ENV=production
-PORT=3000
-ENABLE_PAID_FEATURES=true
-```
-
-### VPS with PM2 + nginx
-
-```bash
-npm install
-NODE_ENV=production npm install -g pm2
-pm2 start server.js --name tokenix
-pm2 save && pm2 startup
-
-# Place nginx.conf at /etc/nginx/conf.d/tokenix.conf
-# (edit yourdomain.com and upstream IP first)
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-### Stripe billing (when ready)
-
-1. Create a product and price in the Stripe dashboard
-2. Set `ENABLE_BILLING=true` and `STRIPE_SECRET_KEY` in your env
-3. Set `STRIPE_PRO_MONTHLY_PRICE_ID` to your price ID
-4. Point the Stripe webhook to `https://yourdomain.com/api/billing/webhook`
-5. Set `STRIPE_WEBHOOK_SECRET` from the webhook dashboard
-6. Add database logic to `server.js` where the `// TODO: provision` comments are
+| Runtime | Node.js 18+ | Zero build step, universal deployment |
+| Framework | Express 4 | Minimal, well-understood, easy to self-host |
+| OpenAI tokenizer | `gpt-tokenizer` | Pure-JS tiktoken port — exact counts, no WASM |
+| Anthropic / Google / Meta / Mistral | Calibrated heuristic | Proprietary tokenizers not public; estimate clearly labelled |
+| PDF parsing | `pdf-parse` | Extracts text layer reliably |
+| DOCX parsing | `mammoth` | Clean text from Word documents |
+| File uploads | `multer` (memoryStorage) | No disk writes |
+| TF-IDF retrieval | Custom (zero deps) | No API keys, no model downloads, works offline |
+| Frontend | Tailwind CDN + Vanilla JS | No build step, loads instantly |
+| Styling | Tailwind CDN + custom CSS | Zero tooling overhead |
+| Payments | Stripe | Industry standard; well-documented |
 
 ---
 
-## What's done vs. what's left for production
+## Limitations / MVP gaps
 
-### ✅ Done (works locally)
-
-| Feature | Status |
-|---|---|
-| Token counting — pasted text | ✅ |
-| Token counting — file upload | ✅ |
-| Exact counts for all OpenAI models (tiktoken) | ✅ |
-| Calibrated estimates for Anthropic, Google, Meta, Mistral | ✅ |
-| Per-model cost breakdown (input + output) | ✅ |
-| Context window usage visualisation | ✅ |
-| Provider filter pills | ✅ |
-| Supported file types: PDF, DOCX, TXT, MD, HTML, 25+ code formats | ✅ |
-| **Format Cleaner** — strips layout noise, token/cost comparison, copy/download | ✅ |
-| **Smart Retrieval** — TF-IDF chunking, top-k relevant passages, token savings | ✅ |
-| Feature flag (`ENABLE_PAID_FEATURES`) gates Pro routes | ✅ |
-| REST API for all four endpoints | ✅ |
-| Prices in a single config file (`src/config/models.js`) | ✅ |
-
-### 🔲 Left for production
-
-| Item | Notes |
-|---|---|
-| **Stripe billing — wire DB** | Routes + scaffold are in `server.js`. Add a database call at the `// TODO: provision` comments to persist subscription state |
-| **Auth — database-backed** | `API_KEY` env-var gate is live; for per-user auth add JWT or sessions with a user table |
-| **Semantic embeddings** | Swap `src/retriever/index.js` for `@xenova/transformers` or OpenAI `text-embedding-3-small` for paraphrase recall |
-| **Persistent vector store** | Cache embeddings in Chroma, pgvector, or Pinecone for large-doc use-cases |
-| **Batch processing** | `POST /api/tokenize/batch` — zip of files → CSV output |
-| **Prompt optimizer (LLM-based)** | Call target LLM API to abstractively compress; show exact savings |
-| **Usage history** | Store analyses in SQLite / PostgreSQL for history + comparison |
-| **Input validation** | Add `zod` schema validation on all request bodies |
-| **Error monitoring** | Add Sentry or Datadog APM |
-| **Anthropic / Google official tokenizers** | Switch when SDK tokenizer support ships for exact counts |
+- Token counts for non-OpenAI models are estimates (±5–15%)
+- No user authentication — plan is determined by query param or ENABLE_PAID_FEATURES flag
+- Credits are in-memory and reset on server restart
+- No saved history or projects
+- TF-IDF retrieval is keyword-based, not semantic
+- PDF extraction works on text-layer PDFs only (not scanned/image PDFs)
+- No batch upload UI (endpoint not built — only the gate exists)
+- Rate limiting is in-memory (resets on restart); use Redis for production
 
 ---
 
-## Retrieval: TF-IDF vs. neural embeddings
+## What is needed for production
 
-The current retrieval uses **TF-IDF cosine similarity** — zero extra dependencies, works offline, good for keyword queries.
-
-For production with paraphrase or semantic queries, swap `src/retriever/index.js`'s `retrieve()` function to use embeddings:
-
-```js
-// Drop-in upgrade example (OpenAI embeddings):
-const { OpenAI } = require('openai');
-const client = new OpenAI();
-
-async function embedText(text) {
-  const res = await client.embeddings.create({
-    model: 'text-embedding-3-small',
-    input: text,
-  });
-  return res.data[0].embedding;
-}
-```
-
-Everything else (chunking, top-k selection, token comparison) stays the same.
+- **Auth**: Supabase Auth or Clerk for email/OAuth login
+- **Database**: Supabase/Postgres for users, credits, and lead storage
+- **Redis**: Upstash for distributed rate limiting
+- **Stripe webhooks**: Verify signatures, provision Pro access on `checkout.session.completed`
+- **Plan enforcement**: Replace `X-Plan` header with real JWT session lookup
+- **Monitoring**: Sentry for error tracking, Datadog or Grafana for metrics
 
 ---
 
-*Prices and counts are for estimation purposes only. Not affiliated with any LLM provider.*
+## Technical risks
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| `pdf-parse` hangs on malformed PDFs | High | Add timeout wrapper; validate MIME type |
+| Non-OpenAI token estimates diverge | Medium | Label estimates clearly; offer BYOK for exact counts |
+| Stripe webhook replay attacks | Medium | Validate webhook signatures; idempotent handlers |
+| Memory pressure from large files | Medium | 50 MB hard limit; stream parsing in production |
+| Rate limit bypass via proxies | Low | Switch to Redis + IP header validation in production |
+
+---
+
+## Monetization recommendations
+
+1. **Free tier as marketing** — generous free tier builds trust; users who count tokens are developers who ship
+2. **Pro at $12/mo** — targets individual developers; cleaning + retrieval reduce their API bills more than the subscription cost
+3. **Team at $39/mo** — shared projects and budget alerts justify team adoption
+4. **Metered add-ons** — sell credit packs for burst usage; low marginal cost, high perceived value
+5. **API access** — charge for high-volume API usage; teams running token checks in CI pipelines
+6. **White-label** — sell a self-hosted license to larger companies
+
+---
+
+## Disclaimer
+
+Not affiliated with OpenAI, Anthropic, Google, Meta, Mistral, or any LLM provider. Pricing information is sourced from public pricing pages and may be outdated. Always verify costs with your provider before making financial decisions.
+
+---
+
+## License
+
+MIT
