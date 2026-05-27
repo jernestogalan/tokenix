@@ -212,14 +212,33 @@ function buildTokenComparison(origResults, newResults, key = 'clean') {
   });
 }
 
-function savingsMessage(origResults, optimizedResults) {
+/**
+ * savingsMessage — produce a human-readable cost comparison.
+ *
+ * @param {Array}  origResults       - tokenizeAll() results for the original text
+ * @param {Array}  optimizedResults  - tokenizeAll() results for the processed text
+ * @param {'clean'|'retrieve'} type  - 'clean'    = noise removal, full meaning preserved
+ *                                     'retrieve' = only relevant chunks, NOT the full doc
+ */
+function savingsMessage(origResults, optimizedResults, type = 'clean') {
   if (!origResults || !optimizedResults || !origResults.length) return null;
-  const first   = origResults[0];
-  const opt     = optimizedResults[0];
+  const first    = origResults[0];
+  const opt      = optimizedResults[0];
   const origCost = (first.tokens / 1e6) * (first.inputPer1M || 0);
   const optCost  = (opt.tokens   / 1e6) * (first.inputPer1M || 0);
   const pct      = origCost > 0 ? Math.round(((origCost - optCost) / origCost) * 1000) / 10 : 0;
-  return `This full document would cost ${fmtMoney(origCost)} to process. Optimized: ${fmtMoney(optCost)}. Estimated savings: ${pct}%.`;
+
+  if (type === 'retrieve') {
+    // Retrieval is partial context — explicitly call that out
+    return `Sending only the relevant passages saves ${pct}% vs the full document `
+         + `(${fmtMoney(origCost)} → ${fmtMoney(optCost)}). `
+         + `Note: this is a subset, not the complete text — the AI will not see the rest.`;
+  }
+
+  // type === 'clean': noise removal, lossless in terms of meaning
+  return `Removing layout noise reduced cost by ${pct}% `
+       + `(${fmtMoney(origCost)} → ${fmtMoney(optCost)}). `
+       + `Full meaning is preserved — this is the same document, just cleaner.`;
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -463,7 +482,7 @@ app.post('/api/clean', upload.single('file'), checkUsageQuota, async (req, res) 
     ]);
 
     const tokenComparison = buildTokenComparison(origResults, cleanResults, 'clean');
-    const msg             = savingsMessage(origResults, cleanResults);
+    const msg             = savingsMessage(origResults, cleanResults, 'clean');
 
     const cleanedTokens = cleanResults.reduce((s, r) => Math.max(s, r.tokens || 0), 0);
     recordUsage(req, { feature: 'cleanFull', inputTokens: cleanedTokens, filename });
@@ -527,7 +546,7 @@ app.post('/api/retrieve', upload.single('file'), checkUsageQuota, async (req, re
     ]);
 
     const tokenComparison = buildTokenComparison(fullResults, retrievedResults, 'retrieve');
-    const msg             = savingsMessage(fullResults, retrievedResults);
+    const msg             = savingsMessage(fullResults, retrievedResults, 'retrieve');
 
     const retrievedTokens = retrievedResults.reduce((s, r) => Math.max(s, r.tokens || 0), 0);
     recordUsage(req, { feature: 'ragFull', inputTokens: retrievedTokens, filename });
@@ -655,22 +674,26 @@ app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.h
 
 // ── Graceful shutdown ─────────────────────────────────────────────────────────
 function gracefulShutdown(signal) {
-  console.log('[shutdown] ' + signal + ' — closing server...');
-  server.close(() => {
-    console.log('[shutdown] HTTP server closed.');
-    process.exit(0);
-  });
-  setTimeout(() => { process.exit(1); }, 10000).unref();
+  console.log(`[server] ${signal} received — shutting down gracefully`);
+  // isRedisReady() from rateLimitRedis — non-blocking, best-effort flush
+  process.exit(0);
 }
-
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT',  () => gracefulShutdown('SIGINT'));
 
-// ── Start ─────────────────────────────────────────────────────────────────────
-const server = app.listen(PORT, () => {
-  console.log(`[tokenia] v3 — port ${PORT} (${NODE_ENV})`);
-  console.log(`[tokenia] Auth: ${AUTH_ENABLED} | Paid: ${PAID_FEATURES_ENABLED} | Billing: ${BILLING_ENABLED}`);
-  console.log(`[tokenia] Supabase: ${!!process.env.SUPABASE_URL} | Redis: configured=${!!process.env.REDIS_URL}`);
+// ── Start ────────────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log(`[server] Tokenia listening on port ${PORT} (${NODE_ENV})`);
+  console.log('[server] Flags:', {
+    auth:     AUTH_ENABLED,
+    billing:  BILLING_ENABLED,
+    stripe:   BILLING_ENABLED && !!stripe,
+    credits:  CREDITS_ENABLED,
+    history:  HISTORY_ENABLED,
+    projects: PROJECTS_ENABLED,
+    redis:    isRedisReady(),
+    paid:     PAID_FEATURES_ENABLED,
+  });
 });
 
-module.exports = app;
+});
