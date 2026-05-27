@@ -695,5 +695,3 @@ app.listen(PORT, () => {
     paid:     PAID_FEATURES_ENABLED,
   });
 });
-
-});
