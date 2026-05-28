@@ -1,399 +1,180 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tokenia Pricing — Simple, Transparent Plans</title>
-  <meta name="description" content="Tokenia pricing — Free, Pro ($12/mo), and Team ($39/mo). Know what your AI calls will cost before you make them." />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/css/style.css" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            bg:       '#08080f',
-            surface:  '#0e0e1a',
-            surface2: '#16162a',
-            surface3: '#1c1c30',
-            border:   '#1f1f38',
-            muted:    '#6b6a8f',
-            accent:   '#7c3aed',
-            'accent-hover': '#8b5cf6',
-            'accent-light': '#a78bfa',
-            cyan:     '#06b6d4',
-            'text-base': '#e4e2f4',
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-          },
-        }
-      }
-    }
-  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tokenia pricing — free token counter for LLM APIs. Pro and Team plans coming soon.">
+  <title>Pricing — Tokenia</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-[#08080f] text-[#e4e2f4] min-h-screen font-sans">
+<body>
 
-<!-- ── Waitlist modal ─────────────────────────────────────────────────────── -->
-<div id="waitlist-modal" style="display:none" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center">
-  <div class="modal-box max-w-sm w-[90%]">
-    <div class="flex justify-between items-start mb-5">
-      <div>
-        <h2 class="text-lg font-semibold text-[#e4e2f4]" id="modal-plan-title">Join the waitlist</h2>
-        <p class="text-sm text-[#6b6a8f] mt-1">We'll reach out when billing goes live.</p>
-      </div>
-      <button id="modal-close" class="text-[#6b6a8f] hover:text-[#e4e2f4] text-xl transition-colors">&times;</button>
-    </div>
-    <div class="flex gap-2">
-      <input id="modal-email" type="email" placeholder="your@email.com"
-        class="flex-1 bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed]/60 transition-colors" />
-      <button id="modal-submit"
-        class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2.5 rounded-sm transition-colors whitespace-nowrap">
-        Join
-      </button>
-    </div>
-    <p id="modal-msg" class="text-xs text-[#4ade80] mt-2 hidden font-mono"></p>
-    <p id="modal-err" class="text-xs text-[#ef4444] mt-2 hidden font-mono"></p>
-  </div>
-</div>
-
-<!-- ── Nav ────────────────────────────────────────────────────────────────── -->
-<nav class="sticky top-0 z-40 bg-[#08080f]/90 backdrop-blur-xl border-b border-[#1f1f38]">
-  <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 no-underline group">
-      <div class="w-7 h-7 rounded flex items-center justify-center bg-[#7c3aed]/15 border border-[#7c3aed]/30 group-hover:border-[#7c3aed]/60 transition-colors">
-        <span class="font-mono font-bold text-[#a78bfa] text-xs">T</span>
-      </div>
-      <span class="font-semibold text-[#e4e2f4] text-sm tracking-tight">Tokenia</span>
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+        </linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#nb)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span data-i18n="nav.brand">Tokenia</span>
     </a>
-    <div class="flex items-center gap-5 text-sm">
-      <a href="/" class="text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors">Home</a>
-      <a href="#faq" class="text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors hidden sm:block">FAQ</a>
+    <div class="nav-links">
+      <a href="/#demo"    class="nav-link" data-i18n="nav.analyzer">Analyzer</a>
+      <a href="/pricing.html" class="nav-link active" data-i18n="nav.pricing">Pricing</a>
+      <a href="/#features" class="nav-link" data-i18n="nav.docs">Docs</a>
+    </div>
+    <div class="nav-right">
+      <div id="lang-selector"></div>
+      <a href="/#demo" class="btn btn-primary btn-sm" data-i18n="nav.cta">Try Free</a>
     </div>
   </div>
 </nav>
 
-<!-- ── Hero ───────────────────────────────────────────────────────────────── -->
-<section class="relative overflow-hidden py-20 px-6 text-center">
-  <div class="absolute inset-0 hero-grid hero-fade-bottom pointer-events-none" aria-hidden="true"></div>
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] pointer-events-none"
-    style="background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.15) 0%, transparent 70%)" aria-hidden="true"></div>
-  <div class="relative max-w-2xl mx-auto">
-    <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-4">Pricing</p>
-    <h1 class="text-4xl font-bold tracking-tight mb-3">Simple, transparent pricing</h1>
-    <p class="text-[#6b6a8f] text-lg">Start free. Upgrade when you need more power.</p>
-  </div>
-</section>
-
-<!-- ── Pricing cards ──────────────────────────────────────────────────────── -->
-<section class="px-6 pb-16">
-  <div class="max-w-5xl mx-auto grid sm:grid-cols-3 gap-5">
-
-    <!-- Free -->
-    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-7 flex flex-col hover:border-[#1f1f38]/80 transition-colors">
-      <div class="mb-5">
-        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-[#6b6a8f]">Free</span>
-        <div class="flex items-end gap-1 mt-2">
-          <span class="text-4xl font-bold font-mono">$0</span>
-          <span class="text-[#6b6a8f] text-sm mb-1.5">/month</span>
-        </div>
-        <p class="text-xs text-[#6b6a8f] mt-2 leading-relaxed">Great for occasional token counting and cost estimation.</p>
+<main style="padding-top:var(--nav-h)">
+  <section class="pricing-section" style="padding-top:4rem">
+    <div class="section-container">
+      <div class="section-header">
+        <p class="section-eyebrow" data-i18n="pricing.badge">Simple Pricing</p>
+        <h1 class="section-title" data-i18n="pricing.title">Start free, scale when ready</h1>
+        <p class="section-sub" data-i18n="pricing.subtitle">No credit card required for the free tier.</p>
       </div>
-      <ul class="space-y-2.5 text-sm flex-1 mb-6">
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Token counting across all models</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Paste text (up to 1M chars)</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">File uploads up to 2 MB</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Cleaning demo (first 5,000 chars)</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Retrieval demo (top 3 chunks)</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] mt-0.5 shrink-0">✗</span><span class="text-[#3d3c5c]">Full document cleaning</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] mt-0.5 shrink-0">✗</span><span class="text-[#3d3c5c]">CSV export</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] mt-0.5 shrink-0">✗</span><span class="text-[#3d3c5c]">Batch upload</span></li>
-      </ul>
-      <a href="/" class="border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#7c3aed]/40 rounded-sm py-2.5 text-sm font-medium transition-colors text-center block">
-        Start Free
+
+      <div class="pricing-grid">
+
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <h2 data-i18n="pricing.free_title">Free</h2>
+            <div class="price-row">
+              <span class="price-amount" data-i18n="pricing.free_price">$0</span>
+              <span class="price-period" data-i18n="pricing.free_period">/ forever</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li data-i18n="pricing.free_f1">Unlimited token counting</li>
+            <li data-i18n="pricing.free_f2">All provider comparisons</li>
+            <li data-i18n="pricing.free_f3">File upload (TXT, MD, DOCX, PDF)</li>
+            <li data-i18n="pricing.free_f4">Cost estimations</li>
+            <li data-i18n="pricing.free_f5">Prompt optimizer tips</li>
+          </ul>
+          <a href="/#demo" class="btn btn-outline btn-block" data-i18n="pricing.free_cta">Get Started Free</a>
+        </div>
+
+        <div class="pricing-card pricing-card-pro">
+          <div class="pricing-card-header">
+            <h2 data-i18n="pricing.pro_title">Pro</h2>
+            <div class="price-row">
+              <span class="price-amount" data-i18n="pricing.pro_price">$12</span>
+              <span class="price-period" data-i18n="pricing.pro_period">/ month</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li data-i18n="pricing.pro_f1">Everything in Free</li>
+            <li data-i18n="pricing.pro_f2">Batch processing (up to 100 files)</li>
+            <li data-i18n="pricing.pro_f3">API access</li>
+            <li data-i18n="pricing.pro_f4">Usage history &amp; reports</li>
+            <li data-i18n="pricing.pro_f5">Priority support</li>
+          </ul>
+          <button class="btn btn-primary btn-block" disabled data-i18n="pricing.pro_cta">Coming Soon</button>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <h2 data-i18n="pricing.team_title">Team</h2>
+            <div class="price-row">
+              <span class="price-amount" data-i18n="pricing.team_price">$49</span>
+              <span class="price-period" data-i18n="pricing.team_period">/ month</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li data-i18n="pricing.team_f1">Everything in Pro</li>
+            <li data-i18n="pricing.team_f2">Up to 10 team members</li>
+            <li data-i18n="pricing.team_f3">Shared workspaces</li>
+            <li data-i18n="pricing.team_f4">Admin dashboard</li>
+            <li data-i18n="pricing.team_f5">SLA support</li>
+          </ul>
+          <button class="btn btn-outline btn-block" disabled data-i18n="pricing.team_cta">Coming Soon</button>
+        </div>
+
+      </div>
+      <p class="pricing-note" data-i18n="pricing.coming_soon_note">Upgrades coming soon — currently free for everyone.</p>
+
+      <!-- FAQ -->
+      <div class="pricing-faq" style="margin-top:4rem">
+        <h2 style="text-align:center;margin-bottom:2rem">Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Do I need to create an account?</summary>
+            <p>No. The free tier works without any account. Just paste text and analyze tokens instantly.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How accurate are the token counts?</summary>
+            <p>For OpenAI models we use tiktoken (exact). For Claude we use the official API. For other models, counts are estimates labeled "Est." so you always know which is which.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is my data stored?</summary>
+            <p>No. All text is processed in memory and discarded immediately. Nothing is logged, stored, or shared.</p>
+          </details>
+          <details class="faq-item">
+            <summary>When will Pro and Team launch?</summary>
+            <p>We're working on it. Enter your email on the waitlist and we'll notify you the day it goes live.</p>
+          </details>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <a href="/" class="nav-brand footer-brand">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <defs><linearGradient id="fb2" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+          </linearGradient></defs>
+          <rect width="28" height="28" rx="7" fill="url(#fb2)"/>
+          <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Tokenia</span>
       </a>
+      <p class="footer-tagline" data-i18n="footer.tagline">The token intelligence platform for LLM developers.</p>
     </div>
-
-    <!-- Pro (highlighted) -->
-    <div class="bg-[#0e0e1a] rounded-xl p-7 flex flex-col relative pricing-card-pro">
-      <div class="mb-5">
-        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-[#a78bfa]">Pro</span>
-        <div class="flex items-end gap-1 mt-2">
-          <span class="text-4xl font-bold font-mono">$12</span>
-          <span class="text-[#6b6a8f] text-sm mb-1.5">/month</span>
-        </div>
-        <p class="text-xs text-[#6b6a8f] mt-2 leading-relaxed">For developers who regularly work with large documents and APIs.</p>
-      </div>
-      <ul class="space-y-2.5 text-sm flex-1 mb-6">
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Everything in Free</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Files up to 20 MB</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Full document cleaning (unlimited)</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Smart retrieval up to 20 chunks</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">CSV &amp; PDF export reports</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Batch upload (10 files)</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">API access + history</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">500 credits / month</span></li>
+    <div class="footer-col">
+      <h4 data-i18n="footer.product">Product</h4>
+      <ul>
+        <li><a href="/#demo" data-i18n="footer.analyzer">Analyzer</a></li>
+        <li><a href="/pricing.html" data-i18n="footer.pricing">Pricing</a></li>
       </ul>
-      <button class="plan-cta bg-[#7c3aed] hover:bg-[#8b5cf6] text-white rounded-sm py-2.5 text-sm font-medium transition-colors"
-        data-plan="pro" data-billing-url="">
-        Join waitlist
-      </button>
     </div>
-
-    <!-- Team -->
-    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-7 flex flex-col hover:border-[#06b6d4]/20 transition-colors">
-      <div class="mb-5">
-        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-[#22d3ee]">Team</span>
-        <div class="flex items-end gap-1 mt-2">
-          <span class="text-4xl font-bold font-mono">$39</span>
-          <span class="text-[#6b6a8f] text-sm mb-1.5">/month</span>
-        </div>
-        <p class="text-xs text-[#6b6a8f] mt-2 leading-relaxed">For teams that need shared projects, API access, and budget controls.</p>
-      </div>
-      <ul class="space-y-2.5 text-sm flex-1 mb-6">
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Everything in Pro</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Files up to 50 MB</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Batch upload (50 files)</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Retrieval up to 50 chunks</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Budget alerts</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">2,000 credits / month</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Team collaboration</span></li>
-        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Priority support</span></li>
+    <div class="footer-col">
+      <h4 data-i18n="footer.company">Company</h4>
+      <ul>
+        <li><a href="/privacy.html" data-i18n="footer.privacy">Privacy Policy</a></li>
+        <li><a href="mailto:support@tokenia.live" data-i18n="footer.contact">Contact</a></li>
       </ul>
-      <button class="plan-cta border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#06b6d4]/35 rounded-sm py-2.5 text-sm font-medium transition-colors"
-        data-plan="team">
-        Join waitlist
-      </button>
-    </div>
-
-  </div>
-</section>
-
-<!-- ── Credits section ────────────────────────────────────────────────────── -->
-<section class="py-12 px-6 border-t border-[#1f1f38]">
-  <div class="max-w-3xl mx-auto">
-    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/20 transition-colors">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-lg bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="text-base font-semibold text-[#e4e2f4]">Credits</h2>
-            <span class="badge-estimated">Coming soon</span>
-          </div>
-          <p class="text-sm text-[#6b6a8f] mb-4 leading-relaxed">Buy extra processing capacity when you need it, without upgrading plans. Credits are consumed for paid operations like full document cleaning and retrieval.</p>
-          <div class="grid sm:grid-cols-3 gap-3 text-sm">
-            <div class="bg-[#16162a] rounded-sm p-3 border border-[#1f1f38]">
-              <p class="font-mono font-semibold text-[#e4e2f4] mb-1">Cleaning (full)</p>
-              <p class="text-[#6b6a8f] text-xs">5 credits / document</p>
-            </div>
-            <div class="bg-[#16162a] rounded-sm p-3 border border-[#1f1f38]">
-              <p class="font-mono font-semibold text-[#e4e2f4] mb-1">Retrieval (full)</p>
-              <p class="text-[#6b6a8f] text-xs">3 credits / query</p>
-            </div>
-            <div class="bg-[#16162a] rounded-sm p-3 border border-[#1f1f38]">
-              <p class="font-mono font-semibold text-[#e4e2f4] mb-1">CSV export</p>
-              <p class="text-[#6b6a8f] text-xs">2 credits / export</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
-</section>
-
-<!-- ── Feature comparison table ───────────────────────────────────────────── -->
-<section class="py-12 px-6 border-t border-[#1f1f38]">
-  <div class="max-w-4xl mx-auto">
-    <h2 class="text-lg font-semibold text-[#e4e2f4] mb-6">Feature comparison</h2>
-    <div class="overflow-x-auto bg-[#0e0e1a] border border-[#1f1f38] rounded-xl">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-[#1f1f38]">
-            <th class="px-5 py-3.5 text-left text-xs font-mono font-medium text-[#6b6a8f] uppercase tracking-wider">Feature</th>
-            <th class="px-5 py-3.5 text-center text-xs font-mono font-medium text-[#6b6a8f] uppercase tracking-wider">Free</th>
-            <th class="px-5 py-3.5 text-center text-xs font-mono font-medium text-[#a78bfa] uppercase tracking-wider">Pro</th>
-            <th class="px-5 py-3.5 text-center text-xs font-mono font-medium text-[#22d3ee] uppercase tracking-wider">Team</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-[#1f1f38]/60">
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Token counting — all models</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Max file size</td>
-            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">2 MB</td>
-            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">20 MB</td>
-            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">50 MB</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Document cleaning</td>
-            <td class="px-5 py-3 text-center text-xs text-[#6b6a8f] font-mono">Demo (5k chars)</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓ Full</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓ Full</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Smart retrieval</td>
-            <td class="px-5 py-3 text-center text-xs text-[#6b6a8f] font-mono">Top 3 chunks</td>
-            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">Up to 20</td>
-            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">Up to 50</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Batch upload</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
-            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">10 files</td>
-            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">50 files</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">CSV &amp; PDF export</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">API access</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Budget alerts</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Team collaboration</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
-            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
-          </tr>
-          <tr class="hover:bg-[#16162a]/50 transition-colors">
-            <td class="px-5 py-3 text-[#6b6a8f]">Monthly credits</td>
-            <td class="px-5 py-3 text-center text-[#3d3c5c]">—</td>
-            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">500</td>
-            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">2,000</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ── FAQ ────────────────────────────────────────────────────────────────── -->
-<section id="faq" class="py-16 px-6 border-t border-[#1f1f38]">
-  <div class="max-w-2xl mx-auto">
-    <div class="text-center mb-10">
-      <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-3">FAQ</p>
-      <h2 class="text-2xl font-bold">Frequently asked questions</h2>
-    </div>
-    <div class="space-y-0 divide-y divide-[#1f1f38]">
-      <div class="py-5">
-        <h3 class="font-semibold text-[#e4e2f4] mb-2">What counts as a token?</h3>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">A token is a chunk of text as processed by a language model. For English text, one token is roughly 3–4 characters or 0.75 words. For OpenAI models, we use the official tiktoken tokenizer for exact counts. For other providers, we use a calibrated heuristic and clearly label results as <span class="font-mono text-[#fbbf24]">~Estimated</span>.</p>
-      </div>
-      <div class="py-5">
-        <h3 class="font-semibold text-[#e4e2f4] mb-2">How accurate are the cost estimates?</h3>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">Cost estimates are based on publicly listed API pricing. We update prices regularly, but providers can change rates without notice. Always verify against your provider's pricing page before making financial decisions. Token counts for non-OpenAI models can vary ±5–15% from actual counts.</p>
-      </div>
-      <div class="py-5">
-        <h3 class="font-semibold text-[#e4e2f4] mb-2">Can I use my own API key?</h3>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">Not yet — this is planned as a Pro/Team feature. Using your own key would allow us to run the provider's official tokenizer for exact counts on all models.</p>
-      </div>
-      <div class="py-5">
-        <h3 class="font-semibold text-[#e4e2f4] mb-2">Is my text stored or used for training?</h3>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">No. All text and files are processed in-memory and discarded immediately after analysis. We never store, log, or use your content.</p>
-      </div>
-      <div class="py-5">
-        <h3 class="font-semibold text-[#e4e2f4] mb-2">What file formats are supported?</h3>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">PDF, DOCX, TXT, Markdown, and most programming language files (.py, .js, .ts, .go, .rs, .java, .kt, .swift, .c, .cpp, .cs, .php, etc.). HTML and JSON are also supported. Max file size: 2 MB on Free, 20 MB on Pro, 50 MB on Team.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
-<footer class="border-t border-[#1f1f38] py-10 px-6">
-  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 text-sm text-[#6b6a8f]">
-    <div class="flex items-center gap-2.5">
-      <div class="w-6 h-6 rounded flex items-center justify-center bg-[#7c3aed]/12 border border-[#7c3aed]/25">
-        <span class="font-mono font-bold text-[#a78bfa] text-[.6rem]">T</span>
-      </div>
-      <span class="font-semibold text-[#e4e2f4] text-sm">Tokenia</span>
-    </div>
-    <div class="flex gap-5 text-xs">
-      <a href="/" class="hover:text-[#e4e2f4] transition-colors">Home</a>
-      <a href="/privacy.html" class="hover:text-[#e4e2f4] transition-colors">Privacy</a>
-      <span class="text-[#3d3c5c]">Not affiliated with OpenAI, Anthropic, or Google.</span>
-    </div>
+  <div class="footer-bottom">
+    <span data-i18n="footer.copyright">© 2025 Tokenia. All rights reserved.</span>
   </div>
 </footer>
 
 <script>
-(async function() {
-  let billingEnabled = false;
-  try {
-    const f = await fetch('/api/features').then(r => r.json());
-    billingEnabled = f.billingEnabled;
-  } catch (_) {}
-
-  const modal       = document.getElementById('waitlist-modal');
-  const modalClose  = document.getElementById('modal-close');
-  const modalSubmit = document.getElementById('modal-submit');
-  const modalEmail  = document.getElementById('modal-email');
-  const modalMsg    = document.getElementById('modal-msg');
-  const modalErr    = document.getElementById('modal-err');
-  const modalTitle  = document.getElementById('modal-plan-title');
-  let currentPlan = 'pro';
-
-  document.querySelectorAll('.plan-cta').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentPlan = btn.dataset.plan || 'pro';
-      if (billingEnabled) {
-        fetch('/api/billing/checkout', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({})
-        }).then(r => r.json()).then(d => { if (d.url) window.location.href = d.url; });
-      } else {
-        modalTitle.textContent = `Join waitlist — ${currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}`;
-        modal.style.display = 'flex';
-        setTimeout(() => modalEmail.focus(), 50);
-      }
-    });
-  });
-
-  modalClose.addEventListener('click', () => { modal.style.display = 'none'; });
-  modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
-
-  modalSubmit.addEventListener('click', async () => {
-    const email = modalEmail.value.trim();
-    if (!email || !email.includes('@')) {
-      modalErr.textContent = 'Please enter a valid email.';
-      modalErr.classList.remove('hidden'); return;
-    }
-    modalErr.classList.add('hidden');
-    modalSubmit.disabled = true; modalSubmit.textContent = 'Joining…';
-    try {
-      await fetch('/api/lead', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, desiredPlan: currentPlan, featureClicked: 'pricing_page' }),
-      });
-      modalMsg.textContent = "You're on the list! We'll reach out when billing goes live.";
-      modalMsg.classList.remove('hidden');
-      modalSubmit.textContent = 'Done!';
-    } catch (_) {
-      modalErr.textContent = 'Something went wrong. Try again.';
-      modalErr.classList.remove('hidden');
-      modalSubmit.disabled = false; modalSubmit.textContent = 'Join';
-    }
-  });
-})();
+  (function(){
+    const nav = document.getElementById('main-nav');
+    if (nav) window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 8);
+    }, { passive: true });
+  })();
 </script>
+<script src="/js/i18n-client.js" defer></script>
 </body>
 </html>

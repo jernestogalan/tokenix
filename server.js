@@ -595,19 +595,21 @@ app.post('/api/report', async (req, res) => {
   }
 });
 
-// POST /api/lead — lead capture
+// POST /api/lead — lead capture (also used by FAQ chatbot contact form)
 app.post('/api/lead', (req, res) => {
-  const { email, desiredPlan, featureClicked } = req.body || {};
+  const { email, desiredPlan, featureClicked, name, message } = req.body || {};
   if (!email || !email.includes('@'))
     return res.status(400).json({ error: 'Valid email required.' });
 
   _leads.push({
     email,
+    name:           name           || null,
+    message:        message        || null,
     desiredPlan:    desiredPlan    || 'pro',
     featureClicked: featureClicked || null,
     createdAt:      new Date().toISOString(),
   });
-  console.log(`[lead] ${email} — plan: ${desiredPlan} — feature: ${featureClicked}`);
+  console.log(`[lead] ${email} — plan: ${desiredPlan} — feature: ${featureClicked}${name ? ` — from: ${name}` : ''}`);
   res.json({ ok: true, message: "You're on the list! We'll reach out when Pro launches." });
 });
 

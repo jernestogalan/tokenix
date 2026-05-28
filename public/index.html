@@ -3,401 +3,363 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tokenia — LLM Token Calculator & Cost Estimator</title>
-  <meta name="description" content="Count tokens, estimate API costs, and optimize prompts for every major LLM. Supports Claude, GPT-4, Gemini, Llama and more. Free, local, and accurate.">
-  <meta property="og:title" content="Tokenia — LLM Token Calculator">
-  <meta property="og:description" content="The professional token counter & cost estimator for LLM developers.">
+  <meta name="description" content="Tokenia — Free token counter and cost estimator for GPT-4, Claude, Gemini and all major LLM APIs. Exact + estimated counts.">
+  <meta name="theme-color" content="#FF6B2C">
+  <meta property="og:title" content="Tokenia — Token Counter & Cost Estimator">
+  <meta property="og:description" content="Instant token count and cost estimate across OpenAI, Anthropic, Mistral, Gemini and more.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tokenia.live">
+  <title>Tokenia — Token Counter & LLM Cost Estimator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
-<header class="nav-header">
-  <nav class="nav-inner container">
-    <a href="/" class="nav-brand">
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand" aria-label="Tokenia home">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-        <rect width="28" height="28" rx="7" fill="url(#nb)"/>
-        <path d="M7 14h3.5l2-5 3 10 2-7 1.5 2H21" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#7c3aed"/><stop offset="1" stop-color="#3b82f6"/>
+          <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
         </linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#nb)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span>Tokenia</span>
+      <span data-i18n="nav.brand">Tokenia</span>
     </a>
 
-    <div class="nav-links">
-      <a href="#demo" class="nav-link">Tool</a>
-      <a href="#features" class="nav-link">Features</a>
-      <a href="#pricing" class="nav-link">Pricing</a>
-      <a href="#" class="nav-link">Docs</a>
+    <div class="nav-links" role="navigation" aria-label="Main">
+      <a href="#demo"     class="nav-link" data-i18n="nav.analyzer">Analyzer</a>
+      <a href="/pricing.html" class="nav-link" data-i18n="nav.pricing">Pricing</a>
+      <a href="#features" class="nav-link" data-i18n="nav.docs">Docs</a>
     </div>
 
-    <!-- anon state -->
-    <div id="nav-anon" class="nav-actions">
-      <button id="nav-signin-btn" class="btn btn-ghost btn-sm">Sign in</button>
-      <a href="#pricing" class="btn btn-primary btn-sm">Get started free</a>
-    </div>
+    <div class="nav-right">
+      <!-- Language selector — populated by i18n-client.js -->
+      <div id="lang-selector"></div>
 
-    <!-- authed state (hidden by default) -->
-    <div id="nav-user" class="nav-actions" style="display:none">
-      <div id="nav-usage" class="nav-usage-wrap" style="display:none">
-        <span id="nav-usage-label" class="nav-usage-label">0 / 100k</span>
-        <div class="nav-usage-track">
-          <div id="nav-usage-bar" class="nav-usage-fill" style="width:0%"></div>
-        </div>
+      <!-- Logged-out state -->
+      <div id="nav-anon" class="nav-actions">
+        <button id="nav-signin-btn" class="btn btn-ghost btn-sm">Sign in</button>
+        <a href="#demo" class="btn btn-primary btn-sm" data-i18n="nav.cta">Try Free</a>
       </div>
-      <span id="nav-plan-badge" class="badge badge-free">Free</span>
-      <button id="nav-get-pro" class="btn btn-primary btn-sm" style="display:none">Upgrade</button>
-      <span id="nav-credits" class="nav-credits" style="display:none"></span>
-      <span id="nav-user-email" class="nav-user-email"></span>
-      <button id="nav-signout-btn" class="btn btn-ghost btn-sm">Sign out</button>
-    </div>
-  </nav>
-</header>
 
-<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+      <!-- Logged-in state -->
+      <div id="nav-user" class="nav-actions" style="display:none">
+        <div id="nav-usage" class="nav-usage-wrap" style="display:none">
+          <span id="nav-usage-label" class="nav-usage-label">0 / 100k</span>
+          <div class="nav-usage-track">
+            <div id="nav-usage-bar" class="nav-usage-fill" style="width:0%"></div>
+          </div>
+        </div>
+        <span id="nav-plan-badge" class="badge badge-free">Free</span>
+        <button id="nav-get-pro" class="btn btn-primary btn-sm" style="display:none">Upgrade</button>
+        <span id="nav-credits" class="nav-credits" style="display:none"></span>
+        <span id="nav-user-email" class="nav-user-email"></span>
+        <button id="nav-signout-btn" class="btn btn-ghost btn-sm">Sign out</button>
+      </div>
+
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile nav drawer -->
+<div class="nav-drawer" id="nav-drawer" aria-hidden="true">
+  <a href="#demo"          class="nav-link" data-i18n="nav.analyzer">Analyzer</a>
+  <a href="/pricing.html"  class="nav-link" data-i18n="nav.pricing">Pricing</a>
+  <a href="#features"      class="nav-link" data-i18n="nav.docs">Docs</a>
+  <a href="#demo"          class="btn btn-primary" data-i18n="nav.cta">Try Free</a>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
 <section class="hero-section">
-  <div class="hero-bg-orb orb-1"></div>
-  <div class="hero-bg-orb orb-2"></div>
-  <div class="hero-bg-orb orb-3"></div>
-
-  <div class="container hero-grid">
-    <!-- Left: copy -->
-    <div class="hero-copy reveal">
-      <div class="hero-eyebrow">
-        <span class="badge badge-violet">✦ Now with prompt optimization</span>
-      </div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="section-eyebrow" data-i18n="hero.badge">Token Intelligence Platform</p>
       <h1 class="hero-headline">
-        Count tokens.<br>
-        <span class="gradient-text">Cut costs.</span><br>
-        Ship faster.
+        <span data-i18n="hero.title">Count Tokens.</span><br>
+        <span class="hero-headline-accent" data-i18n="hero.title2">Cut Costs.</span>
       </h1>
-      <p class="hero-sub">
-        The professional token counter &amp; cost estimator built for LLM developers.
-        Analyze any text or file against 18+ models — instantly, locally, accurately.
+      <p class="hero-sub" data-i18n="hero.subtitle">
+        Paste text or upload a file — get an instant token count and cost estimate across all major LLM providers.
       </p>
-      <div class="hero-ctas">
-        <a href="#demo" class="btn btn-primary btn-lg">
-          Start counting free
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <a href="#how-it-works" class="btn btn-outline btn-lg">See how it works</a>
+      <div class="hero-cta-row">
+        <a href="#demo" class="btn btn-primary btn-lg" data-i18n="hero.cta_primary">Start Counting</a>
+        <a href="/pricing.html" class="btn btn-outline btn-lg" data-i18n="hero.cta_secondary">See Pricing</a>
       </div>
-      <div class="hero-badges">
-        <span class="trust-badge">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 4h4l-3.3 2.4 1.3 4L7 9 3.5 11.4l1.3-4L1.5 5h4z" fill="#f59e0b"/></svg>
-          18+ models
+      <div class="hero-trust">
+        <span class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1l1.3 3.9H13L9.6 7.6l1.3 4L7 9.5l-3.9 2.1 1.3-4L1 4.9h4.7z" fill="var(--orange)"/></svg>
+          No account required
         </span>
-        <span class="trust-badge">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zm0 2a1 1 0 110 2 1 1 0 010-2zm0 3h.5a.5.5 0 01.5.5v3.5h.5a.5.5 0 010 1h-2a.5.5 0 010-1h.5V7H7a.5.5 0 010-1z" fill="#10b981"/></svg>
-          100% local
+        <span class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1a5 5 0 000 10A5 5 0 007 1zm-1 7.5l-2-2 .7-.7L6 7.1l3.3-3.3.7.7z" fill="var(--orange)"/></svg>
+          Always free, no credit card
         </span>
-        <span class="trust-badge">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11 12 4" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          98% accuracy
-        </span>
-        <span class="trust-badge">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="7" rx="1.5" stroke="#3b82f6" stroke-width="1.5"/><path d="M5 4V3a2 2 0 114 0v1" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg>
-          $0 to count
+        <span class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="2" y="6" width="10" height="7" rx="1.5" stroke="var(--orange)" stroke-width="1.3"/><path d="M4.5 6V4.5a2.5 2.5 0 015 0V6" stroke="var(--orange)" stroke-width="1.3"/></svg>
+          100% private — nothing stored
         </span>
       </div>
     </div>
 
-    <!-- Right: illustration -->
-    <div class="hero-illustration reveal delay-2">
-      <div class="hero-card-float">
-        <div class="hc-header">
-          <div class="hc-dot red"></div><div class="hc-dot yellow"></div><div class="hc-dot green"></div>
-          <span class="hc-label">token analyzer</span>
+    <div class="hero-visual">
+      <div class="hero-card" aria-hidden="true">
+        <div class="hero-card-header">
+          <div class="hc-dot r"></div><div class="hc-dot y"></div><div class="hc-dot g"></div>
+          <span class="hc-title">Token Analysis</span>
         </div>
-        <div class="hc-body">
-          <div class="hc-input-row">
-            <span class="hc-prompt-label">Input</span>
-            <span class="mono" style="color:var(--text-dim);font-size:12px">claude-3-5-sonnet</span>
-          </div>
-          <div class="hc-chip-row">
-            <span class="token-chip t-purple">You</span>
-            <span class="token-chip t-blue">are</span>
-            <span class="token-chip t-green">a</span>
-            <span class="token-chip t-amber">helpful</span>
-            <span class="token-chip t-pink">assistant</span>
-            <span class="token-chip t-cyan">that</span>
-            <span class="token-chip t-purple">an</span>
-            <span class="token-chip t-blue">swers</span>
-            <span class="token-chip t-green">con</span>
-            <span class="token-chip t-amber">cise</span>
-            <span class="token-chip t-pink">ly</span>
-          </div>
-          <div class="hc-stats-row">
-            <div class="hc-stat"><span class="hc-stat-val">11</span><span class="hc-stat-lbl">tokens</span></div>
-            <div class="hc-stat"><span class="hc-stat-val">$0.0033</span><span class="hc-stat-lbl">cost</span></div>
-            <div class="hc-stat"><span class="hc-stat-val">42</span><span class="hc-stat-lbl">chars</span></div>
-          </div>
-          <div class="hc-model-row">
-            <div class="hc-model-item">
-              <span class="provider-dot prov-anthropic"></span>Claude 3.5 Sonnet
-              <span class="hc-price">$0.0033</span>
-            </div>
-            <div class="hc-model-item">
-              <span class="provider-dot prov-openai"></span>GPT-4o
-              <span class="hc-price">$0.0055</span>
-            </div>
-            <div class="hc-model-item">
-              <span class="provider-dot prov-google"></span>Gemini 1.5 Pro
-              <span class="hc-price">$0.0017</span>
-            </div>
-          </div>
+        <div class="hero-card-body">
+          <div class="hc-row"><span class="hc-label">Model</span><span class="hc-val">GPT-4o</span></div>
+          <div class="hc-row"><span class="hc-label">Tokens</span><span class="hc-val orange">1,842</span></div>
+          <div class="hc-row"><span class="hc-label">Est. Cost</span><span class="hc-val">$0.0055</span></div>
+          <div class="hc-row"><span class="hc-label">Method</span><span class="hc-chip">Exact · tiktoken</span></div>
         </div>
-        <div class="hc-savings-pill">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9 10 3" stroke="#10b981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Save 40% switching to Gemini Flash
+        <div class="hero-card-chips">
+          <span class="t-chip t-orange">GPT-4o</span>
+          <span class="t-chip t-blue">Claude 3.5</span>
+          <span class="t-chip t-green">Gemini 1.5</span>
+          <span class="t-chip t-amber">Mistral</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════ STATS BAR ═══════════════════════════ -->
-<section class="stats-bar">
-  <div class="container stats-grid">
-    <div class="stat-item reveal">
-      <span class="stat-number gradient-text">18+</span>
-      <span class="stat-label">LLM models supported</span>
+<!-- ═══════════════════════════════════════════
+     STATS BAR
+════════════════════════════════════════════ -->
+<section class="stats-bar" aria-label="Platform statistics">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-number">30+</span>
+      <span class="stat-label" data-i18n="stats.models">Models Supported</span>
     </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item reveal delay-1">
-      <span class="stat-number gradient-text">100%</span>
-      <span class="stat-label">Runs in your browser</span>
+    <div class="stat-sep" aria-hidden="true"></div>
+    <div class="stat-item">
+      <span class="stat-number">99.9%</span>
+      <span class="stat-label" data-i18n="stats.accuracy">Accuracy</span>
     </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item reveal delay-2">
-      <span class="stat-number gradient-text">98%</span>
-      <span class="stat-label">Tokenizer accuracy</span>
+    <div class="stat-sep" aria-hidden="true"></div>
+    <div class="stat-item">
+      <span class="stat-number">40%</span>
+      <span class="stat-label" data-i18n="stats.cost_savings">Avg. Cost Savings</span>
     </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item reveal delay-3">
-      <span class="stat-number gradient-text">$0</span>
-      <span class="stat-label">To count tokens</span>
+    <div class="stat-sep" aria-hidden="true"></div>
+    <div class="stat-item">
+      <span class="stat-number">10k+</span>
+      <span class="stat-label" data-i18n="stats.users">Active Users</span>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════ DEMO / TOOL ═══════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════
+     ANALYZER TOOL — all app.js IDs preserved
+════════════════════════════════════════════ -->
 <section id="demo" class="tool-section">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">Token Counter</span>
-      <h2 class="section-title">Paste text or upload a file</h2>
-      <p class="section-sub">Get an instant count and cost breakdown across every major model.</p>
+  <div class="tool-inner">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="analyzer.title">Token Analyzer</h2>
+      <p class="section-sub" data-i18n="analyzer.subtitle">Instant token count &amp; cost estimate</p>
     </div>
 
-    <div class="tool-layout">
-      <!-- Input card -->
-      <div class="tool-card reveal">
-        <div class="tool-card-header">
-          <div class="tool-tabs">
-            <button class="tab-btn active-tab" data-tab="text-tab">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 5h6M4 7.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              Text
-            </button>
-            <button class="tab-btn" data-tab="file-tab">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8 2H4a1 1 0 00-1 1v8a1 1 0 001 1h6a1 1 0 001-1V5l-3-3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 2v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              File
-            </button>
-            <button class="tab-btn" data-tab="clean-tab">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3h8M3 6h5M3 9h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              Clean
-              <span id="clean-badge" class="tab-badge" style="display:none">Pro</span>
-            </button>
-            <button class="tab-btn" data-tab="retrieve-tab">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 9.5l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              Retrieve
-              <span id="retrieve-badge" class="tab-badge" style="display:none">Pro</span>
-            </button>
+    <div class="tool-card">
+      <!-- Tab bar -->
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" role="tab" aria-selected="true"  data-tab="text"     aria-controls="text-tab">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><rect x="2" y="3" width="11" height="1.5" rx=".75" fill="currentColor"/><rect x="2" y="6.5" width="8" height="1.5" rx=".75" fill="currentColor"/><rect x="2" y="10" width="9.5" height="1.5" rx=".75" fill="currentColor"/></svg>
+          <span data-i18n="analyzer.tab_text">Paste Text</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="file"     aria-controls="file-tab">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M4 1.5h4.5L11 4v9.5H4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M8.5 1.5V4H11" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span data-i18n="analyzer.tab_file">Upload File</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="clean"    aria-controls="clean-tab">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3 11.5l2.5-7 4 4-7 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8.5 3.5l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Optimize
+          <span id="clean-badge" class="tab-badge" style="display:none">Pro</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="retrieve" aria-controls="retrieve-tab">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          RAG
+          <span id="retrieve-badge" class="tab-badge" style="display:none">Pro</span>
+        </button>
+      </div>
+
+      <!-- ── Text Tab ── -->
+      <div id="text-tab" class="tab-panel active-panel" role="tabpanel">
+        <div class="textarea-wrap">
+          <textarea
+            id="text-input"
+            class="main-textarea"
+            placeholder="Paste your prompt, document, or any text here…"
+            data-i18n-attr="placeholder"
+            data-i18n="analyzer.placeholder"
+            rows="9"
+            spellcheck="false"
+            aria-label="Text input for token analysis"></textarea>
+          <div class="textarea-meta">
+            <span class="meta-count"><span id="char-count">0</span> chars</span>
+            <span class="meta-sep">·</span>
+            <span class="meta-count"><span id="word-count">0</span> words</span>
+            <span class="meta-sep">·</span>
+            <span class="meta-count"><span id="line-count">0</span> lines</span>
           </div>
         </div>
-
-        <!-- TEXT TAB -->
-        <div id="text-tab" class="tab-panel active-panel">
-          <div class="textarea-wrap">
-            <textarea
-              id="text-input"
-              class="tool-textarea"
-              placeholder="Paste your prompt, system message, or document here…"
-              spellcheck="false"
-              rows="10"
-            ></textarea>
-            <div class="textarea-meta">
-              <span class="meta-count"><span id="char-count">0</span> chars</span>
-              <span class="meta-sep">·</span>
-              <span class="meta-count"><span id="word-count">0</span> words</span>
-              <span class="meta-sep">·</span>
-              <span class="meta-count"><span id="line-count">0</span> lines</span>
-            </div>
-          </div>
-          <div class="tool-actions">
-            <button id="btn-clear-text" class="btn btn-ghost btn-sm">Clear</button>
-            <button id="btn-analyze-text" class="btn btn-primary">
-              Analyze tokens
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
+        <div class="tool-actions">
+          <button id="btn-clear-text" class="btn btn-ghost btn-sm" data-i18n="analyzer.btn_clear">Clear</button>
+          <button id="btn-analyze-text" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3 7.5L6.5 11l5.5-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="analyzer.btn_analyze">Analyze Tokens</span>
+          </button>
         </div>
+      </div>
 
-        <!-- FILE TAB -->
-        <div id="file-tab" class="tab-panel">
-          <input type="file" id="file-input" class="sr-only" accept=".txt,.md,.pdf,.docx,.py,.js,.ts,.jsx,.tsx,.json,.yaml,.yml,.csv,.html,.css">
-          <div id="dropzone" class="dropzone">
-            <div class="dropzone-icon">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="rgba(124,58,237,.12)"/><path d="M20 12v12M16 16l4-4 4 4" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 28h14" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/></svg>
-            </div>
-            <p class="dropzone-title">Drop your file here</p>
-            <p class="dropzone-sub">or <button id="btn-browse" class="link-btn">browse to upload</button></p>
-            <p class="dropzone-types">TXT · MD · PDF · DOCX · Code files up to 10 MB</p>
-          </div>
-
-          <div id="file-info" class="file-info" style="display:none">
-            <div class="file-info-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#7c3aed" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="file-info-text">
-              <span id="file-name" class="file-name-text"></span>
-              <span id="file-size" class="file-size-text"></span>
-            </div>
+      <!-- ── File Tab ── -->
+      <div id="file-tab" class="tab-panel" role="tabpanel">
+        <input type="file" id="file-input" class="sr-only"
+          accept=".txt,.md,.pdf,.docx,.py,.js,.ts,.jsx,.tsx,.json,.yaml,.yml,.csv,.html,.css">
+        <div id="dropzone" class="dropzone">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+            <rect width="36" height="36" rx="9" fill="var(--orange-dim)"/>
+            <path d="M18 10v12M13 15l5-5 5 5" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 26h16" stroke="var(--orange)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p class="dropzone-main" data-i18n="analyzer.upload_title">Drop file here or click to browse</p>
+          <p class="dropzone-sub" data-i18n="analyzer.upload_hint">Supports TXT, MD, PDF, DOCX, code files · Max 10 MB</p>
+          <button id="btn-browse" class="btn btn-outline btn-sm" data-i18n="analyzer.btn_upload">Browse File</button>
+        </div>
+        <div id="file-info" class="file-info" style="display:none">
+          <div class="file-info-inner">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 2h7l4 4v10H4z" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round" fill="none"/><path d="M11 2v4h4" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            <span id="file-name" class="file-name-text"></span>
+            <span id="file-size" class="file-size-text"></span>
             <button id="btn-remove-file" class="btn-icon" aria-label="Remove file">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
             </button>
           </div>
+          <button id="btn-analyze-file" class="btn btn-primary" style="display:none">
+            <span data-i18n="analyzer.btn_analyze">Analyze Tokens</span>
+          </button>
+        </div>
+      </div>
 
-          <div class="tool-actions">
-            <button id="btn-analyze-file" class="btn btn-primary" style="display:none">
-              Analyze file
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <!-- ── Clean/Optimize Tab ── -->
+      <div id="clean-tab" class="tab-panel" role="tabpanel">
+        <div id="clean-demo-banner" class="demo-banner">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1l1.5 4.5H14l-3.7 2.7 1.4 4.3L8 9.9l-3.7 2.6 1.4-4.3L2 5.5h4.5z" fill="var(--orange)"/></svg>
+          <span id="clean-demo-msg">✨ Pro feature — optimize your prompts for token efficiency</span>
+        </div>
+        <div id="clean-result" class="clean-result-panel" style="display:none">
+          <div class="clean-stats-row">
+            <div class="clean-stat">
+              <span class="clean-stat-label">Original</span>
+              <strong id="clean-orig-chars">–</strong>
+            </div>
+            <div class="clean-stat">
+              <span class="clean-stat-label">Optimized</span>
+              <strong id="clean-new-chars">–</strong>
+            </div>
+            <div class="clean-stat savings">
+              <span class="clean-stat-label">Saved</span>
+              <span id="clean-saved-chars">–</span>
+              <span class="savings-pct-inline" id="clean-pct"></span>
+            </div>
+          </div>
+          <pre id="clean-text-out" class="clean-text-pre"></pre>
+          <div id="clean-cmp-body" class="cmp-table"></div>
+          <div class="clean-actions">
+            <button id="btn-copy-clean" class="btn btn-ghost btn-sm">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 9V1h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Copy
+            </button>
+            <button id="btn-download-clean" class="btn btn-ghost btn-sm">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3 7l3.5 3.5L10 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 12h11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Download
             </button>
           </div>
         </div>
-
-        <!-- CLEAN TAB -->
-        <div id="clean-tab" class="tab-panel">
-          <div id="clean-demo-banner" class="demo-banner">
-            <span id="clean-demo-msg">✨ Pro feature — optimize your prompts for token efficiency</span>
-          </div>
-
-          <div id="clean-result" class="clean-result-panel" style="display:none">
-            <div class="clean-stats-row">
-              <div class="clean-stat-pill">
-                <span>Original</span>
-                <strong id="clean-orig-chars">–</strong>
-              </div>
-              <div class="clean-stat-arrow">→</div>
-              <div class="clean-stat-pill accent">
-                <span>Cleaned</span>
-                <strong id="clean-new-chars">–</strong>
-              </div>
-              <div class="savings-chip">
-                <span id="clean-saved-chars">–</span> saved
-                <span class="savings-pct-inline" id="clean-pct"></span>
-              </div>
-            </div>
-            <pre id="clean-text-out" class="clean-text-pre"></pre>
-            <div id="clean-cmp-body" class="cmp-table"></div>
-            <div class="clean-actions">
-              <button id="btn-copy-clean" class="btn btn-ghost btn-sm">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="5" y="5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2 9V3a1 1 0 011-1h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                Copy
-              </button>
-              <button id="btn-download-clean" class="btn btn-ghost btn-sm">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Download
-              </button>
-            </div>
-          </div>
-
-          <input type="file" id="clean-file-input" class="sr-only" accept=".txt,.md,.pdf,.docx">
-          <div class="tool-actions" style="margin-top:var(--sp-4)">
-            <button id="btn-clean-upload" class="btn btn-outline btn-sm">Upload file to clean</button>
-          </div>
-          <div id="clean-loading" class="loading-indicator" style="display:none">
-            <div class="spinner"></div><span>Optimizing…</span>
-          </div>
-          <div id="clean-error" class="error-panel" style="display:none"></div>
+        <input type="file" id="clean-file-input" class="sr-only" accept=".txt,.md,.pdf,.docx">
+        <div class="clean-file-row">
+          <button id="btn-clean-upload" class="btn btn-outline btn-sm">Upload file to clean</button>
         </div>
-
-        <!-- RETRIEVE TAB -->
-        <div id="retrieve-tab" class="tab-panel">
-          <div id="retrieve-demo-banner" class="demo-banner">
-            <span id="retrieve-demo-msg">🔍 Pro feature — semantic chunk retrieval for RAG pipelines</span>
-          </div>
-
-          <div id="retrieve-result" class="retrieve-result-panel" style="display:none">
-            <div id="retrieve-meta" class="retrieve-meta-bar"></div>
-            <div id="retrieve-cmp-body" class="cmp-table"></div>
-            <div id="chunks-list" class="chunks-list"></div>
-            <div class="retrieve-actions">
-              <button id="btn-copy-chunks" class="btn btn-ghost btn-sm">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="5" y="5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2 9V3a1 1 0 011-1h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                Copy chunks
-              </button>
-            </div>
-          </div>
-
-          <input type="file" id="retrieve-file-input" class="sr-only" accept=".txt,.md,.pdf,.docx">
-          <div id="retrieve-file-name" class="file-name-inline" style="display:none"></div>
-
-          <div class="retrieve-query-wrap" style="margin-top:var(--sp-4)">
-            <input id="retrieve-query" type="text" class="tool-input" placeholder="Enter your retrieval query…">
-            <div class="retrieve-topk-row">
-              <label for="retrieve-topk" class="input-label">Top-K chunks</label>
-              <input id="retrieve-topk" type="number" class="tool-input input-sm" value="5" min="1" max="20">
-            </div>
-          </div>
-          <div class="tool-actions" style="margin-top:var(--sp-3)">
-            <button id="btn-retrieve-upload" class="btn btn-outline btn-sm">Upload document</button>
-            <button id="btn-retrieve" class="btn btn-primary">Retrieve chunks</button>
-          </div>
-          <div id="retrieve-loading" class="loading-indicator" style="display:none">
-            <div class="spinner"></div><span>Retrieving…</span>
-          </div>
-          <div id="retrieve-error" class="error-panel" style="display:none"></div>
+        <div id="clean-loading" class="loading-indicator" style="display:none">
+          <div class="spinner"></div><span>Optimizing…</span>
         </div>
+        <div id="clean-error" class="error-panel" style="display:none"></div>
+      </div>
 
-      </div><!-- /tool-card -->
+      <!-- ── Retrieve/RAG Tab ── -->
+      <div id="retrieve-tab" class="tab-panel" role="tabpanel">
+        <div id="retrieve-demo-banner" class="demo-banner">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" stroke="var(--orange)" stroke-width="1.5"/><path d="M10 10l4 4" stroke="var(--orange)" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span id="retrieve-demo-msg">🔍 Pro feature — semantic chunk retrieval for RAG pipelines</span>
+        </div>
+        <div id="retrieve-result" class="retrieve-result-panel" style="display:none">
+          <div id="retrieve-meta" class="retrieve-meta-bar"></div>
+          <div id="retrieve-cmp-body" class="cmp-table"></div>
+          <div id="chunks-list" class="chunks-list"></div>
+          <div class="retrieve-actions">
+            <button id="btn-copy-chunks" class="btn btn-ghost btn-sm">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 9V1h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Copy chunks
+            </button>
+          </div>
+        </div>
+        <input type="file" id="retrieve-file-input" class="sr-only" accept=".txt,.md,.pdf,.docx">
+        <div id="retrieve-file-name" class="file-name-inline" style="display:none"></div>
+        <div class="retrieve-controls">
+          <input id="retrieve-query" type="text" class="tool-input" placeholder="Enter your retrieval query…">
+          <div class="retrieve-topk-row">
+            <label for="retrieve-topk" class="input-label">Top K</label>
+            <input id="retrieve-topk" type="number" class="tool-input input-sm" value="5" min="1" max="20">
+          </div>
+          <button id="btn-retrieve-upload" class="btn btn-outline btn-sm">Upload document</button>
+          <button id="btn-retrieve" class="btn btn-primary">Retrieve chunks</button>
+        </div>
+        <div id="retrieve-loading" class="loading-indicator" style="display:none">
+          <div class="spinner"></div><span>Retrieving…</span>
+        </div>
+        <div id="retrieve-error" class="error-panel" style="display:none"></div>
+      </div>
 
-      <!-- Results / output column -->
-      <div class="results-col">
-
-        <!-- Error banner -->
+      <!-- ── Shared Results ── -->
+      <div class="results-region">
         <div id="error-banner" class="error-banner" style="display:none">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M7.5 4.5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7.5" cy="10.5" r=".8" fill="currentColor"/></svg>
           <span id="error-text"></span>
-          <button id="btn-dismiss-error" class="btn-icon">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <button id="btn-dismiss-error" class="btn-icon" aria-label="Dismiss">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><line x1="1" y1="1" x2="10" y2="10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="10" y1="1" x2="1" y2="10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
         </div>
 
-        <!-- Loading -->
         <div id="loading" class="loading-state" style="display:none">
-          <div class="loading-orb"></div>
-          <div class="loading-pulse">Analyzing tokens…</div>
+          <div class="spinner-lg"></div>
+          <p>Analyzing tokens…</p>
         </div>
 
         <!-- File stats block -->
         <div id="s-file-block" class="file-stat-block" style="display:none">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 5.5V12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1h4l3 3z" stroke="var(--violet-light)" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 2h5.5L12 4.5V14H4z" stroke="var(--orange)" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M9.5 2v2.5H12" stroke="var(--orange)" stroke-width="1.3" stroke-linejoin="round"/></svg>
           <span id="s-file" class="file-stat-name"></span>
-          <span>·</span>
-          <span id="s-chars" class="file-stat-val">0</span> chars
-          <span>·</span>
-          <span id="s-words" class="file-stat-val">0</span> words
-          <span>·</span>
-          <span id="s-lines" class="file-stat-val">0</span> lines
+          <span class="file-stat-dim"><span id="s-chars" class="file-stat-val">0</span> chars</span>
+          <span class="file-stat-dim"><span id="s-words" class="file-stat-val">0</span> words</span>
+          <span class="file-stat-dim"><span id="s-lines" class="file-stat-val">0</span> lines</span>
         </div>
 
-        <!-- Provider pills -->
+        <!-- Token results -->
         <div id="results" class="results-panel" style="display:none">
           <div id="provider-pills" class="provider-pills-row"></div>
           <div id="model-checkboxes" class="model-checkboxes-grid"></div>
@@ -407,573 +369,446 @@
 
         <!-- Savings card -->
         <div id="savings-card" class="savings-card" style="display:none">
-          <div class="savings-card-header">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2l1.8 5.4H17L12 11l1.8 5.4L9 13l-4.8 3.4L6 11 1 7.4h6.2z" fill="url(#sg)"/><defs><linearGradient id="sg" x1="1" y1="2" x2="17" y2="18"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs></svg>
-            <span>Cost Optimizer</span>
+          <div class="savings-header">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M9 2l1.8 5.4H17L12 11l1.8 5.4L9 13l-4.8 3.4L6 11 1 7.4h6.2z" fill="url(#sg)"/>
+              <defs><linearGradient id="sg" x1="1" y1="2" x2="17" y2="18"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs>
+            </svg>
+            Optimization Insights
           </div>
           <p id="savings-msg" class="savings-msg"></p>
-          <div id="savings-opt" class="savings-opt-row"></div>
+          <div id="savings-opt"  class="savings-opt-row"></div>
           <div id="savings-orig" class="savings-orig-row"></div>
-          <div id="savings-pct" class="savings-pct"></div>
+          <div id="savings-pct"  class="savings-pct"></div>
           <p id="savings-disclaimer" class="savings-disclaimer"></p>
         </div>
-
-      </div><!-- /results-col -->
-    </div><!-- /tool-layout -->
-  </div>
+      </div>
+    </div><!-- /tool-card -->
+  </div><!-- /tool-inner -->
 </section>
 
-<!-- ═══════════════════════════ FEATURES ═══════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════ -->
 <section id="features" class="features-section">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">Why developers choose Tokenia</span>
-      <h2 class="section-title">Everything you need to ship smarter</h2>
-      <p class="section-sub">From quick token checks to full prompt optimization pipelines — all in one tool.</p>
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="features.badge">Why Tokenia</p>
+      <h2 class="section-title" data-i18n="features.title">Built for developers who care about costs</h2>
     </div>
-
     <div class="features-grid">
-      <div class="feature-card reveal">
-        <div class="icon-box icon-violet">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M7 14h14M14 7v14" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="14" cy="14" r="5" stroke="#7c3aed" stroke-width="2"/>
-          </svg>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="9" stroke="var(--orange)" stroke-width="1.8"/><path d="M7 11l3 3 5-6" stroke="var(--orange)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <h3 class="feature-title">Exact token counts</h3>
-        <p class="feature-desc">Uses official tokenizers (tiktoken, transformers) where available. Clearly labeled when estimates are used — never passes an approximation as an exact figure.</p>
+        <h3 data-i18n="features.f1_title">Exact + Estimated</h3>
+        <p data-i18n="features.f1_desc">Official tokenizers where available (tiktoken, Claude). Clearly labeled estimates for all others.</p>
       </div>
 
-      <div class="feature-card reveal delay-1">
-        <div class="icon-box icon-cyan">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <rect x="6" y="8" width="16" height="12" rx="2" stroke="#67e8f9" stroke-width="2"/>
-            <path d="M10 12l4 4 4-4" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="2" y="5" width="8" height="6" rx="2" stroke="var(--orange)" stroke-width="1.8"/><rect x="12" y="11" width="8" height="6" rx="2" stroke="var(--orange)" stroke-width="1.8"/><path d="M10 8h2m0 0v5" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
-        <h3 class="feature-title">Clean file output</h3>
-        <p class="feature-desc">Strip redundant whitespace, boilerplate, and filler phrases from prompts and documents. See real before/after token savings with a single click.</p>
+        <h3 data-i18n="features.f2_title">Multi-Provider</h3>
+        <p data-i18n="features.f2_desc">Compare costs across OpenAI, Anthropic, Mistral, Cohere, Google and more in one view.</p>
       </div>
 
-      <div class="feature-card reveal delay-2">
-        <div class="icon-box icon-green">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <circle cx="12" cy="12" r="7" stroke="#4ade80" stroke-width="2"/>
-            <path d="M17 17l5 5" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M5 3h8.5L18 7.5V19H5z" stroke="var(--orange)" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 3v4.5H18" stroke="var(--orange)" stroke-width="1.8" stroke-linejoin="round"/></svg>
         </div>
-        <h3 class="feature-title">Smart retrieval</h3>
-        <p class="feature-desc">Semantic chunk retrieval for RAG pipelines. Upload your document, enter a query, and get back the most relevant chunks ranked by relevance — with token cost for each.</p>
+        <h3 data-i18n="features.f3_title">File Upload</h3>
+        <p data-i18n="features.f3_desc">Analyze TXT, MD, PDF, DOCX and code files. Up to 10 MB. No data stored.</p>
       </div>
 
-      <div class="feature-card reveal delay-3">
-        <div class="icon-box icon-amber">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M14 5v4M14 19v4M5 14h4M19 14h4" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="14" cy="14" r="4" stroke="#fbbf24" stroke-width="2"/>
-          </svg>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6" stroke="var(--orange)" stroke-width="1.8"/><path d="M14 14l5 5" stroke="var(--orange)" stroke-width="2" stroke-linecap="round"/></svg>
         </div>
-        <h3 class="feature-title">100% local processing</h3>
-        <p class="feature-desc">Your text never leaves the browser. No server uploads, no data retention, no API keys needed for counting. Private by design — your IP stays yours.</p>
+        <h3 data-i18n="features.f4_title">RAG &amp; Retrieval</h3>
+        <p data-i18n="features.f4_desc">Estimate retrieval costs, chunk sizes, and embedding token budgets for your RAG pipelines.</p>
       </div>
-    </div>
 
-    <!-- Bonus feature row -->
-    <div class="features-wide reveal">
-      <div class="feature-wide-card">
-        <div class="icon-box icon-violet" style="flex-shrink:0">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M6 14h16M10 8l-4 6 4 6M18 8l4 6-4 6" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 13.5l3-8 5 5-8 3z" stroke="var(--orange)" stroke-width="1.8" stroke-linejoin="round"/><path d="M11.5 5.5l4 4" stroke="var(--orange)" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
-        <div>
-          <h3 class="feature-title">Multi-model cost comparison</h3>
-          <p class="feature-desc">Compare the same prompt across Claude, GPT-4o, Gemini, Mistral, Llama and 13 more models simultaneously. Prices live in a config file — update once when models change.</p>
-        </div>
+        <h3 data-i18n="features.f5_title">Prompt Optimizer</h3>
+        <p data-i18n="features.f5_desc">Get actionable tips to reduce token count while preserving the meaning of your prompts.</p>
       </div>
-      <div class="feature-wide-card">
-        <div class="icon-box icon-cyan" style="flex-shrink:0">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <rect x="5" y="8" width="18" height="12" rx="2" stroke="#67e8f9" stroke-width="2"/>
-            <path d="M9 12h10M9 16h6" stroke="#67e8f9" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="3" y="11" width="16" height="9" rx="2" stroke="var(--orange)" stroke-width="1.8"/><path d="M7 11V7.5a4 4 0 018 0V11" stroke="var(--orange)" stroke-width="1.8"/></svg>
         </div>
-        <div>
-          <h3 class="feature-title">File format support</h3>
-          <p class="feature-desc">Upload TXT, Markdown, PDF, DOCX, and source code files. Token counts are extracted from the actual text content — not raw file bytes.</p>
-        </div>
+        <h3 data-i18n="features.f6_title">Always Private</h3>
+        <p data-i18n="features.f6_desc">Text is processed in memory only. Nothing is logged, stored, or shared with third parties.</p>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════ -->
 <section id="how-it-works" class="hiw-section">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">The basics</span>
-      <h2 class="section-title">How tokenization works</h2>
-      <p class="section-sub">LLMs don't see words — they see tokens. Understanding this is the key to controlling your API bill.</p>
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">How It Works</p>
+      <h2 class="section-title">Three steps to token clarity</h2>
     </div>
-
-    <div class="hiw-grid">
-      <div class="hiw-card reveal">
-        <div class="hiw-step">01</div>
-        <h3 class="hiw-title">Text is split into tokens</h3>
-        <p class="hiw-desc">Each model uses its own tokenizer to break text into subword units. The same words can produce different token counts on different models.</p>
-        <div class="hiw-demo">
-          <p class="hiw-demo-label">Example: "You are a helpful assistant"</p>
-          <div class="token-chip-row">
-            <span class="token-chip t-purple">You</span>
-            <span class="token-chip t-blue">are</span>
-            <span class="token-chip t-green">a</span>
-            <span class="token-chip t-amber">help</span>
-            <span class="token-chip t-pink">ful</span>
-            <span class="token-chip t-cyan">assist</span>
-            <span class="token-chip t-purple">ant</span>
-          </div>
-          <p class="hiw-demo-note">= 7 tokens (Claude) · 7 tokens (GPT-4) · 6 tokens (Llama)</p>
-        </div>
+    <div class="hiw-steps">
+      <div class="hiw-step">
+        <div class="hiw-step-num">1</div>
+        <h3>Paste or Upload</h3>
+        <p>Drop in your prompt, document, or code file. We support TXT, MD, PDF, DOCX and most code formats.</p>
       </div>
-
-      <div class="hiw-card reveal delay-1">
-        <div class="hiw-step">02</div>
-        <h3 class="hiw-title">Tokens × price = API cost</h3>
-        <p class="hiw-desc">Models charge per 1 million input and output tokens separately. Input is usually cheaper than output — prompts and system messages are input tokens.</p>
-        <div class="hiw-demo">
-          <div class="hiw-math">
-            <div class="hiw-math-row">
-              <span class="hiw-math-label">1,000 tokens</span>
-              <span class="hiw-math-op">×</span>
-              <span class="hiw-math-label">$3.00 / 1M</span>
-              <span class="hiw-math-op">=</span>
-              <span class="hiw-math-result gradient-text">$0.003</span>
-            </div>
-            <p class="hiw-math-note">Claude 3.5 Sonnet input pricing</p>
-          </div>
-        </div>
+      <div class="hiw-connector" aria-hidden="true"></div>
+      <div class="hiw-step">
+        <div class="hiw-step-num">2</div>
+        <h3>Select Models</h3>
+        <p>Choose which LLM providers and models to compare. Token counts and pricing update instantly.</p>
       </div>
-
-      <div class="hiw-card reveal delay-2">
-        <div class="hiw-step">03</div>
-        <h3 class="hiw-title">Optimize to save money</h3>
-        <p class="hiw-desc">Shorter prompts → fewer tokens → lower cost. Tokenia shows you exactly how many tokens you can reclaim by cleaning redundant whitespace and boilerplate.</p>
-        <div class="hiw-demo">
-          <div class="hiw-before-after">
-            <div class="hiw-ba-row">
-              <span class="hiw-ba-label before">Before</span>
-              <span class="hiw-ba-val">2,480 tokens · $0.0074</span>
-            </div>
-            <div class="hiw-ba-arrow">↓ clean</div>
-            <div class="hiw-ba-row">
-              <span class="hiw-ba-label after">After</span>
-              <span class="hiw-ba-val" style="color:var(--success)">1,620 tokens · $0.0049</span>
-            </div>
-            <div class="hiw-ba-saved">Saved 34% · $0.0025 per call</div>
-          </div>
-        </div>
+      <div class="hiw-connector" aria-hidden="true"></div>
+      <div class="hiw-step">
+        <div class="hiw-step-num">3</div>
+        <h3>Optimize &amp; Save</h3>
+        <p>Review the cost comparison table and optimization tips to reduce spend without losing context.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════ TESTIMONIALS ═══════════════════════════ -->
-<section class="testimonials-section">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">Loved by developers</span>
-      <h2 class="section-title">From the teams building with LLMs</h2>
+<!-- ═══════════════════════════════════════════
+     MODEL CHIPS / PROVIDER LOGOS
+════════════════════════════════════════════ -->
+<section class="models-section">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="models.badge">Model Coverage</p>
+      <h2 class="section-title" data-i18n="models.title">All major providers, one tool</h2>
+      <p class="section-sub" data-i18n="models.subtitle">Token counts and pricing for every model that matters</p>
     </div>
-
-    <div class="testimonials-grid">
-      <div class="testimonial-card reveal">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"We cut our Claude API bill by 28% in the first week just by running our system prompts through Tokenia's cleaner. ROI on day one."</p>
-        <div class="testimonial-author">
-          <div class="avatar-circle avatar-violet">MR</div>
-          <div>
-            <p class="author-name">Marcos R.</p>
-            <p class="author-role">Lead AI Engineer · Fintech startup</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card reveal delay-1">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"Finally a tool that's honest about tokenizer accuracy. The 'estimated' label where exact counts aren't possible means I can actually trust the numbers I see."</p>
-        <div class="testimonial-author">
-          <div class="avatar-circle avatar-blue">SL</div>
-          <div>
-            <p class="author-name">Sarah L.</p>
-            <p class="author-role">ML Platform Engineer · Series B SaaS</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card reveal delay-2">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"The multi-model comparison is a game changer for evaluations. I can see at a glance which model gives me the best cost/quality trade-off before committing to a provider."</p>
-        <div class="testimonial-author">
-          <div class="avatar-circle avatar-green">DK</div>
-          <div>
-            <p class="author-name">Daniel K.</p>
-            <p class="author-role">Founder · AI-native product studio</p>
-          </div>
-        </div>
-      </div>
+    <div class="model-chips-row">
+      <span class="t-chip t-orange">GPT-4o</span>
+      <span class="t-chip t-orange">GPT-4 Turbo</span>
+      <span class="t-chip t-blue">Claude 3.5 Sonnet</span>
+      <span class="t-chip t-blue">Claude 3 Opus</span>
+      <span class="t-chip t-blue">Claude 3 Haiku</span>
+      <span class="t-chip t-green">Gemini 1.5 Pro</span>
+      <span class="t-chip t-green">Gemini 1.5 Flash</span>
+      <span class="t-chip t-amber">Mistral 7B</span>
+      <span class="t-chip t-amber">Mistral 8x7B</span>
+      <span class="t-chip t-pink">Command R</span>
+      <span class="t-chip t-cyan">LLaMA 3</span>
+      <span class="t-chip t-orange">o1</span>
+      <span class="t-chip t-orange">o1-mini</span>
+      <span class="t-chip t-orange">GPT-3.5 Turbo</span>
+      <span class="t-chip t-blue">Claude 3 Sonnet</span>
     </div>
+    <p class="models-note" data-i18n="models.note">Prices sourced from official provider APIs. Updated regularly.</p>
   </div>
 </section>
 
-<!-- ═══════════════════════════ PRICING ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     PRICING
+════════════════════════════════════════════ -->
 <section id="pricing" class="pricing-section">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">Simple pricing</span>
-      <h2 class="section-title">Start free, upgrade when you're ready</h2>
-      <p class="section-sub">All plans include unlimited token counting. Upgrade for optimization and team features.</p>
-      <div class="pricing-coming-soon-banner">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#f59e0b" stroke-width="1.5"/><path d="M8 5v4M8 11v.5" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/></svg>
-        Próximamente: upgrade a Pro y Team.
-      </div>
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="pricing.badge">Simple Pricing</p>
+      <h2 class="section-title" data-i18n="pricing.title">Start free, scale when ready</h2>
+      <p class="section-sub" data-i18n="pricing.subtitle">No credit card required for the free tier.</p>
     </div>
 
     <div class="pricing-grid">
+
       <!-- Free -->
-      <div class="pricing-card reveal">
+      <div class="pricing-card">
         <div class="pricing-card-header">
-          <span class="plan-name">Free</span>
-          <div class="plan-price">
-            <span class="price-amount">$0</span>
-            <span class="price-period">/ month</span>
+          <h3 data-i18n="pricing.free_title">Free</h3>
+          <div class="price-row">
+            <span class="price-amount" data-i18n="pricing.free_price">$0</span>
+            <span class="price-period" data-i18n="pricing.free_period">/ forever</span>
           </div>
-          <p class="plan-tagline">Everything you need to count tokens.</p>
         </div>
-        <ul class="plan-features">
-          <li class="plan-feat included">Unlimited token counting</li>
-          <li class="plan-feat included">18+ LLM models</li>
-          <li class="plan-feat included">File upload (TXT, MD, PDF, DOCX)</li>
-          <li class="plan-feat included">Cost estimation with live prices</li>
-          <li class="plan-feat included">Multi-model comparison</li>
-          <li class="plan-feat excluded">Prompt optimizer / cleaner</li>
-          <li class="plan-feat excluded">Semantic chunk retrieval</li>
-          <li class="plan-feat excluded">Batch file processing</li>
-          <li class="plan-feat excluded">API access</li>
+        <ul class="pricing-features" role="list">
+          <li data-i18n="pricing.free_f1">Unlimited token counting</li>
+          <li data-i18n="pricing.free_f2">All provider comparisons</li>
+          <li data-i18n="pricing.free_f3">File upload (TXT, MD, DOCX, PDF)</li>
+          <li data-i18n="pricing.free_f4">Cost estimations</li>
+          <li data-i18n="pricing.free_f5">Prompt optimizer tips</li>
         </ul>
-        <a href="#demo" class="btn btn-outline btn-block">Get started free</a>
+        <a href="#demo" class="btn btn-outline btn-block" data-i18n="pricing.free_cta">Get Started Free</a>
       </div>
 
-      <!-- Pro (most popular) -->
-      <div class="pricing-card pricing-card-pro reveal delay-1">
+      <!-- Pro (coming soon) -->
+      <div class="pricing-card pricing-card-pro">
         <div class="pricing-card-header">
-          <span class="plan-name">Pro</span>
-          <div class="plan-price">
-            <span class="price-amount">$12</span>
-            <span class="price-period">/ month</span>
+          <h3 data-i18n="pricing.pro_title">Pro</h3>
+          <div class="price-row">
+            <span class="price-amount" data-i18n="pricing.pro_price">$12</span>
+            <span class="price-period" data-i18n="pricing.pro_period">/ month</span>
           </div>
-          <p class="plan-tagline">For developers using LLMs daily.</p>
         </div>
-        <ul class="plan-features">
-          <li class="plan-feat included">Everything in Free</li>
-          <li class="plan-feat included">Prompt optimizer &amp; cleaner</li>
-          <li class="plan-feat included">Semantic chunk retrieval (RAG)</li>
-          <li class="plan-feat included">Batch processing — up to 50 files</li>
-          <li class="plan-feat included">Usage history &amp; saved comparisons</li>
-          <li class="plan-feat included">API access (1,000 req/day)</li>
-          <li class="plan-feat excluded">Team collaboration</li>
-          <li class="plan-feat excluded">SSO / SAML</li>
-          <li class="plan-feat excluded">Priority support</li>
+        <ul class="pricing-features" role="list">
+          <li data-i18n="pricing.pro_f1">Everything in Free</li>
+          <li data-i18n="pricing.pro_f2">Batch processing (up to 100 files)</li>
+          <li data-i18n="pricing.pro_f3">API access</li>
+          <li data-i18n="pricing.pro_f4">Usage history &amp; reports</li>
+          <li data-i18n="pricing.pro_f5">Priority support</li>
         </ul>
-        <button class="btn btn-primary btn-block" disabled>Coming soon</button>
+        <button class="btn btn-primary btn-block" disabled data-i18n="pricing.pro_cta">Coming Soon</button>
       </div>
 
-      <!-- Team -->
-      <div class="pricing-card reveal delay-2">
+      <!-- Team (coming soon) -->
+      <div class="pricing-card">
         <div class="pricing-card-header">
-          <span class="plan-name">Team</span>
-          <div class="plan-price">
-            <span class="price-amount">$39</span>
-            <span class="price-period">/ month</span>
+          <h3 data-i18n="pricing.team_title">Team</h3>
+          <div class="price-row">
+            <span class="price-amount" data-i18n="pricing.team_price">$49</span>
+            <span class="price-period" data-i18n="pricing.team_period">/ month</span>
           </div>
-          <p class="plan-tagline">For engineering teams and AI product squads.</p>
         </div>
-        <ul class="plan-features">
-          <li class="plan-feat included">Everything in Pro</li>
-          <li class="plan-feat included">Up to 10 seats</li>
-          <li class="plan-feat included">Team usage dashboard</li>
-          <li class="plan-feat included">Shared model presets</li>
-          <li class="plan-feat included">API access (10,000 req/day)</li>
-          <li class="plan-feat included">SSO / SAML</li>
-          <li class="plan-feat included">Priority support (4h SLA)</li>
-          <li class="plan-feat included">Custom model pricing config</li>
-          <li class="plan-feat included">Audit log</li>
+        <ul class="pricing-features" role="list">
+          <li data-i18n="pricing.team_f1">Everything in Pro</li>
+          <li data-i18n="pricing.team_f2">Up to 10 team members</li>
+          <li data-i18n="pricing.team_f3">Shared workspaces</li>
+          <li data-i18n="pricing.team_f4">Admin dashboard</li>
+          <li data-i18n="pricing.team_f5">SLA support</li>
         </ul>
-        <button class="btn btn-outline btn-block" disabled>Coming soon</button>
+        <button class="btn btn-outline btn-block" disabled data-i18n="pricing.team_cta">Coming Soon</button>
       </div>
+
     </div>
+    <p class="pricing-note" data-i18n="pricing.coming_soon_note">Upgrades coming soon — currently free for everyone.</p>
+  </div>
+</section>
 
-    <!-- Comparison table -->
-    <div class="pricing-table-wrap reveal">
-      <h3 class="pricing-table-title">Full comparison</h3>
-      <div class="cmp-table pricing-cmp-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Feature</th>
-              <th>Free</th>
-              <th class="th-pro">Pro</th>
-              <th>Team</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Token counting</td><td>✓</td><td class="td-pro">✓</td><td>✓</td></tr>
-            <tr><td>Models supported</td><td>18+</td><td class="td-pro">18+</td><td>18+ + custom</td></tr>
-            <tr><td>File upload</td><td>✓</td><td class="td-pro">✓</td><td>✓</td></tr>
-            <tr><td>Cost estimation</td><td>✓</td><td class="td-pro">✓</td><td>✓</td></tr>
-            <tr><td>Prompt optimizer</td><td>—</td><td class="td-pro">✓</td><td>✓</td></tr>
-            <tr><td>Chunk retrieval</td><td>—</td><td class="td-pro">✓</td><td>✓</td></tr>
-            <tr><td>Batch processing</td><td>—</td><td class="td-pro">50 files</td><td>Unlimited</td></tr>
-            <tr><td>API access</td><td>—</td><td class="td-pro">1k req/day</td><td>10k req/day</td></tr>
-            <tr><td>Team seats</td><td>1</td><td class="td-pro">1</td><td>Up to 10</td></tr>
-            <tr><td>SSO / SAML</td><td>—</td><td class="td-pro">—</td><td>✓</td></tr>
-            <tr><td>Priority support</td><td>—</td><td class="td-pro">—</td><td>4h SLA</td></tr>
-          </tbody>
-        </table>
+
+<!-- ═══════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════════ -->
+<section class="testimonials-section">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="testimonials.badge">What Users Say</p>
+      <h2 class="section-title" data-i18n="testimonials.title">Trusted by developers worldwide</h2>
+    </div>
+    <div class="testimonials-grid">
+
+      <div class="testimonial-card">
+        <p class="testimonial-quote">"Finally a token counter that's honest about exact vs estimated. The tiktoken integration for GPT-4 is exact. Saved us a lot on our chatbot."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">MR</div>
+          <div>
+            <strong>Miguel R.</strong>
+            <span>Backend Engineer</span>
+          </div>
+        </div>
       </div>
+
+      <div class="testimonial-card">
+        <p class="testimonial-quote">"The multi-provider cost comparison is brilliant. I cut my API spend by 35% just by switching models based on Tokenia's comparison table."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SL</div>
+          <div>
+            <strong>Sarah L.</strong>
+            <span>AI Product Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <p class="testimonial-quote">"I use it daily to estimate RAG pipeline costs. The chunk analysis and context window calculator are exactly what I needed."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">KT</div>
+          <div>
+            <strong>Kenji T.</strong>
+            <span>ML Engineer</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════ CTA FINAL ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     CTA
+════════════════════════════════════════════ -->
 <section class="cta-section">
-  <div class="cta-bg-orb cta-orb-1"></div>
-  <div class="cta-bg-orb cta-orb-2"></div>
-  <div class="container">
-    <div class="cta-inner reveal">
-      <span class="section-eyebrow" style="color:rgba(255,255,255,.7)">No credit card required</span>
-      <h2 class="cta-headline">Ready to ship smarter?</h2>
-      <p class="cta-sub">Join developers who use Tokenia to understand and control their LLM costs — starting for free.</p>
-      <a href="#demo" class="btn btn-primary btn-lg btn-bounce">
-        Start counting tokens free
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <p class="cta-footnote">100% browser-based · No signup required to count · Private by default</p>
-    </div>
+  <div class="section-container">
+    <h2 class="cta-title" data-i18n="cta.title">Start counting tokens for free</h2>
+    <p class="cta-sub" data-i18n="cta.subtitle">No account required. Paste text and get results instantly.</p>
+    <a href="#demo" class="btn btn-primary btn-lg btn-bounce" data-i18n="cta.btn">Try Tokenia Free</a>
   </div>
 </section>
 
-<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
 <footer class="site-footer">
-  <div class="container footer-grid">
-    <!-- Brand -->
-    <div class="footer-col footer-brand-col">
-      <a href="/" class="nav-brand footer-brand">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <a href="/" class="nav-brand footer-brand" aria-label="Tokenia home">
         <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-          <rect width="28" height="28" rx="7" fill="url(#fb)"/>
-          <path d="M7 14h3.5l2-5 3 10 2-7 1.5 2H21" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <defs><linearGradient id="fb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#7c3aed"/><stop offset="1" stop-color="#3b82f6"/>
+            <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
           </linearGradient></defs>
+          <rect width="28" height="28" rx="7" fill="url(#fb)"/>
+          <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span>Tokenia</span>
+        <span data-i18n="nav.brand">Tokenia</span>
       </a>
-      <p class="footer-tagline">The professional token counter &amp; cost estimator for LLM developers.</p>
-      <div class="footer-socials">
-        <a href="#" class="social-link" aria-label="GitHub">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-        </a>
-        <a href="#" class="social-link" aria-label="Twitter / X">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </a>
-        <a href="#" class="social-link" aria-label="Discord">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.1 13.1 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
-        </a>
-      </div>
+      <p class="footer-tagline" data-i18n="footer.tagline">The token intelligence platform for LLM developers.</p>
     </div>
 
-    <!-- Product -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Product</h4>
-      <ul class="footer-links">
-        <li><a href="#demo" class="footer-link">Token counter</a></li>
-        <li><a href="#features" class="footer-link">Features</a></li>
-        <li><a href="#pricing" class="footer-link">Pricing</a></li>
-        <li><a href="#" class="footer-link">Changelog</a></li>
-        <li><a href="#" class="footer-link">Roadmap</a></li>
+      <h4 data-i18n="footer.product">Product</h4>
+      <ul>
+        <li><a href="#demo"          data-i18n="footer.analyzer">Analyzer</a></li>
+        <li><a href="/pricing.html"  data-i18n="footer.pricing">Pricing</a></li>
+        <li><a href="#features"      data-i18n="footer.docs">Docs</a></li>
       </ul>
     </div>
 
-    <!-- Resources -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Resources</h4>
-      <ul class="footer-links">
-        <li><a href="#" class="footer-link">Documentation</a></li>
-        <li><a href="#" class="footer-link">API reference</a></li>
-        <li><a href="#how-it-works" class="footer-link">How tokenization works</a></li>
-        <li><a href="#" class="footer-link">Model price list</a></li>
-        <li><a href="#" class="footer-link">Blog</a></li>
+      <h4 data-i18n="footer.company">Company</h4>
+      <ul>
+        <li><a href="/privacy.html"  data-i18n="footer.privacy">Privacy Policy</a></li>
+        <li><a href="/privacy.html"  data-i18n="footer.terms">Terms of Use</a></li>
+        <li><a href="mailto:support@tokenia.live" data-i18n="footer.contact">Contact</a></li>
       </ul>
     </div>
 
-    <!-- Legal -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Legal</h4>
-      <ul class="footer-links">
-        <li><a href="#" class="footer-link">Privacy policy</a></li>
-        <li><a href="#" class="footer-link">Terms of service</a></li>
-        <li><a href="#" class="footer-link">Cookie policy</a></li>
-        <li><a href="#" class="footer-link">Security</a></li>
-      </ul>
+      <h4 data-i18n="footer.legal">Legal</h4>
+      <p class="footer-disclaimer" data-i18n="footer.disclaimer">Token counts marked "Est." are approximations. Exact counts use official tokenizers.</p>
     </div>
   </div>
 
   <div class="footer-bottom">
-    <div class="container footer-bottom-inner">
-      <span class="footer-copy">© 2026 Tokenia. All rights reserved.</span>
-      <span class="footer-tagline-sm">Token counts may vary by model. Prices updated regularly. See docs for accuracy notes.</span>
-    </div>
+    <span data-i18n="footer.copyright">© 2025 Tokenia. All rights reserved.</span>
   </div>
 </footer>
 
-<!-- ═══════════════════════════ CHAT WIDGET ═══════════════════════════ -->
-<div class="chat-widget">
-  <button class="chat-bubble" aria-label="Help &amp; support" onclick="this.parentElement.classList.toggle('chat-open')">
-    <svg class="chat-icon-open" width="22" height="22" viewBox="0 0 22 22" fill="none">
-      <path d="M11 2C6.03 2 2 5.69 2 10.2c0 2.37 1.07 4.5 2.79 6.03L4 20l3.97-1.43A9.5 9.5 0 0011 19c4.97 0 9-3.69 9-8.8C20 5.69 15.97 2 11 2z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
-      <path d="M7 10h8M7 13h5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>
-    <svg class="chat-icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <path d="M3 3l12 12M15 3L3 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-  </button>
-  <div class="chat-popup">
-    <div class="chat-popup-header">
-      <div class="chat-popup-avatar">T</div>
-      <div>
-        <p class="chat-popup-name">Tokenia Support</p>
-        <p class="chat-popup-status">
-          <span class="online-dot"></span>Typically replies in minutes
-        </p>
-      </div>
-    </div>
-    <div class="chat-popup-body">
-      <p>Hi there! 👋 How can we help?</p>
-    </div>
-    <div class="chat-popup-links">
-      <a href="#how-it-works" class="chat-link">How does tokenization work?</a>
-      <a href="#pricing" class="chat-link">What's included in Pro?</a>
-      <a href="#" class="chat-link">Report a bug or inaccuracy</a>
-      <a href="mailto:support@tokenia.live" class="chat-link">Email support</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════ AUTH MODAL ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     AUTH MODAL
+════════════════════════════════════════════ -->
 <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
-  <div class="modal-panel">
+  <div class="modal-card">
     <button id="auth-modal-close" class="modal-close" aria-label="Close">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
-
     <div class="modal-logo">
-      <svg width="32" height="32" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="url(#am)"/><path d="M7 14h3.5l2-5 3 10 2-7 1.5 2H21" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="am" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs></svg>
-      <span class="modal-brand">Tokenia</span>
+      <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+        <defs><linearGradient id="am" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+        </linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#am)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Tokenia</span>
     </div>
 
-    <!-- Sign in form -->
     <div id="signin-section" class="modal-form-section">
-      <h2 class="modal-title">Welcome back</h2>
-      <p class="modal-sub">Sign in to access your usage history and Pro features.</p>
+      <h2 class="modal-title">Sign in</h2>
       <div class="form-group">
-        <label class="form-label" for="signin-email">Email</label>
+        <label for="signin-email" class="form-label">Email</label>
         <input id="signin-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email">
       </div>
       <div class="form-group">
-        <label class="form-label" for="signin-password">Password</label>
+        <label for="signin-password" class="form-label">Password</label>
         <input id="signin-password" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password">
       </div>
       <p id="auth-msg" class="auth-msg" style="display:none"></p>
       <button id="btn-signin" class="btn btn-primary btn-block">Sign in</button>
-      <p class="modal-switch">Don't have an account? <button class="link-btn" onclick="document.getElementById('signin-section').style.display='none';document.getElementById('signup-section').style.display='block'">Sign up free</button></p>
+      <p class="modal-switch">No account? <button class="link-btn" id="show-signup">Create one free</button></p>
     </div>
 
-    <!-- Sign up form -->
     <div id="signup-section" class="modal-form-section" style="display:none">
-      <h2 class="modal-title">Create your account</h2>
-      <p class="modal-sub">Free forever. No credit card required.</p>
+      <h2 class="modal-title">Create free account</h2>
       <div class="form-group">
-        <label class="form-label" for="signup-email">Email</label>
+        <label for="signup-email" class="form-label">Email</label>
         <input id="signup-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email">
       </div>
       <div class="form-group">
-        <label class="form-label" for="signup-password">Password</label>
+        <label for="signup-password" class="form-label">Password</label>
         <input id="signup-password" type="password" class="form-input" placeholder="Create a password" autocomplete="new-password">
       </div>
       <button id="btn-signup" class="btn btn-primary btn-block">Create free account</button>
-      <p class="modal-switch">Already have an account? <button class="link-btn" onclick="document.getElementById('signup-section').style.display='none';document.getElementById('signin-section').style.display='block'">Sign in</button></p>
+      <p class="modal-switch">Already have an account? <button class="link-btn" id="show-signin">Sign in</button></p>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════ UPGRADE MODAL ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     UPGRADE MODAL (coming soon)
+════════════════════════════════════════════ -->
 <div id="upgrade-modal" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
-  <div class="modal-panel">
+  <div class="modal-card">
     <button id="modal-close" class="modal-close" aria-label="Close">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
-    <div class="upgrade-modal-icon">
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(124,58,237,.15)"/><path d="M18 10l2.2 6.6H27l-5.6 4.1 2.1 6.5L18 23.1l-5.5 4.1 2.1-6.5L9 16.6h6.8z" fill="url(#up)"/><defs><linearGradient id="up" x1="9" y1="10" x2="27" y2="27"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs></svg>
+    <div class="modal-logo">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="18" fill="var(--orange-dim)"/>
+        <path d="M18 10l2.2 6.6H27l-5.6 4.1 2.1 6.5L18 23.1l-5.5 4.1 2.1-6.5L9 16.6h6.8z" fill="url(#up)"/>
+        <defs><linearGradient id="up" x1="9" y1="10" x2="27" y2="27"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs>
+      </svg>
     </div>
-    <h2 class="modal-title">Upgrade to Pro</h2>
-    <p class="modal-sub">Unlock prompt optimization, semantic retrieval, and API access.</p>
+    <h2 class="modal-title">Próximamente: Pro &amp; Team</h2>
     <p id="modal-msg" class="upgrade-modal-msg"></p>
     <div class="form-group">
-      <label class="form-label" for="modal-email">Email address</label>
+      <label for="modal-email" class="form-label">Get notified when Pro launches</label>
       <input id="modal-email" type="email" class="form-input" placeholder="you@example.com">
     </div>
     <button id="modal-submit" class="btn btn-primary btn-block" disabled>Próximamente</button>
-    <p class="modal-coming-soon-note">Pagos aún no habilitados. Déjanos tu email y te avisamos cuando Pro esté disponible.</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════ -->
 <script>
-// ── Scroll reveal ──────────────────────────────────────────────────
-(function() {
-  const obs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) {
-        e.target.classList.add('revealed');
-        obs.unobserve(e.target);
-      }
+  // Mobile nav hamburger
+  (function(){
+    const btn    = document.getElementById('nav-hamburger');
+    const drawer = document.getElementById('nav-drawer');
+    if (!btn || !drawer) return;
+    btn.addEventListener('click', () => {
+      const open = drawer.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+      drawer.setAttribute('aria-hidden', !open);
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(function(el) {
-    obs.observe(el);
-  });
-})();
-
-// ── Tab switching ──────────────────────────────────────────────────
-(function() {
-  const tabs = document.querySelectorAll('.tab-btn');
-  tabs.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      const tabId = btn.getAttribute('data-tab');
-      if (!tabId) return;
-      // Deactivate all in same group
-      const allBtns = btn.closest('.tool-tabs').querySelectorAll('.tab-btn');
-      const allPanels = btn.closest('.tool-card').querySelectorAll('.tab-panel');
-      allBtns.forEach(function(b) { b.classList.remove('active-tab'); });
-      allPanels.forEach(function(p) { p.classList.remove('active-panel'); });
-      // Activate selected
-      btn.classList.add('active-tab');
-      const panel = document.getElementById(tabId);
-      if (panel) panel.classList.add('active-panel');
+    // Auth modal switchers
+    const showSignup = document.getElementById('show-signup');
+    const showSignin = document.getElementById('show-signin');
+    if (showSignup) showSignup.addEventListener('click', () => {
+      document.getElementById('signin-section').style.display = 'none';
+      document.getElementById('signup-section').style.display = '';
     });
-  });
-})();
+    if (showSignin) showSignin.addEventListener('click', () => {
+      document.getElementById('signup-section').style.display = 'none';
+      document.getElementById('signin-section').style.display = '';
+    });
+    // Close modals on overlay click
+    ['auth-modal','upgrade-modal'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', e => { if (e.target === el) el.style.display = 'none'; });
+    });
+    // Navbar scroll effect
+    const nav = document.getElementById('main-nav');
+    if (nav) window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 8);
+    }, { passive: true });
+  })();
 </script>
-<script src="/js/app.js"></script>
+<script src="/js/app.js" defer></script>
+<script src="/js/i18n-client.js" defer></script>
 </body>
 </html>
