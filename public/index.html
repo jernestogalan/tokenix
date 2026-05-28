@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tokenia — LLM Token Calculator & Cost Estimator</title>
+  <title>Tokenia — LLM Token Calculator &amp; Cost Estimator</title>
   <meta name="description" content="Count tokens and estimate API costs across Anthropic, OpenAI, Google, Meta and Mistral models. Know what your AI calls will cost before you make them." />
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase client (loaded conditionally by app.js after /api/config) -->
@@ -14,45 +14,60 @@
       theme: {
         extend: {
           colors: {
-            surface: '#161b22',
-            surface2: '#21262d',
-            border: '#30363d',
-            muted: '#8b949e',
-            accent: '#6366f1',
+            bg:       '#08080f',
+            surface:  '#0e0e1a',
+            surface2: '#16162a',
+            surface3: '#1c1c30',
+            border:   '#1f1f38',
+            muted:    '#6b6a8f',
+            accent:   '#7c3aed',
+            'accent-hover': '#8b5cf6',
+            'accent-light': '#a78bfa',
+            cyan:     '#06b6d4',
+            'text-base': '#e4e2f4',
           },
-          fontFamily: { mono: ['JetBrains Mono', 'Fira Code', 'monospace'] },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
+          borderRadius: {
+            sm: '6px',
+            DEFAULT: '10px',
+            lg: '14px',
+            xl: '18px',
+          },
         }
       }
     }
   </script>
 </head>
-<body class="bg-[#0d1117] text-[#e6edf3] min-h-screen">
+<body class="bg-[#08080f] text-[#e4e2f4] min-h-screen font-sans">
 
 <!-- ── Auth Modal ────────────────────────────────────────────────────────── -->
 <div id="auth-modal" aria-modal="true" role="dialog" style="display:none">
-  <div class="modal-box" style="max-width:400px">
-    <div class="flex items-start justify-between mb-4">
+  <div class="modal-box" style="max-width:420px">
+    <div class="flex items-start justify-between mb-5">
       <div>
-        <h2 class="text-lg font-semibold text-white" id="auth-modal-title">Sign in to Tokenia</h2>
-        <p class="text-xs text-[#8b949e] mt-1">Save usage history, manage your plan, and access Pro features.</p>
+        <h2 class="text-lg font-semibold text-[#e4e2f4]" id="auth-modal-title">Sign in to Tokenia</h2>
+        <p class="text-xs text-[#6b6a8f] mt-1">Save usage history, manage your plan, and access Pro features.</p>
       </div>
-      <button id="auth-modal-close" class="text-[#8b949e] hover:text-white text-xl leading-none">&times;</button>
+      <button id="auth-modal-close" class="text-[#6b6a8f] hover:text-[#e4e2f4] text-xl leading-none transition-colors ml-4">&times;</button>
     </div>
 
     <!-- Tabs -->
-    <div class="flex gap-1 mb-5 border-b border-[#30363d] pb-0">
-      <button id="auth-tab-signin" class="tab-btn active-tab px-4 py-2 text-sm font-medium rounded-t-lg transition-colors" data-authtab="signin">Sign in</button>
-      <button id="auth-tab-signup" class="tab-btn px-4 py-2 text-sm font-medium rounded-t-lg transition-colors text-[#8b949e] hover:text-white" data-authtab="signup">Sign up</button>
+    <div class="flex gap-0 mb-5 border-b border-[#1f1f38]">
+      <button id="auth-tab-signin" class="tab-btn active-tab" data-authtab="signin">Sign in</button>
+      <button id="auth-tab-signup" class="tab-btn" data-authtab="signup">Sign up</button>
     </div>
 
     <!-- Sign-in form -->
     <div id="auth-panel-signin" class="space-y-3">
       <input id="signin-email" type="email" placeholder="Email" autocomplete="email"
-        class="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-white placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]" />
+        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
       <input id="signin-password" type="password" placeholder="Password" autocomplete="current-password"
-        class="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-white placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]" />
+        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
       <button id="btn-signin"
-        class="w-full bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        class="w-full bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2.5 rounded-sm transition-colors">
         Sign in
       </button>
     </div>
@@ -60,21 +75,20 @@
     <!-- Sign-up form -->
     <div id="auth-panel-signup" class="space-y-3 hidden">
       <input id="signup-email" type="email" placeholder="Email" autocomplete="email"
-        class="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-white placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]" />
+        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
       <input id="signup-password" type="password" placeholder="Password (min 8 chars)" autocomplete="new-password"
-        class="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-white placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]" />
+        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
       <button id="btn-signup"
-        class="w-full bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        class="w-full bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2.5 rounded-sm transition-colors">
         Create free account
       </button>
     </div>
 
     <p id="auth-msg" class="text-xs mt-3 hidden"></p>
 
-    <!-- Privacy note -->
-    <p class="text-[.65rem] text-[#8b949e] mt-4 text-center">
+    <p class="text-[.65rem] text-[#6b6a8f] mt-4 text-center leading-relaxed">
       Auth powered by Supabase. We never store your text or documents.
-      <a href="/privacy.html" target="_blank" class="underline hover:text-white">Privacy policy</a>
+      <a href="/privacy.html" target="_blank" class="underline hover:text-[#e4e2f4]">Privacy policy</a>
     </p>
   </div>
 </div>
@@ -84,73 +98,76 @@
   <div class="modal-box">
     <div class="flex items-start justify-between mb-4">
       <div>
-        <h2 class="text-lg font-semibold text-white">Unlock Pro Features</h2>
-        <p class="text-sm text-[#8b949e] mt-1">Próximamente: upgrade a Pro y Team.</p>
+        <h2 class="text-lg font-semibold text-[#e4e2f4]">Unlock Pro Features</h2>
+        <p class="text-sm text-[#6b6a8f] mt-1">Próximamente: upgrade a Pro y Team.</p>
       </div>
-      <button id="modal-close" class="text-[#8b949e] hover:text-white text-xl leading-none">&times;</button>
+      <button id="modal-close" class="text-[#6b6a8f] hover:text-[#e4e2f4] text-xl leading-none transition-colors ml-4">&times;</button>
     </div>
-    <div class="space-y-2 mb-5 text-sm text-[#8b949e]">
-      <div class="flex items-center gap-2"><span class="text-[#3fb950]">✓</span> Full document cleaning — save 10–40% tokens</div>
-      <div class="flex items-center gap-2"><span class="text-[#3fb950]">✓</span> Smart retrieval — send only relevant passages</div>
-      <div class="flex items-center gap-2"><span class="text-[#3fb950]">✓</span> CSV export reports</div>
-      <div class="flex items-center gap-2"><span class="text-[#3fb950]">✓</span> Up to 20 MB file uploads</div>
-      <div class="flex items-center gap-2"><span class="text-[#3fb950]">✓</span> Retrieve up to 20 chunks</div>
+    <div class="space-y-2 mb-5 text-sm text-[#6b6a8f]">
+      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Full document cleaning — save 10–40% tokens</div>
+      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Smart retrieval — send only relevant passages</div>
+      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> CSV export reports</div>
+      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Up to 20 MB file uploads</div>
+      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Retrieve up to 20 chunks</div>
     </div>
     <div class="flex gap-2">
       <input id="modal-email" type="email" placeholder="your@email.com"
-        class="flex-1 bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-white placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]" />
+        class="flex-1 bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
       <button id="modal-submit"
-        class="bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
+        class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2 rounded-sm transition-colors whitespace-nowrap">
         Join waitlist
       </button>
     </div>
-    <p id="modal-msg" class="text-xs text-[#3fb950] mt-2 hidden"></p>
+    <p id="modal-msg" class="text-xs text-[#4ade80] mt-2 hidden"></p>
   </div>
 </div>
 
 <!-- ── Nav ────────────────────────────────────────────────────────────────── -->
-<nav class="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur border-b border-[#30363d]">
+<nav class="sticky top-0 z-50 bg-[#08080f]/90 backdrop-blur-xl border-b border-[#1f1f38]">
   <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-1 font-mono font-semibold text-[#e6edf3] no-underline">
-      <span class="text-[#6366f1]">&lt;</span>T<span class="text-[#6366f1]">&gt;</span>
-      <span class="ml-1">Tokenia</span>
-      <span class="ml-2 text-xs bg-[#21262d] text-[#8b949e] border border-[#30363d] rounded px-1.5 py-0.5">beta</span>
-    </a>
-    <div class="flex items-center gap-4">
-      <a href="#how-it-works" class="text-sm text-[#8b949e] hover:text-white transition-colors hidden sm:block">How it works</a>
-      <a href="/pricing.html" class="text-sm text-[#8b949e] hover:text-white transition-colors hidden sm:block">Pricing</a>
 
-      <!-- Shown when auth is disabled or user is anonymous -->
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 no-underline group">
+      <div class="w-7 h-7 rounded flex items-center justify-center bg-[#7c3aed]/15 border border-[#7c3aed]/30 group-hover:border-[#7c3aed]/60 transition-colors">
+        <span class="font-mono font-bold text-[#a78bfa] text-xs">T</span>
+      </div>
+      <span class="font-semibold text-[#e4e2f4] text-sm tracking-tight">Tokenia</span>
+      <span class="text-[.65rem] bg-[#16162a] text-[#6b6a8f] border border-[#1f1f38] rounded px-1.5 py-0.5 font-mono">beta</span>
+    </a>
+
+    <div class="flex items-center gap-5">
+      <a href="#how-it-works" class="text-sm text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors hidden sm:block">How it works</a>
+      <a href="/pricing.html" class="text-sm text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors hidden sm:block">Pricing</a>
+
+      <!-- Anonymous / auth-disabled state -->
       <div id="nav-anon" class="flex items-center gap-2">
         <button id="nav-signin-btn"
-          class="text-sm text-[#8b949e] hover:text-white px-3 py-1.5 rounded-lg border border-[#30363d] hover:border-[#6366f1] transition-colors hidden"
+          class="text-sm text-[#6b6a8f] hover:text-[#e4e2f4] px-3 py-1.5 rounded-sm border border-[#1f1f38] hover:border-[#7c3aed]/50 transition-colors hidden"
           aria-label="Sign in">
           Sign in
         </button>
         <button id="nav-get-pro"
-          class="bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors">
+          class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-1.5 rounded-sm transition-colors">
           Get Pro
         </button>
       </div>
 
-      <!-- Shown when user is logged in -->
+      <!-- Logged-in state -->
       <div id="nav-user" class="hidden items-center gap-3">
-        <!-- Usage mini-bar -->
-        <div id="nav-usage" class="hidden items-center gap-2 text-xs text-[#8b949e]">
-          <div class="w-20 h-1.5 bg-[#21262d] rounded-full overflow-hidden">
-            <div id="nav-usage-bar" class="h-full bg-[#6366f1] rounded-full transition-all" style="width:0%"></div>
+        <div id="nav-usage" class="hidden items-center gap-2 text-xs text-[#6b6a8f]">
+          <div class="w-18 h-1 bg-[#16162a] rounded-full overflow-hidden" style="width:72px">
+            <div id="nav-usage-bar" class="h-full bg-[#7c3aed] rounded-full transition-all" style="width:0%"></div>
           </div>
           <span id="nav-usage-label"></span>
         </div>
-        <!-- Plan badge + email -->
-        <div class="flex items-center gap-2 border border-[#30363d] rounded-lg px-2.5 py-1 text-xs">
-          <span id="nav-credits" class="text-xs text-[#8b949e]" style="display:none"></span>
-          <span id="nav-plan-badge" class="font-medium text-[#6366f1]">Free</span>
-          <span class="text-[#30363d]">|</span>
-          <span id="nav-user-email" class="text-[#8b949e] truncate max-w-[120px]"></span>
+        <div class="flex items-center gap-2 border border-[#1f1f38] rounded-sm px-2.5 py-1 text-xs bg-[#0e0e1a]">
+          <span id="nav-credits" class="text-xs text-[#6b6a8f]" style="display:none"></span>
+          <span id="nav-plan-badge" class="font-medium text-[#a78bfa] font-mono">Free</span>
+          <span class="text-[#1f1f38]">|</span>
+          <span id="nav-user-email" class="text-[#6b6a8f] truncate max-w-[120px]"></span>
         </div>
         <button id="nav-signout-btn"
-          class="text-xs text-[#8b949e] hover:text-[#f85149] transition-colors"
+          class="text-xs text-[#6b6a8f] hover:text-[#ef4444] transition-colors"
           title="Sign out">
           Sign out
         </button>
@@ -160,58 +177,68 @@
 </nav>
 
 <!-- ── Hero ───────────────────────────────────────────────────────────────── -->
-<section id="hero" class="py-14 px-6">
-  <div class="max-w-6xl mx-auto text-center">
-    <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+<section id="hero" class="relative overflow-hidden">
+  <!-- Grid background -->
+  <div class="absolute inset-0 hero-grid hero-fade-bottom pointer-events-none" aria-hidden="true"></div>
+  <!-- Glow orb -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full pointer-events-none"
+    style="background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.18) 0%, transparent 70%)" aria-hidden="true"></div>
+
+  <div class="relative max-w-6xl mx-auto px-6 pt-20 pb-12 text-center">
+    <!-- Eyebrow badge -->
+    <div class="inline-flex items-center gap-1.5 bg-[#0e0e1a] border border-[#1f1f38] rounded-full px-3 py-1 text-xs text-[#6b6a8f] mb-6 font-mono">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse"></span>
+      OpenAI · Anthropic · Google · Meta · Mistral
+    </div>
+
+    <h1 class="text-4xl sm:text-5xl font-bold tracking-tight leading-[1.15] mb-5">
       Count tokens.<br>
-      <span class="text-[#6366f1]">Estimate costs.</span> Ship smarter.
+      <span class="gradient-text">Estimate costs.</span> Ship smarter.
     </h1>
-    <p class="text-[#8b949e] text-lg max-w-xl mx-auto mb-6">
-      Know what your AI calls will cost before you make them. Compare across OpenAI, Anthropic, Google, Meta and Mistral.
+    <p class="text-[#6b6a8f] text-lg max-w-lg mx-auto mb-8 leading-relaxed">
+      Know what your AI API calls will cost before you make them. Compare across providers with exact or clearly-labelled estimated counts.
     </p>
-    <div class="flex flex-wrap justify-center gap-2 mb-10 text-sm">
-      <span class="badge-exact">✓ No signup</span>
-      <span class="badge-exact">✓ OpenAI exact via tiktoken</span>
-      <span class="badge-estimated">~ Others clearly estimated</span>
+
+    <!-- Precision tier badges -->
+    <div class="flex flex-wrap justify-center gap-2 mb-12 text-sm">
+      <span class="badge-exact">✓ Exact — OpenAI tiktoken</span>
+      <span class="badge-official">~ Official — Anthropic API</span>
+      <span class="badge-estimated">~ Estimated — calibrated heuristic</span>
       <span class="badge-local">✓ Local processing</span>
     </div>
 
-    <!-- ── Input card ────────────────────────────────────────────────────── -->
-    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5 text-left max-w-3xl mx-auto">
+    <!-- ── Input card ──────────────────────────────────────────────────────── -->
+    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-5 text-left max-w-3xl mx-auto shadow-2xl">
 
       <!-- Tabs -->
-      <div class="flex gap-1 mb-4 border-b border-[#30363d] pb-0">
-        <button class="tab-btn active-tab px-4 py-2 text-sm font-medium rounded-t-lg transition-colors" data-tab="text">
-          Paste Text
-        </button>
-        <button class="tab-btn px-4 py-2 text-sm font-medium rounded-t-lg transition-colors text-[#8b949e] hover:text-white" data-tab="file">
-          Upload File
-        </button>
-        <button class="tab-btn px-4 py-2 text-sm font-medium rounded-t-lg transition-colors text-[#8b949e] hover:text-white flex items-center gap-1" data-tab="batch">
+      <div class="flex gap-0 mb-4 border-b border-[#1f1f38]">
+        <button class="tab-btn active-tab" data-tab="text">Paste Text</button>
+        <button class="tab-btn" data-tab="file">Upload File</button>
+        <button class="tab-btn flex items-center gap-1.5" data-tab="batch">
           Batch
-          <span class="badge-paid text-[.6rem] py-0">Pro</span>
+          <span class="badge-paid" style="font-size:.58rem;padding:1px 6px">Pro</span>
         </button>
       </div>
 
       <!-- Text tab -->
       <div id="tab-text" class="tab-panel">
         <textarea id="text-input"
-          class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg px-4 py-3 text-sm text-[#e6edf3] placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1] resize-none font-mono"
+          class="w-full bg-[#08080f] border border-[#1f1f38] rounded px-4 py-3 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed]/60 resize-none font-mono transition-colors"
           rows="8"
           placeholder="Paste your prompt, system instruction, document, or code here…"
           spellcheck="false"></textarea>
-        <div class="flex items-center justify-between mt-2 text-xs text-[#8b949e]">
-          <div class="flex gap-3">
+        <div class="flex items-center justify-between mt-2.5 text-xs text-[#6b6a8f]">
+          <div class="flex gap-3 font-mono">
             <span id="char-count">0 chars</span>
-            <span>&middot;</span>
+            <span class="text-[#1f1f38]">&middot;</span>
             <span id="word-count">0 words</span>
-            <span>&middot;</span>
+            <span class="text-[#1f1f38]">&middot;</span>
             <span id="line-count">0 lines</span>
           </div>
           <div class="flex gap-2">
-            <button id="btn-clear-text" class="text-[#8b949e] hover:text-[#f85149] transition-colors disabled:opacity-30" disabled>Clear</button>
+            <button id="btn-clear-text" class="text-[#6b6a8f] hover:text-[#ef4444] transition-colors disabled:opacity-30" disabled>Clear</button>
             <button id="btn-analyze-text"
-              class="bg-[#6366f1] hover:bg-[#818cf8] text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white px-4 py-1.5 rounded-sm text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               disabled>
               Calculate Tokens
             </button>
@@ -224,23 +251,23 @@
         <div id="dropzone" class="dropzone cursor-pointer">
           <input type="file" id="file-input" hidden
             accept=".txt,.md,.pdf,.docx,.doc,.js,.ts,.jsx,.tsx,.py,.rb,.go,.rs,.java,.kt,.swift,.c,.cpp,.cs,.php,.sh,.bash,.sql,.html,.css,.scss,.json,.yaml,.yml,.xml,.toml,.r" />
-          <div class="flex flex-col items-center gap-2 pointer-events-none">
-            <svg class="text-[#8b949e]" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <div class="flex flex-col items-center gap-2.5 pointer-events-none">
+            <svg class="text-[#6b6a8f]" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            <p class="text-sm text-[#8b949e]">Drop a file or <span class="text-[#6366f1] pointer-events-auto cursor-pointer" id="btn-browse">browse</span></p>
-            <p class="text-xs text-[#8b949e]">.txt · .md · .pdf · .docx · .py · .js · .ts · .go · .rs · .java and 20+ more · max 10 MB</p>
+            <p class="text-sm text-[#6b6a8f]">Drop a file or <span class="text-[#a78bfa] pointer-events-auto cursor-pointer hover:text-[#c4b5fd]" id="btn-browse">browse</span></p>
+            <p class="text-xs text-[#3d3c5c] font-mono">.txt · .md · .pdf · .docx · .py · .js · .ts · .go · .rs · .java and 20+ more · max 10 MB</p>
           </div>
         </div>
-        <div id="file-info" class="hidden flex items-center gap-2 mt-3 text-sm text-[#8b949e] bg-[#21262d] rounded-lg px-3 py-2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-          <span id="file-name" class="flex-1 truncate text-[#e6edf3]"></span>
-          <span id="file-size" class="text-xs text-[#8b949e]"></span>
-          <button id="btn-remove-file" class="text-[#8b949e] hover:text-[#f85149] ml-2">&times;</button>
+        <div id="file-info" class="hidden flex items-center gap-2 mt-3 text-sm text-[#6b6a8f] bg-[#16162a] rounded-sm px-3 py-2 border border-[#1f1f38]">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          <span id="file-name" class="flex-1 truncate text-[#e4e2f4] font-mono text-xs"></span>
+          <span id="file-size" class="text-xs text-[#6b6a8f] font-mono"></span>
+          <button id="btn-remove-file" class="text-[#6b6a8f] hover:text-[#ef4444] transition-colors ml-1">&times;</button>
         </div>
         <div class="flex justify-end mt-3">
           <button id="btn-analyze-file"
-            class="bg-[#6366f1] hover:bg-[#818cf8] text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white px-4 py-1.5 rounded-sm text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             disabled>
             Calculate Tokens
           </button>
@@ -249,149 +276,153 @@
 
       <!-- Batch tab (Pro locked) -->
       <div id="tab-batch" class="tab-panel hidden">
-        <div class="flex flex-col items-center justify-center py-12 gap-3 text-center">
-          <span class="text-4xl">🔒</span>
-          <h3 class="text-base font-semibold text-white">Batch processing is a Pro feature</h3>
-          <p class="text-sm text-[#8b949e] max-w-xs">Upload up to 50 files at once, get a CSV report of token counts and cost projections per file.</p>
-          <button class="upgrade-trigger bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors mt-2" data-feature="batch">
+        <div class="flex flex-col items-center justify-center py-12 gap-4 text-center">
+          <div class="w-12 h-12 rounded-lg bg-[#16162a] border border-[#1f1f38] flex items-center justify-center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b6a8f" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold text-[#e4e2f4] mb-1">Batch processing — Pro feature</h3>
+            <p class="text-sm text-[#6b6a8f] max-w-xs">Upload up to 50 files at once, get a CSV report of token counts and cost projections per file.</p>
+          </div>
+          <button class="upgrade-trigger bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-5 py-2 rounded-sm transition-colors mt-1" data-feature="batch">
             Próximamente: Batch Pro
           </button>
         </div>
       </div>
     </div><!-- /input-card -->
 
-    <!-- ── Model selector ──────────────────────────────────────────────────── -->
+    <!-- ── Model selector ────────────────────────────────────────────────── -->
     <div id="model-selector" class="max-w-3xl mx-auto mt-4 text-left">
-      <p class="text-xs text-[#8b949e] mb-2 font-medium uppercase tracking-wider">Compare models</p>
+      <p class="text-xs text-[#6b6a8f] mb-2 font-medium uppercase tracking-wider font-mono">Compare models</p>
       <div id="model-checkboxes" class="flex flex-wrap gap-2"></div>
     </div>
   </div>
 </section>
 
 <!-- ── Loading ────────────────────────────────────────────────────────────── -->
-<div id="loading" class="hidden flex flex-col items-center gap-3 py-8">
+<div id="loading" class="hidden flex flex-col items-center gap-3 py-10">
   <div class="spinner"></div>
-  <span class="text-sm text-[#8b949e] loading-pulse">Counting tokens…</span>
+  <span class="text-sm text-[#6b6a8f] loading-pulse font-mono">Counting tokens…</span>
 </div>
 
 <!-- ── Error banner ───────────────────────────────────────────────────────── -->
 <div id="error-banner" class="hidden max-w-3xl mx-auto px-6 mb-4">
-  <div class="bg-[#f85149]/10 border border-[#f85149]/30 rounded-lg px-4 py-3 flex items-start gap-3">
-    <svg class="text-[#f85149] mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <span id="error-text" class="text-sm text-[#f85149] flex-1"></span>
-    <button id="btn-dismiss-error" class="text-[#8b949e] hover:text-white">&times;</button>
+  <div class="bg-[#ef4444]/08 border border-[#ef4444]/25 rounded-sm px-4 py-3 flex items-start gap-3">
+    <svg class="text-[#ef4444] mt-0.5 shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="error-text" class="text-sm text-[#ef4444] flex-1"></span>
+    <button id="btn-dismiss-error" class="text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors">&times;</button>
   </div>
 </div>
 
 <!-- ── Results ────────────────────────────────────────────────────────────── -->
-<div id="results" class="hidden max-w-6xl mx-auto px-6 pb-8 space-y-6">
+<div id="results" class="hidden max-w-6xl mx-auto px-6 pb-12 space-y-5">
 
-  <!-- Savings card -->
+  <!-- Savings card — hero protagonist -->
   <div id="savings-card" class="savings-card hidden">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
       <div>
-        <p id="savings-msg" class="text-sm text-[#8b949e] mb-1"></p>
-        <div class="flex items-center gap-3 flex-wrap">
+        <p id="savings-msg" class="text-xs text-[#6b6a8f] mb-3 font-mono uppercase tracking-wider"></p>
+        <div class="flex items-end gap-4 flex-wrap">
           <div>
-            <p class="text-xs text-[#8b949e]">Original</p>
-            <p id="savings-orig" class="text-xl font-bold font-mono text-white"></p>
+            <p class="text-xs text-[#6b6a8f] mb-0.5">Original</p>
+            <p id="savings-orig" class="savings-card-amount text-[#6b6a8f]"></p>
           </div>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          <svg class="mb-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3d3c5c" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
           <div>
-            <p class="text-xs text-[#8b949e]">Optimized</p>
-            <p id="savings-opt" class="text-xl font-bold font-mono text-[#3fb950]"></p>
+            <p class="text-xs text-[#6b6a8f] mb-0.5">Optimized</p>
+            <p id="savings-opt" class="savings-card-amount text-[#4ade80]"></p>
           </div>
-          <span id="savings-pct" class="savings-pct"></span>
+          <span id="savings-pct" class="savings-pct mb-1"></span>
         </div>
       </div>
-      <p class="text-xs text-[#8b949e] max-w-xs italic" id="savings-disclaimer"></p>
+      <p class="text-xs text-[#6b6a8f] max-w-xs italic sm:text-right leading-relaxed" id="savings-disclaimer"></p>
     </div>
   </div>
 
   <!-- Token results table -->
   <div id="token-results">
     <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-      <h2 class="text-base font-semibold text-white">Token counts &amp; costs</h2>
-      <div class="flex gap-2" id="provider-pills"></div>
+      <h2 class="text-sm font-semibold text-[#e4e2f4] tracking-wide uppercase font-mono">Token counts &amp; costs</h2>
+      <div class="flex gap-2 flex-wrap" id="provider-pills"></div>
     </div>
 
     <!-- Stats bar -->
-    <div class="flex gap-6 mb-4 text-sm text-[#8b949e] flex-wrap">
-      <span>Characters: <span class="text-white font-mono" id="s-chars">—</span></span>
-      <span>Words: <span class="text-white font-mono" id="s-words">—</span></span>
-      <span>Lines: <span class="text-white font-mono" id="s-lines">—</span></span>
-      <span id="s-file-block" class="hidden">File: <span class="text-white font-mono" id="s-file">—</span></span>
+    <div class="flex gap-5 mb-4 text-xs text-[#6b6a8f] font-mono flex-wrap">
+      <span>chars: <span class="text-[#e4e2f4]" id="s-chars">—</span></span>
+      <span>words: <span class="text-[#e4e2f4]" id="s-words">—</span></span>
+      <span>lines: <span class="text-[#e4e2f4]" id="s-lines">—</span></span>
+      <span id="s-file-block" class="hidden">file: <span class="text-[#e4e2f4]" id="s-file">—</span></span>
     </div>
 
-    <div class="overflow-x-auto bg-[#161b22] border border-[#30363d] rounded-xl">
+    <div class="overflow-x-auto bg-[#0e0e1a] border border-[#1f1f38] rounded-xl">
       <table class="w-full text-sm">
         <thead>
-          <tr class="border-b border-[#30363d] text-xs text-[#8b949e] uppercase tracking-wider">
-            <th class="px-4 py-3 text-left">Model</th>
-            <th class="px-4 py-3 text-right">Tokens</th>
-            <th class="px-4 py-3 text-right">Context used</th>
-            <th class="px-4 py-3 text-right">Input cost</th>
-            <th class="px-4 py-3 text-right">Output cost</th>
-            <th class="px-4 py-3 text-center">Precision</th>
+          <tr class="border-b border-[#1f1f38] text-[.7rem] text-[#6b6a8f] uppercase tracking-wider font-mono">
+            <th class="px-4 py-3 text-left font-medium">Model</th>
+            <th class="px-4 py-3 text-right font-medium">Tokens</th>
+            <th class="px-4 py-3 text-right font-medium">Context used</th>
+            <th class="px-4 py-3 text-right font-medium">Input cost</th>
+            <th class="px-4 py-3 text-right font-medium">Output cost</th>
+            <th class="px-4 py-3 text-center font-medium">Precision</th>
           </tr>
         </thead>
         <tbody id="results-body"></tbody>
       </table>
     </div>
-    <p class="text-xs text-[#8b949e] mt-2">* Output cost assumes reply ≈ same length as input. Costs based on public pricing and may be outdated.</p>
+    <p class="text-xs text-[#3d3c5c] mt-2 font-mono">* Output cost assumes reply ≈ same length as input. Based on public pricing, may be outdated.</p>
   </div>
 
   <!-- Clean section -->
-  <div id="clean-section" class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+  <div id="clean-section" class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-5">
     <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <h3 class="text-base font-semibold text-white">Format Cleaner</h3>
+        <div class="flex items-center gap-2.5 mb-1">
+          <h3 class="text-sm font-semibold text-[#e4e2f4]">Format Cleaner</h3>
           <span id="clean-badge" class="badge-demo">Demo</span>
         </div>
-        <p class="text-xs text-[#8b949e]">Removes layout noise from PDFs, DOCX and HTML without touching meaning. Typical savings: 10–40%.</p>
+        <p class="text-xs text-[#6b6a8f] max-w-md">Removes layout noise from PDFs, DOCX and HTML without touching meaning. Typical savings: 10–40% tokens.</p>
       </div>
       <div class="flex gap-2">
-        <button id="btn-clean-upload" class="bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        <button id="btn-clean-upload" class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2 rounded-sm transition-colors">
           Clean a file
         </button>
       </div>
     </div>
 
-    <!-- Clean file input (hidden, triggered by button) -->
     <input type="file" id="clean-file-input" hidden accept=".pdf,.docx,.doc,.html,.htm,.txt,.md" />
 
-    <!-- Clean result -->
     <div id="clean-result" class="hidden space-y-4 mt-2">
       <!-- Demo banner -->
       <div id="clean-demo-banner" class="demo-banner hidden">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span id="clean-demo-msg"></span>
-        <button class="upgrade-trigger ml-auto text-xs text-[#f97316] underline" data-feature="cleanFull">Próximamente: Pro</button>
+        <button class="upgrade-trigger ml-auto text-xs text-[#f97316] hover:underline shrink-0" data-feature="cleanFull">Próximamente: Pro</button>
       </div>
-      <!-- Stats -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-[#21262d] rounded-lg px-3 py-2">
-          <p class="text-xs text-[#8b949e]">Original chars</p>
-          <p class="font-mono font-semibold" id="clean-orig-chars">—</p>
+
+      <!-- Stats grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
+          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Original chars</p>
+          <p class="font-mono font-semibold text-sm" id="clean-orig-chars">—</p>
         </div>
-        <div class="bg-[#21262d] rounded-lg px-3 py-2">
-          <p class="text-xs text-[#8b949e]">Cleaned chars</p>
-          <p class="font-mono font-semibold text-[#3fb950]" id="clean-new-chars">—</p>
+        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
+          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Cleaned chars</p>
+          <p class="font-mono font-semibold text-sm text-[#4ade80]" id="clean-new-chars">—</p>
         </div>
-        <div class="bg-[#21262d] rounded-lg px-3 py-2">
-          <p class="text-xs text-[#8b949e]">Chars removed</p>
-          <p class="font-mono font-semibold text-[#3fb950]" id="clean-saved-chars">—</p>
+        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
+          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Chars removed</p>
+          <p class="font-mono font-semibold text-sm text-[#4ade80]" id="clean-saved-chars">—</p>
         </div>
-        <div class="bg-[#21262d] rounded-lg px-3 py-2">
-          <p class="text-xs text-[#8b949e]">Savings</p>
-          <p class="font-mono font-semibold text-[#3fb950]" id="clean-pct">—</p>
+        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
+          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Savings</p>
+          <p class="font-mono font-semibold text-sm text-[#4ade80]" id="clean-pct">—</p>
         </div>
       </div>
+
       <!-- Token comparison -->
       <div>
-        <p class="text-xs text-[#8b949e] mb-2 font-medium">Token savings per model:</p>
-        <div class="overflow-x-auto rounded-lg border border-[#30363d]">
+        <p class="text-xs text-[#6b6a8f] mb-2 font-mono uppercase tracking-wider">Token savings per model:</p>
+        <div class="overflow-x-auto rounded-sm border border-[#1f1f38] bg-[#0e0e1a]">
           <table class="cmp-table w-full">
             <thead><tr>
               <th>Model</th><th class="text-right">Before</th><th class="text-right">After</th><th class="text-right">Saved</th><th class="text-right">%</th>
@@ -400,73 +431,76 @@
           </table>
         </div>
       </div>
+
       <!-- Cleaned text preview -->
       <div>
-        <p class="text-xs text-[#8b949e] mb-1">Cleaned text (ready to paste):</p>
+        <p class="text-xs text-[#6b6a8f] mb-1.5 font-mono">Cleaned text (ready to paste):</p>
         <div class="clean-text-pre" id="clean-text-out"></div>
         <div class="flex gap-2 mt-2">
-          <button id="btn-copy-clean" class="text-xs text-[#8b949e] hover:text-white border border-[#30363d] rounded px-3 py-1 transition-colors">Copy</button>
-          <button id="btn-download-clean" class="text-xs text-[#8b949e] hover:text-white border border-[#30363d] rounded px-3 py-1 transition-colors hidden">Download .txt</button>
+          <button id="btn-copy-clean" class="text-xs text-[#6b6a8f] hover:text-[#e4e2f4] border border-[#1f1f38] hover:border-[#7c3aed]/50 rounded-sm px-3 py-1 transition-colors font-mono">Copy</button>
+          <button id="btn-download-clean" class="text-xs text-[#6b6a8f] hover:text-[#e4e2f4] border border-[#1f1f38] hover:border-[#7c3aed]/50 rounded-sm px-3 py-1 transition-colors font-mono hidden">Download .txt</button>
         </div>
       </div>
     </div>
-    <div id="clean-loading" class="hidden flex items-center gap-2 text-sm text-[#8b949e] py-4">
-      <div class="spinner"></div><span>Cleaning document…</span>
+
+    <div id="clean-loading" class="hidden flex items-center gap-2.5 text-sm text-[#6b6a8f] py-4">
+      <div class="spinner"></div><span class="font-mono loading-pulse">Cleaning document…</span>
     </div>
-    <div id="clean-error" class="hidden text-xs text-[#f85149] bg-[#f85149]/10 border border-[#f85149]/20 rounded px-3 py-2 mt-2"></div>
+    <div id="clean-error" class="hidden text-xs text-[#ef4444] bg-[#ef4444]/08 border border-[#ef4444]/20 rounded-sm px-3 py-2 mt-2 font-mono"></div>
   </div>
 
   <!-- Retrieve section -->
-  <div id="retrieve-section" class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+  <div id="retrieve-section" class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-5">
     <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <h3 class="text-base font-semibold text-white">Smart Retrieval</h3>
+        <div class="flex items-center gap-2.5 mb-1">
+          <h3 class="text-sm font-semibold text-[#e4e2f4]">Smart Retrieval</h3>
           <span id="retrieve-badge" class="badge-demo">Demo</span>
         </div>
-        <p class="text-xs text-[#8b949e]">Upload a large doc + your question — returns only relevant chunks. TF-IDF keyword search. Best for focused queries.</p>
+        <p class="text-xs text-[#6b6a8f] max-w-md">Upload a large doc + your question — returns only relevant chunks. TF-IDF keyword search. Best for focused queries.</p>
       </div>
     </div>
-    <!-- Retrieve file + query -->
+
     <div class="space-y-3">
-      <div class="flex gap-2 flex-wrap">
-        <button id="btn-retrieve-upload" class="text-sm border border-[#30363d] text-[#8b949e] hover:text-white hover:border-[#6366f1] px-4 py-2 rounded-lg transition-colors">
+      <div class="flex gap-2 flex-wrap items-center">
+        <button id="btn-retrieve-upload" class="text-sm border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#7c3aed]/50 px-4 py-2 rounded-sm transition-colors font-mono text-xs">
           Choose document
         </button>
-        <span id="retrieve-file-name" class="text-sm text-[#8b949e] self-center"></span>
+        <span id="retrieve-file-name" class="text-xs text-[#6b6a8f] font-mono"></span>
       </div>
       <input type="file" id="retrieve-file-input" hidden accept=".pdf,.docx,.doc,.txt,.md,.html,.htm" />
       <input id="retrieve-query" type="text"
-        class="w-full bg-[#0d1117] border border-[#30363d] rounded-lg px-4 py-2 text-sm text-[#e6edf3] placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]"
+        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-4 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed]/60 transition-colors"
         placeholder="What do you want to know? e.g. 'What are the termination clauses?'" />
       <div class="flex items-center gap-3 flex-wrap">
-        <label class="text-xs text-[#8b949e]">Top chunks:</label>
+        <label class="text-xs text-[#6b6a8f] font-mono">Top chunks:</label>
         <select id="retrieve-topk"
-          class="bg-[#21262d] border border-[#30363d] rounded px-2 py-1 text-sm text-[#e6edf3] focus:outline-none">
+          class="bg-[#16162a] border border-[#1f1f38] rounded-sm px-2 py-1.5 text-sm text-[#e4e2f4] focus:outline-none focus:border-[#7c3aed]/60 font-mono text-xs">
           <option value="3">3 (demo limit)</option>
           <option value="5" selected>5</option>
           <option value="10">10</option>
           <option value="20">20</option>
         </select>
         <button id="btn-retrieve"
-          class="bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-40"
+          class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2 rounded-sm transition-colors disabled:opacity-40"
           disabled>
           Find Relevant Chunks
         </button>
       </div>
     </div>
-    <!-- Retrieve result -->
-    <div id="retrieve-result" class="hidden mt-4 space-y-4">
+
+    <div id="retrieve-result" class="hidden mt-5 space-y-4">
       <div id="retrieve-demo-banner" class="demo-banner hidden">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span id="retrieve-demo-msg"></span>
-        <button class="upgrade-trigger ml-auto text-xs text-[#f97316] underline" data-feature="ragFull">Próximamente: Pro</button>
+        <button class="upgrade-trigger ml-auto text-xs text-[#f97316] hover:underline shrink-0" data-feature="ragFull">Próximamente: Pro</button>
       </div>
-      <p id="retrieve-meta" class="text-xs text-[#8b949e]"></p>
+      <p id="retrieve-meta" class="text-xs text-[#6b6a8f] font-mono"></p>
+
       <!-- Token comparison -->
       <div>
-        <p class="text-xs text-[#8b949e] mb-2 font-medium">Token savings per model:</p>
-        <div class="overflow-x-auto rounded-lg border border-[#30363d]">
+        <p class="text-xs text-[#6b6a8f] mb-2 font-mono uppercase tracking-wider">Token savings per model:</p>
+        <div class="overflow-x-auto rounded-sm border border-[#1f1f38] bg-[#0e0e1a]">
           <table class="cmp-table w-full">
             <thead><tr>
               <th>Model</th><th class="text-right">Full doc</th><th class="text-right">Retrieved</th><th class="text-right">Saved</th><th class="text-right">%</th>
@@ -475,132 +509,156 @@
           </table>
         </div>
       </div>
+
       <!-- Chunks -->
       <div>
-        <p class="text-xs text-[#8b949e] mb-2">Relevant passages (sorted by relevance):</p>
+        <p class="text-xs text-[#6b6a8f] mb-2 font-mono">Relevant passages (sorted by relevance):</p>
         <div class="chunks-scroll" id="chunks-list"></div>
       </div>
       <div class="flex gap-2">
-        <button id="btn-copy-chunks" class="text-xs text-[#8b949e] hover:text-white border border-[#30363d] rounded px-3 py-1 transition-colors">Copy context</button>
+        <button id="btn-copy-chunks" class="text-xs text-[#6b6a8f] hover:text-[#e4e2f4] border border-[#1f1f38] hover:border-[#7c3aed]/50 rounded-sm px-3 py-1 transition-colors font-mono">Copy context</button>
       </div>
     </div>
-    <div id="retrieve-loading" class="hidden flex items-center gap-2 text-sm text-[#8b949e] py-4">
-      <div class="spinner"></div><span>Finding relevant chunks…</span>
+
+    <div id="retrieve-loading" class="hidden flex items-center gap-2.5 text-sm text-[#6b6a8f] py-4">
+      <div class="spinner"></div><span class="font-mono loading-pulse">Finding relevant chunks…</span>
     </div>
-    <div id="retrieve-error" class="hidden text-xs text-[#f85149] bg-[#f85149]/10 border border-[#f85149]/20 rounded px-3 py-2 mt-2"></div>
+    <div id="retrieve-error" class="hidden text-xs text-[#ef4444] bg-[#ef4444]/08 border border-[#ef4444]/20 rounded-sm px-3 py-2 mt-2 font-mono"></div>
   </div>
 
 </div><!-- /results -->
 
 <!-- ── How it works ───────────────────────────────────────────────────────── -->
-<section id="how-it-works" class="py-16 px-6 border-t border-[#30363d]">
+<section id="how-it-works" class="py-20 px-6 border-t border-[#1f1f38]">
   <div class="max-w-6xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-10">How tokenization works</h2>
-    <div class="grid sm:grid-cols-3 gap-6">
-      <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-6">
-        <div class="text-3xl mb-3">🔢</div>
-        <h3 class="font-semibold mb-2">What are tokens?</h3>
-        <p class="text-sm text-[#8b949e]">Tokens are the chunks LLMs process — roughly 3–4 characters of English text. Code and non-Latin scripts often produce more tokens per character.</p>
+    <div class="text-center mb-12">
+      <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-3">Under the hood</p>
+      <h2 class="text-2xl font-bold tracking-tight">How tokenization works</h2>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-5">
+      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/30 transition-colors">
+        <div class="w-10 h-10 rounded-lg bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center mb-4">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </div>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">Tokens are the chunks LLMs process — roughly 3–4 characters of English text. Code and non-Latin scripts often produce more tokens per character.</p>
       </div>
-      <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-6">
-        <div class="text-3xl mb-3">✓</div>
-        <h3 class="font-semibold mb-2">Exact vs. estimated</h3>
-        <p class="text-sm text-[#8b949e]">OpenAI uses the open-source tiktoken library — we run the same tokenizer server-side, so counts are exact. Anthropic, Google and others use proprietary tokenizers; we estimate and label it clearly.</p>
+      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/30 transition-colors">
+        <div class="w-10 h-10 rounded-lg bg-[#06b6d4]/10 border border-[#06b6d4]/20 flex items-center justify-center mb-4">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2 text-[#e4e2f4]">Exact vs. estimated</h3>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">OpenAI uses the open-source tiktoken library — we run the same tokenizer server-side, so counts are exact. Anthropic, Google and others use proprietary tokenizers; we estimate and label it clearly.</p>
       </div>
-      <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-6">
-        <div class="text-3xl mb-3">💰</div>
-        <h3 class="font-semibold mb-2">Cost formula</h3>
-        <p class="text-sm text-[#8b949e]">Cost = (tokens ÷ 1,000,000) × price-per-million-tokens. Input and output tokens are billed separately by most providers.</p>
+      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/30 transition-colors">
+        <div class="w-10 h-10 rounded-lg bg-[#22c55e]/10 border border-[#22c55e]/20 flex items-center justify-center mb-4">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2 text-[#e4e2f4]">Cost formula</h3>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">Cost = (tokens ÷ 1,000,000) × price-per-million-tokens. Input and output tokens are billed separately by most providers.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ── Pricing preview ────────────────────────────────────────────────────── -->
-<section id="pricing-preview" class="py-16 px-6 border-t border-[#30363d]">
+<section id="pricing-preview" class="py-20 px-6 border-t border-[#1f1f38]">
   <div class="max-w-6xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-2">Simple, transparent pricing</h2>
-    <p class="text-center text-[#8b949e] text-sm mb-10">Everything you need to ship AI features without surprises.</p>
-    <div class="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    <div class="text-center mb-12">
+      <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-3">Plans</p>
+      <h2 class="text-2xl font-bold tracking-tight mb-2">Simple, transparent pricing</h2>
+      <p class="text-[#6b6a8f] text-sm">Start free. Upgrade when you need more power.</p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
 
       <!-- Free -->
-      <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-6 flex flex-col">
-        <div class="mb-4">
-          <p class="text-sm text-[#8b949e] font-medium">Free</p>
-          <p class="text-3xl font-bold mt-1">$0<span class="text-sm font-normal text-[#8b949e]">/mo</span></p>
+      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 flex flex-col">
+        <div class="mb-5">
+          <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#6b6a8f]">Free</p>
+          <div class="mt-2">
+            <span class="text-3xl font-bold font-mono text-[#e4e2f4]">$0</span>
+            <span class="text-sm text-[#6b6a8f]">/mo</span>
+          </div>
         </div>
-        <ul class="space-y-2 text-sm text-[#8b949e] mb-6 flex-1">
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Token counting — all models</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> File uploads up to 2 MB</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Cleaning demo (first 5,000 chars)</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Retrieval demo (top 3 chunks)</li>
-          <li class="flex gap-2"><span class="text-[#f85149]">✗</span> CSV export</li>
-          <li class="flex gap-2"><span class="text-[#f85149]">✗</span> Batch upload</li>
+        <ul class="space-y-2.5 text-sm text-[#6b6a8f] mb-6 flex-1">
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Token counting — all models</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> File uploads up to 2 MB</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Cleaning demo (first 5,000 chars)</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Retrieval demo (top 3 chunks)</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] shrink-0">✗</span> <span class="text-[#3d3c5c]">CSV export</span></li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] shrink-0">✗</span> <span class="text-[#3d3c5c]">Batch upload</span></li>
         </ul>
-        <button class="border border-[#30363d] text-[#8b949e] hover:text-white hover:border-[#6366f1] rounded-lg py-2 text-sm font-medium transition-colors">
+        <button class="border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#7c3aed]/40 rounded-sm py-2 text-sm font-medium transition-colors">
           Current plan
         </button>
       </div>
 
       <!-- Pro -->
-      <div class="bg-[#161b22] border-2 border-[#6366f1] rounded-xl p-6 flex flex-col relative pricing-card-pro">
-        <div class="mb-4">
-          <p class="text-sm text-[#6366f1] font-medium">Pro</p>
-          <p class="text-3xl font-bold mt-1">$12<span class="text-sm font-normal text-[#8b949e]">/mo</span></p>
+      <div class="bg-[#0e0e1a] rounded-xl p-6 flex flex-col relative pricing-card-pro">
+        <div class="mb-5">
+          <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#a78bfa]">Pro</p>
+          <div class="mt-2">
+            <span class="text-3xl font-bold font-mono text-[#e4e2f4]">$12</span>
+            <span class="text-sm text-[#6b6a8f]">/mo</span>
+          </div>
         </div>
-        <ul class="space-y-2 text-sm text-[#8b949e] mb-6 flex-1">
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Everything in Free</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> CSV &amp; PDF export</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Batch upload (10 files)</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Full cleaning &amp; retrieval</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> API access + history</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> 500 credits/mo</li>
+        <ul class="space-y-2.5 text-sm text-[#6b6a8f] mb-6 flex-1">
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Everything in Free</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> CSV &amp; PDF export</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Batch upload (10 files)</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Full cleaning &amp; retrieval</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> API access + history</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> 500 credits/mo</li>
         </ul>
-        <button class="upgrade-trigger bg-[#6366f1] hover:bg-[#818cf8] text-white rounded-lg py-2 text-sm font-medium transition-colors" data-feature="pro">
+        <button class="upgrade-trigger bg-[#7c3aed] hover:bg-[#8b5cf6] text-white rounded-sm py-2 text-sm font-medium transition-colors" data-feature="pro">
           Próximamente
         </button>
       </div>
 
       <!-- Team -->
-      <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-6 flex flex-col">
-        <div class="mb-4">
-          <p class="text-sm text-[#0ea5e9] font-medium">Team</p>
-          <p class="text-3xl font-bold mt-1">$39<span class="text-sm font-normal text-[#8b949e]">/mo</span></p>
+      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 flex flex-col hover:border-[#06b6d4]/20 transition-colors">
+        <div class="mb-5">
+          <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#22d3ee]">Team</p>
+          <div class="mt-2">
+            <span class="text-3xl font-bold font-mono text-[#e4e2f4]">$39</span>
+            <span class="text-sm text-[#6b6a8f]">/mo</span>
+          </div>
         </div>
-        <ul class="space-y-2 text-sm text-[#8b949e] mb-6 flex-1">
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Everything in Pro</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Batch upload (50 files)</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Budget alerts</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Team shared projects</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> Priority support</li>
-          <li class="flex gap-2"><span class="text-[#3fb950]">✓</span> 2,000 credits/mo</li>
+        <ul class="space-y-2.5 text-sm text-[#6b6a8f] mb-6 flex-1">
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Everything in Pro</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Batch upload (50 files)</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Budget alerts</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Team shared projects</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Priority support</li>
+          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> 2,000 credits/mo</li>
         </ul>
-        <button class="upgrade-trigger border border-[#0ea5e9] text-[#0ea5e9] hover:bg-[#0ea5e9]/10 rounded-lg py-2 text-sm font-medium transition-colors" data-feature="team">
+        <button class="upgrade-trigger border border-[#06b6d4]/30 text-[#22d3ee] hover:bg-[#06b6d4]/08 rounded-sm py-2 text-sm font-medium transition-colors" data-feature="team">
           Próximamente
         </button>
       </div>
 
     </div>
-    <p class="text-center text-xs text-[#8b949e] mt-8">
-      Cobro todavía no activo. <a href="/pricing.html" class="underline hover:text-white">Ver detalles del plan →</a>
+    <p class="text-center text-xs text-[#3d3c5c] mt-8 font-mono">
+      Cobro todavía no activo. <a href="/pricing.html" class="text-[#6b6a8f] hover:text-[#a78bfa] underline underline-offset-2">Ver detalles del plan →</a>
     </p>
   </div>
 </section>
 
 <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
-<footer class="border-t border-[#30363d] py-10 px-6 text-[#8b949e] text-sm">
-  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div class="flex items-center gap-2">
-      <span class="font-bold text-white text-base">&lt;T&gt;</span>
-      <span class="font-semibold text-white">Tokenia</span>
-      <span class="text-xs bg-[#21262d] border border-[#30363d] rounded px-1.5 py-0.5 ml-1">beta</span>
+<footer class="border-t border-[#1f1f38] py-10 px-6">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5">
+    <div class="flex items-center gap-2.5">
+      <div class="w-6 h-6 rounded flex items-center justify-center bg-[#7c3aed]/12 border border-[#7c3aed]/25">
+        <span class="font-mono font-bold text-[#a78bfa] text-[.6rem]">T</span>
+      </div>
+      <span class="font-semibold text-[#e4e2f4] text-sm">Tokenia</span>
+      <span class="text-[.65rem] bg-[#16162a] border border-[#1f1f38] rounded px-1.5 py-0.5 font-mono text-[#6b6a8f]">beta</span>
     </div>
-    <div class="flex items-center gap-6 text-xs">
-      <a href="/pricing.html" class="hover:text-white transition-colors">Pricing</a>
-      <a href="/privacy.html" class="hover:text-white transition-colors">Privacy</a>
-      <a href="#how-it-works" class="hover:text-white transition-colors">How it works</a>
+    <div class="flex items-center gap-6 text-xs text-[#6b6a8f]">
+      <a href="/pricing.html" class="hover:text-[#e4e2f4] transition-colors">Pricing</a>
+      <a href="/privacy.html" class="hover:text-[#e4e2f4] transition-colors">Privacy</a>
+      <a href="#how-it-works" class="hover:text-[#e4e2f4] transition-colors">How it works</a>
     </div>
-    <p class="text-xs text-center sm:text-right">
+    <p class="text-[.7rem] text-[#3d3c5c] text-center sm:text-right leading-relaxed">
       Not affiliated with Anthropic, OpenAI, Google, or Meta.<br>
       Prices are informational estimates and may lag behind provider changes.
     </p>

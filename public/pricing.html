@@ -13,171 +13,190 @@
       theme: {
         extend: {
           colors: {
-            surface: '#161b22', surface2: '#21262d',
-            border: '#30363d', muted: '#8b949e', accent: '#6366f1',
+            bg:       '#08080f',
+            surface:  '#0e0e1a',
+            surface2: '#16162a',
+            surface3: '#1c1c30',
+            border:   '#1f1f38',
+            muted:    '#6b6a8f',
+            accent:   '#7c3aed',
+            'accent-hover': '#8b5cf6',
+            'accent-light': '#a78bfa',
+            cyan:     '#06b6d4',
+            'text-base': '#e4e2f4',
           },
-          fontFamily: { mono: ['JetBrains Mono', 'Fira Code', 'monospace'] },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
         }
       }
     }
   </script>
 </head>
-<body class="bg-[#0d1117] text-[#e6edf3] min-h-screen">
+<body class="bg-[#08080f] text-[#e4e2f4] min-h-screen font-sans">
 
-<!-- Waitlist modal -->
-<div id="waitlist-modal" style="display:none" class="fixed inset-0 bg-black/70 backdrop-blur z-50 flex items-center justify-center">
+<!-- ── Waitlist modal ─────────────────────────────────────────────────────── -->
+<div id="waitlist-modal" style="display:none" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center">
   <div class="modal-box max-w-sm w-[90%]">
-    <div class="flex justify-between items-start mb-4">
+    <div class="flex justify-between items-start mb-5">
       <div>
-        <h2 class="text-lg font-semibold" id="modal-plan-title">Join the waitlist</h2>
-        <p class="text-sm text-[#8b949e] mt-1">We'll reach out when billing goes live.</p>
+        <h2 class="text-lg font-semibold text-[#e4e2f4]" id="modal-plan-title">Join the waitlist</h2>
+        <p class="text-sm text-[#6b6a8f] mt-1">We'll reach out when billing goes live.</p>
       </div>
-      <button id="modal-close" class="text-[#8b949e] hover:text-white text-xl">&times;</button>
+      <button id="modal-close" class="text-[#6b6a8f] hover:text-[#e4e2f4] text-xl transition-colors">&times;</button>
     </div>
     <div class="flex gap-2">
       <input id="modal-email" type="email" placeholder="your@email.com"
-        class="flex-1 bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-white placeholder-[#8b949e] focus:outline-none focus:border-[#6366f1]" />
+        class="flex-1 bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed]/60 transition-colors" />
       <button id="modal-submit"
-        class="bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
+        class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2.5 rounded-sm transition-colors whitespace-nowrap">
         Join
       </button>
     </div>
-    <p id="modal-msg" class="text-xs text-[#3fb950] mt-2 hidden"></p>
-    <p id="modal-err" class="text-xs text-[#f85149] mt-2 hidden"></p>
+    <p id="modal-msg" class="text-xs text-[#4ade80] mt-2 hidden font-mono"></p>
+    <p id="modal-err" class="text-xs text-[#ef4444] mt-2 hidden font-mono"></p>
   </div>
 </div>
 
-<!-- Nav -->
-<nav class="sticky top-0 z-40 bg-[#0d1117]/95 backdrop-blur border-b border-[#30363d]">
+<!-- ── Nav ────────────────────────────────────────────────────────────────── -->
+<nav class="sticky top-0 z-40 bg-[#08080f]/90 backdrop-blur-xl border-b border-[#1f1f38]">
   <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-1 font-mono font-semibold text-[#e6edf3] no-underline">
-      <span class="text-[#6366f1]">&lt;</span>T<span class="text-[#6366f1]">&gt;</span>
-      <span class="ml-1">Tokenia</span>
+    <a href="/" class="flex items-center gap-2 no-underline group">
+      <div class="w-7 h-7 rounded flex items-center justify-center bg-[#7c3aed]/15 border border-[#7c3aed]/30 group-hover:border-[#7c3aed]/60 transition-colors">
+        <span class="font-mono font-bold text-[#a78bfa] text-xs">T</span>
+      </div>
+      <span class="font-semibold text-[#e4e2f4] text-sm tracking-tight">Tokenia</span>
     </a>
     <div class="flex items-center gap-5 text-sm">
-      <a href="/" class="text-[#8b949e] hover:text-white transition-colors">Home</a>
-      <a href="#faq" class="text-[#8b949e] hover:text-white transition-colors hidden sm:block">FAQ</a>
+      <a href="/" class="text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors">Home</a>
+      <a href="#faq" class="text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors hidden sm:block">FAQ</a>
     </div>
   </div>
 </nav>
 
-<!-- Hero -->
-<section class="py-16 px-6 text-center">
-  <div class="max-w-2xl mx-auto">
+<!-- ── Hero ───────────────────────────────────────────────────────────────── -->
+<section class="relative overflow-hidden py-20 px-6 text-center">
+  <div class="absolute inset-0 hero-grid hero-fade-bottom pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] pointer-events-none"
+    style="background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.15) 0%, transparent 70%)" aria-hidden="true"></div>
+  <div class="relative max-w-2xl mx-auto">
+    <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-4">Pricing</p>
     <h1 class="text-4xl font-bold tracking-tight mb-3">Simple, transparent pricing</h1>
-    <p class="text-[#8b949e] text-lg">Start free. Upgrade when you need more power.</p>
+    <p class="text-[#6b6a8f] text-lg">Start free. Upgrade when you need more power.</p>
   </div>
 </section>
 
-<!-- Pricing cards -->
+<!-- ── Pricing cards ──────────────────────────────────────────────────────── -->
 <section class="px-6 pb-16">
-  <div class="max-w-5xl mx-auto grid sm:grid-cols-3 gap-6">
+  <div class="max-w-5xl mx-auto grid sm:grid-cols-3 gap-5">
 
     <!-- Free -->
-    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-7 flex flex-col">
+    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-7 flex flex-col hover:border-[#1f1f38]/80 transition-colors">
       <div class="mb-5">
-        <span class="text-xs font-semibold uppercase tracking-wider text-[#8b949e]">Free</span>
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-[#6b6a8f]">Free</span>
         <div class="flex items-end gap-1 mt-2">
-          <span class="text-4xl font-bold">$0</span>
-          <span class="text-[#8b949e] text-sm mb-1">/month</span>
+          <span class="text-4xl font-bold font-mono">$0</span>
+          <span class="text-[#6b6a8f] text-sm mb-1.5">/month</span>
         </div>
-        <p class="text-xs text-[#8b949e] mt-2">Great for occasional token counting and cost estimation.</p>
+        <p class="text-xs text-[#6b6a8f] mt-2 leading-relaxed">Great for occasional token counting and cost estimation.</p>
       </div>
       <ul class="space-y-2.5 text-sm flex-1 mb-6">
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Token counting across all models</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Paste text (up to 1M chars)</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>File uploads up to 2 MB</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Cleaning demo (first 5,000 chars)</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Retrieval demo (top 3 chunks)</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Full document cleaning</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">CSV export</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Batch upload</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Credits</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Token counting across all models</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Paste text (up to 1M chars)</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">File uploads up to 2 MB</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Cleaning demo (first 5,000 chars)</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Retrieval demo (top 3 chunks)</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] mt-0.5 shrink-0">✗</span><span class="text-[#3d3c5c]">Full document cleaning</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] mt-0.5 shrink-0">✗</span><span class="text-[#3d3c5c]">CSV export</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] mt-0.5 shrink-0">✗</span><span class="text-[#3d3c5c]">Batch upload</span></li>
       </ul>
-      <a href="/" class="border border-[#30363d] text-[#8b949e] hover:text-white hover:border-[#6366f1] rounded-lg py-2.5 text-sm font-medium transition-colors text-center">
+      <a href="/" class="border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#7c3aed]/40 rounded-sm py-2.5 text-sm font-medium transition-colors text-center block">
         Start Free
       </a>
     </div>
 
     <!-- Pro (highlighted) -->
-    <div class="bg-[#161b22] border-2 border-[#6366f1] rounded-xl p-7 flex flex-col relative pricing-card-pro">
+    <div class="bg-[#0e0e1a] rounded-xl p-7 flex flex-col relative pricing-card-pro">
       <div class="mb-5">
-        <span class="text-xs font-semibold uppercase tracking-wider text-[#6366f1]">Pro</span>
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-[#a78bfa]">Pro</span>
         <div class="flex items-end gap-1 mt-2">
-          <span class="text-4xl font-bold">$12</span>
-          <span class="text-[#8b949e] text-sm mb-1">/month</span>
+          <span class="text-4xl font-bold font-mono">$12</span>
+          <span class="text-[#6b6a8f] text-sm mb-1.5">/month</span>
         </div>
-        <p class="text-xs text-[#8b949e] mt-2">For developers who regularly work with large documents and APIs.</p>
+        <p class="text-xs text-[#6b6a8f] mt-2 leading-relaxed">For developers who regularly work with large documents and APIs.</p>
       </div>
       <ul class="space-y-2.5 text-sm flex-1 mb-6">
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Everything in Free</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Files up to 20 MB</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Full document cleaning (unlimited chars)</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Smart retrieval up to 20 chunks</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Download cleaned text</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>CSV export reports</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Batch upload (10 files)</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>500 credits / month</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Budget alerts</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#f85149] mt-0.5">✗</span><span class="text-[#8b949e]">Team collaboration</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Everything in Free</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Files up to 20 MB</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Full document cleaning (unlimited)</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Smart retrieval up to 20 chunks</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">CSV &amp; PDF export reports</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">Batch upload (10 files)</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">API access + history</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#e4e2f4]">500 credits / month</span></li>
       </ul>
-      <button class="plan-cta bg-[#6366f1] hover:bg-[#818cf8] text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
+      <button class="plan-cta bg-[#7c3aed] hover:bg-[#8b5cf6] text-white rounded-sm py-2.5 text-sm font-medium transition-colors"
         data-plan="pro" data-billing-url="">
-        Upgrade to Pro
+        Join waitlist
       </button>
     </div>
 
     <!-- Team -->
-    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-7 flex flex-col">
+    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-7 flex flex-col hover:border-[#06b6d4]/20 transition-colors">
       <div class="mb-5">
-        <span class="text-xs font-semibold uppercase tracking-wider text-[#0ea5e9]">Team</span>
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-[#22d3ee]">Team</span>
         <div class="flex items-end gap-1 mt-2">
-          <span class="text-4xl font-bold">$39</span>
-          <span class="text-[#8b949e] text-sm mb-1">/month</span>
+          <span class="text-4xl font-bold font-mono">$39</span>
+          <span class="text-[#6b6a8f] text-sm mb-1.5">/month</span>
         </div>
-        <p class="text-xs text-[#8b949e] mt-2">For teams that need shared projects, API access, and budget controls.</p>
+        <p class="text-xs text-[#6b6a8f] mt-2 leading-relaxed">For teams that need shared projects, API access, and budget controls.</p>
       </div>
       <ul class="space-y-2.5 text-sm flex-1 mb-6">
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Everything in Pro</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Files up to 50 MB</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Batch upload (50 files)</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Retrieval up to 50 chunks</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Budget alerts</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>2,000 credits / month</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Team collaboration</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Saved projects</span></li>
-        <li class="flex gap-2 items-start"><span class="text-[#3fb950] mt-0.5">✓</span><span>Priority support</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Everything in Pro</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Files up to 50 MB</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Batch upload (50 files)</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Retrieval up to 50 chunks</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Budget alerts</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">2,000 credits / month</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Team collaboration</span></li>
+        <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] mt-0.5 shrink-0">✓</span><span class="text-[#6b6a8f]">Priority support</span></li>
       </ul>
-      <button class="plan-cta border border-[#30363d] text-[#8b949e] hover:text-white hover:border-[#0ea5e9] rounded-lg py-2.5 text-sm font-medium transition-colors"
+      <button class="plan-cta border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#06b6d4]/35 rounded-sm py-2.5 text-sm font-medium transition-colors"
         data-plan="team">
-        Get Team
+        Join waitlist
       </button>
     </div>
 
   </div>
 </section>
 
-<!-- Credits section -->
-<section class="py-12 px-6 border-t border-[#30363d]">
+<!-- ── Credits section ────────────────────────────────────────────────────── -->
+<section class="py-12 px-6 border-t border-[#1f1f38]">
   <div class="max-w-3xl mx-auto">
-    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-6">
+    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/20 transition-colors">
       <div class="flex items-start gap-4">
-        <div class="text-3xl">⚡</div>
-        <div>
-          <h2 class="text-lg font-semibold mb-1">Credits — coming soon</h2>
-          <p class="text-sm text-[#8b949e] mb-3">Buy extra processing capacity when you need it, without upgrading plans. Credits are consumed for paid operations like full document cleaning and retrieval.</p>
+        <div class="w-10 h-10 rounded-lg bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center shrink-0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <h2 class="text-base font-semibold text-[#e4e2f4]">Credits</h2>
+            <span class="badge-estimated">Coming soon</span>
+          </div>
+          <p class="text-sm text-[#6b6a8f] mb-4 leading-relaxed">Buy extra processing capacity when you need it, without upgrading plans. Credits are consumed for paid operations like full document cleaning and retrieval.</p>
           <div class="grid sm:grid-cols-3 gap-3 text-sm">
-            <div class="bg-[#21262d] rounded-lg p-3">
-              <p class="font-semibold mb-1">Cleaning (full)</p>
-              <p class="text-[#8b949e]">5 credits / document</p>
+            <div class="bg-[#16162a] rounded-sm p-3 border border-[#1f1f38]">
+              <p class="font-mono font-semibold text-[#e4e2f4] mb-1">Cleaning (full)</p>
+              <p class="text-[#6b6a8f] text-xs">5 credits / document</p>
             </div>
-            <div class="bg-[#21262d] rounded-lg p-3">
-              <p class="font-semibold mb-1">Retrieval (full)</p>
-              <p class="text-[#8b949e]">3 credits / query</p>
+            <div class="bg-[#16162a] rounded-sm p-3 border border-[#1f1f38]">
+              <p class="font-mono font-semibold text-[#e4e2f4] mb-1">Retrieval (full)</p>
+              <p class="text-[#6b6a8f] text-xs">3 credits / query</p>
             </div>
-            <div class="bg-[#21262d] rounded-lg p-3">
-              <p class="font-semibold mb-1">CSV export</p>
-              <p class="text-[#8b949e]">2 credits / export</p>
+            <div class="bg-[#16162a] rounded-sm p-3 border border-[#1f1f38]">
+              <p class="font-mono font-semibold text-[#e4e2f4] mb-1">CSV export</p>
+              <p class="text-[#6b6a8f] text-xs">2 credits / export</p>
             </div>
           </div>
         </div>
@@ -186,54 +205,139 @@
   </div>
 </section>
 
-<!-- FAQ -->
-<section id="faq" class="py-14 px-6 border-t border-[#30363d]">
+<!-- ── Feature comparison table ───────────────────────────────────────────── -->
+<section class="py-12 px-6 border-t border-[#1f1f38]">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-lg font-semibold text-[#e4e2f4] mb-6">Feature comparison</h2>
+    <div class="overflow-x-auto bg-[#0e0e1a] border border-[#1f1f38] rounded-xl">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-[#1f1f38]">
+            <th class="px-5 py-3.5 text-left text-xs font-mono font-medium text-[#6b6a8f] uppercase tracking-wider">Feature</th>
+            <th class="px-5 py-3.5 text-center text-xs font-mono font-medium text-[#6b6a8f] uppercase tracking-wider">Free</th>
+            <th class="px-5 py-3.5 text-center text-xs font-mono font-medium text-[#a78bfa] uppercase tracking-wider">Pro</th>
+            <th class="px-5 py-3.5 text-center text-xs font-mono font-medium text-[#22d3ee] uppercase tracking-wider">Team</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#1f1f38]/60">
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Token counting — all models</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Max file size</td>
+            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">2 MB</td>
+            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">20 MB</td>
+            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">50 MB</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Document cleaning</td>
+            <td class="px-5 py-3 text-center text-xs text-[#6b6a8f] font-mono">Demo (5k chars)</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓ Full</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓ Full</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Smart retrieval</td>
+            <td class="px-5 py-3 text-center text-xs text-[#6b6a8f] font-mono">Top 3 chunks</td>
+            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">Up to 20</td>
+            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">Up to 50</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Batch upload</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
+            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">10 files</td>
+            <td class="px-5 py-3 text-center text-xs text-[#e4e2f4] font-mono">50 files</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">CSV &amp; PDF export</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">API access</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Budget alerts</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Team collaboration</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">✗</td>
+            <td class="px-5 py-3 text-center text-[#4ade80]">✓</td>
+          </tr>
+          <tr class="hover:bg-[#16162a]/50 transition-colors">
+            <td class="px-5 py-3 text-[#6b6a8f]">Monthly credits</td>
+            <td class="px-5 py-3 text-center text-[#3d3c5c]">—</td>
+            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">500</td>
+            <td class="px-5 py-3 text-center font-mono text-xs text-[#e4e2f4]">2,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ────────────────────────────────────────────────────────────────── -->
+<section id="faq" class="py-16 px-6 border-t border-[#1f1f38]">
   <div class="max-w-2xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-10">Frequently asked questions</h2>
-    <div class="space-y-6">
-      <div>
-        <h3 class="font-semibold mb-2">What counts as a token?</h3>
-        <p class="text-sm text-[#8b949e]">A token is a chunk of text as processed by a language model. For English text, one token is roughly 3–4 characters or 0.75 words. For OpenAI models, we use the official tiktoken tokenizer for exact counts. For other providers, we use a calibrated heuristic and clearly label results as "~Estimated".</p>
+    <div class="text-center mb-10">
+      <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-3">FAQ</p>
+      <h2 class="text-2xl font-bold">Frequently asked questions</h2>
+    </div>
+    <div class="space-y-0 divide-y divide-[#1f1f38]">
+      <div class="py-5">
+        <h3 class="font-semibold text-[#e4e2f4] mb-2">What counts as a token?</h3>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">A token is a chunk of text as processed by a language model. For English text, one token is roughly 3–4 characters or 0.75 words. For OpenAI models, we use the official tiktoken tokenizer for exact counts. For other providers, we use a calibrated heuristic and clearly label results as <span class="font-mono text-[#fbbf24]">~Estimated</span>.</p>
       </div>
-      <div>
-        <h3 class="font-semibold mb-2">How accurate are the cost estimates?</h3>
-        <p class="text-sm text-[#8b949e]">Cost estimates are based on publicly listed API pricing. We update prices regularly, but providers can change rates without notice. Always verify against your provider's pricing page before making financial decisions. Token counts for non-OpenAI models can vary ±5–15% from actual counts.</p>
+      <div class="py-5">
+        <h3 class="font-semibold text-[#e4e2f4] mb-2">How accurate are the cost estimates?</h3>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">Cost estimates are based on publicly listed API pricing. We update prices regularly, but providers can change rates without notice. Always verify against your provider's pricing page before making financial decisions. Token counts for non-OpenAI models can vary ±5–15% from actual counts.</p>
       </div>
-      <div>
-        <h3 class="font-semibold mb-2">Can I use my own API key?</h3>
-        <p class="text-sm text-[#8b949e]">Not yet — this is planned as a Pro/Team feature. Using your own key would allow us to run the provider's official tokenizer for exact counts on all models.</p>
+      <div class="py-5">
+        <h3 class="font-semibold text-[#e4e2f4] mb-2">Can I use my own API key?</h3>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">Not yet — this is planned as a Pro/Team feature. Using your own key would allow us to run the provider's official tokenizer for exact counts on all models.</p>
       </div>
-      <div>
-        <h3 class="font-semibold mb-2">Is my text stored or used for training?</h3>
-        <p class="text-sm text-[#8b949e]">No. All text and files are processed in-memory and discarded immediately after analysis. We never store, log, or use your content.</p>
+      <div class="py-5">
+        <h3 class="font-semibold text-[#e4e2f4] mb-2">Is my text stored or used for training?</h3>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">No. All text and files are processed in-memory and discarded immediately after analysis. We never store, log, or use your content.</p>
       </div>
-      <div>
-        <h3 class="font-semibold mb-2">What file formats are supported?</h3>
-        <p class="text-sm text-[#8b949e]">PDF, DOCX, TXT, Markdown, and most programming language files (.py, .js, .ts, .go, .rs, .java, .kt, .swift, .c, .cpp, .cs, .php, etc.). HTML and JSON are also supported. Max file size: 2 MB on Free, 20 MB on Pro, 50 MB on Team.</p>
+      <div class="py-5">
+        <h3 class="font-semibold text-[#e4e2f4] mb-2">What file formats are supported?</h3>
+        <p class="text-sm text-[#6b6a8f] leading-relaxed">PDF, DOCX, TXT, Markdown, and most programming language files (.py, .js, .ts, .go, .rs, .java, .kt, .swift, .c, .cpp, .cs, .php, etc.). HTML and JSON are also supported. Max file size: 2 MB on Free, 20 MB on Pro, 50 MB on Team.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
-<footer class="border-t border-[#30363d] py-8 px-6">
-  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#8b949e]">
-    <div class="flex items-center gap-2 font-mono">
-      <span class="text-[#6366f1]">&lt;</span>T<span class="text-[#6366f1]">&gt;</span>
-      <span class="ml-1">Tokenia</span>
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer class="border-t border-[#1f1f38] py-10 px-6">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 text-sm text-[#6b6a8f]">
+    <div class="flex items-center gap-2.5">
+      <div class="w-6 h-6 rounded flex items-center justify-center bg-[#7c3aed]/12 border border-[#7c3aed]/25">
+        <span class="font-mono font-bold text-[#a78bfa] text-[.6rem]">T</span>
+      </div>
+      <span class="font-semibold text-[#e4e2f4] text-sm">Tokenia</span>
     </div>
-    <div class="flex gap-4 text-xs">
-      <a href="/" class="hover:text-white">Home</a>
-      <a href="/privacy.html" class="hover:text-white">Privacy</a>
-      <span>MIT License</span>
-      <span>Not affiliated with OpenAI, Anthropic, or Google.</span>
+    <div class="flex gap-5 text-xs">
+      <a href="/" class="hover:text-[#e4e2f4] transition-colors">Home</a>
+      <a href="/privacy.html" class="hover:text-[#e4e2f4] transition-colors">Privacy</a>
+      <span class="text-[#3d3c5c]">Not affiliated with OpenAI, Anthropic, or Google.</span>
     </div>
   </div>
 </footer>
 
 <script>
 (async function() {
-  // Detect billing state
   let billingEnabled = false;
   try {
     const f = await fetch('/api/features').then(r => r.json());
@@ -247,21 +351,19 @@
   const modalMsg    = document.getElementById('modal-msg');
   const modalErr    = document.getElementById('modal-err');
   const modalTitle  = document.getElementById('modal-plan-title');
-
   let currentPlan = 'pro';
 
   document.querySelectorAll('.plan-cta').forEach(btn => {
     btn.addEventListener('click', () => {
       currentPlan = btn.dataset.plan || 'pro';
       if (billingEnabled) {
-        // Redirect to Stripe checkout
         fetch('/api/billing/checkout', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({})
         }).then(r => r.json()).then(d => { if (d.url) window.location.href = d.url; });
       } else {
         modalTitle.textContent = `Join waitlist — ${currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}`;
         modal.style.display = 'flex';
-        modalEmail.focus();
+        setTimeout(() => modalEmail.focus(), 50);
       }
     });
   });
@@ -271,7 +373,10 @@
 
   modalSubmit.addEventListener('click', async () => {
     const email = modalEmail.value.trim();
-    if (!email || !email.includes('@')) { modalErr.textContent = 'Please enter a valid email.'; modalErr.classList.remove('hidden'); return; }
+    if (!email || !email.includes('@')) {
+      modalErr.textContent = 'Please enter a valid email.';
+      modalErr.classList.remove('hidden'); return;
+    }
     modalErr.classList.add('hidden');
     modalSubmit.disabled = true; modalSubmit.textContent = 'Joining…';
     try {
