@@ -1,670 +1,979 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tokenia — LLM Token Calculator &amp; Cost Estimator</title>
-  <meta name="description" content="Count tokens and estimate API costs across Anthropic, OpenAI, Google, Meta and Mistral models. Know what your AI calls will cost before you make them." />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase client (loaded conditionally by app.js after /api/config) -->
-  <link rel="stylesheet" href="/css/style.css" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            bg:       '#08080f',
-            surface:  '#0e0e1a',
-            surface2: '#16162a',
-            surface3: '#1c1c30',
-            border:   '#1f1f38',
-            muted:    '#6b6a8f',
-            accent:   '#7c3aed',
-            'accent-hover': '#8b5cf6',
-            'accent-light': '#a78bfa',
-            cyan:     '#06b6d4',
-            'text-base': '#e4e2f4',
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-          },
-          borderRadius: {
-            sm: '6px',
-            DEFAULT: '10px',
-            lg: '14px',
-            xl: '18px',
-          },
-        }
-      }
-    }
-  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokenia — LLM Token Calculator & Cost Estimator</title>
+  <meta name="description" content="Count tokens, estimate API costs, and optimize prompts for every major LLM. Supports Claude, GPT-4, Gemini, Llama and more. Free, local, and accurate.">
+  <meta property="og:title" content="Tokenia — LLM Token Calculator">
+  <meta property="og:description" content="The professional token counter & cost estimator for LLM developers.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-[#08080f] text-[#e4e2f4] min-h-screen font-sans">
+<body>
 
-<!-- ── Auth Modal ────────────────────────────────────────────────────────── -->
-<div id="auth-modal" aria-modal="true" role="dialog" style="display:none">
-  <div class="modal-box" style="max-width:420px">
-    <div class="flex items-start justify-between mb-5">
-      <div>
-        <h2 class="text-lg font-semibold text-[#e4e2f4]" id="auth-modal-title">Sign in to Tokenia</h2>
-        <p class="text-xs text-[#6b6a8f] mt-1">Save usage history, manage your plan, and access Pro features.</p>
-      </div>
-      <button id="auth-modal-close" class="text-[#6b6a8f] hover:text-[#e4e2f4] text-xl leading-none transition-colors ml-4">&times;</button>
-    </div>
-
-    <!-- Tabs -->
-    <div class="flex gap-0 mb-5 border-b border-[#1f1f38]">
-      <button id="auth-tab-signin" class="tab-btn active-tab" data-authtab="signin">Sign in</button>
-      <button id="auth-tab-signup" class="tab-btn" data-authtab="signup">Sign up</button>
-    </div>
-
-    <!-- Sign-in form -->
-    <div id="auth-panel-signin" class="space-y-3">
-      <input id="signin-email" type="email" placeholder="Email" autocomplete="email"
-        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
-      <input id="signin-password" type="password" placeholder="Password" autocomplete="current-password"
-        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
-      <button id="btn-signin"
-        class="w-full bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2.5 rounded-sm transition-colors">
-        Sign in
-      </button>
-    </div>
-
-    <!-- Sign-up form -->
-    <div id="auth-panel-signup" class="space-y-3 hidden">
-      <input id="signup-email" type="email" placeholder="Email" autocomplete="email"
-        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
-      <input id="signup-password" type="password" placeholder="Password (min 8 chars)" autocomplete="new-password"
-        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
-      <button id="btn-signup"
-        class="w-full bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2.5 rounded-sm transition-colors">
-        Create free account
-      </button>
-    </div>
-
-    <p id="auth-msg" class="text-xs mt-3 hidden"></p>
-
-    <p class="text-[.65rem] text-[#6b6a8f] mt-4 text-center leading-relaxed">
-      Auth powered by Supabase. We never store your text or documents.
-      <a href="/privacy.html" target="_blank" class="underline hover:text-[#e4e2f4]">Privacy policy</a>
-    </p>
-  </div>
-</div>
-
-<!-- ── Upgrade Modal ─────────────────────────────────────────────────────── -->
-<div id="upgrade-modal" aria-modal="true" role="dialog">
-  <div class="modal-box">
-    <div class="flex items-start justify-between mb-4">
-      <div>
-        <h2 class="text-lg font-semibold text-[#e4e2f4]">Unlock Pro Features</h2>
-        <p class="text-sm text-[#6b6a8f] mt-1">Próximamente: upgrade a Pro y Team.</p>
-      </div>
-      <button id="modal-close" class="text-[#6b6a8f] hover:text-[#e4e2f4] text-xl leading-none transition-colors ml-4">&times;</button>
-    </div>
-    <div class="space-y-2 mb-5 text-sm text-[#6b6a8f]">
-      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Full document cleaning — save 10–40% tokens</div>
-      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Smart retrieval — send only relevant passages</div>
-      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> CSV export reports</div>
-      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Up to 20 MB file uploads</div>
-      <div class="flex items-center gap-2.5"><span class="text-[#4ade80] text-base">✓</span> Retrieve up to 20 chunks</div>
-    </div>
-    <div class="flex gap-2">
-      <input id="modal-email" type="email" placeholder="your@email.com"
-        class="flex-1 bg-[#08080f] border border-[#1f1f38] rounded-sm px-3 py-2 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed] transition-colors" />
-      <button id="modal-submit"
-        class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2 rounded-sm transition-colors whitespace-nowrap">
-        Join waitlist
-      </button>
-    </div>
-    <p id="modal-msg" class="text-xs text-[#4ade80] mt-2 hidden"></p>
-  </div>
-</div>
-
-<!-- ── Nav ────────────────────────────────────────────────────────────────── -->
-<nav class="sticky top-0 z-50 bg-[#08080f]/90 backdrop-blur-xl border-b border-[#1f1f38]">
-  <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-2 no-underline group">
-      <div class="w-7 h-7 rounded flex items-center justify-center bg-[#7c3aed]/15 border border-[#7c3aed]/30 group-hover:border-[#7c3aed]/60 transition-colors">
-        <span class="font-mono font-bold text-[#a78bfa] text-xs">T</span>
-      </div>
-      <span class="font-semibold text-[#e4e2f4] text-sm tracking-tight">Tokenia</span>
-      <span class="text-[.65rem] bg-[#16162a] text-[#6b6a8f] border border-[#1f1f38] rounded px-1.5 py-0.5 font-mono">beta</span>
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<header class="nav-header">
+  <nav class="nav-inner container">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="url(#nb)"/>
+        <path d="M7 14h3.5l2-5 3 10 2-7 1.5 2H21" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#7c3aed"/><stop offset="1" stop-color="#3b82f6"/>
+        </linearGradient></defs>
+      </svg>
+      <span>Tokenia</span>
     </a>
 
-    <div class="flex items-center gap-5">
-      <a href="#how-it-works" class="text-sm text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors hidden sm:block">How it works</a>
-      <a href="/pricing.html" class="text-sm text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors hidden sm:block">Pricing</a>
+    <div class="nav-links">
+      <a href="#demo" class="nav-link">Tool</a>
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#" class="nav-link">Docs</a>
+    </div>
 
-      <!-- Anonymous / auth-disabled state -->
-      <div id="nav-anon" class="flex items-center gap-2">
-        <button id="nav-signin-btn"
-          class="text-sm text-[#6b6a8f] hover:text-[#e4e2f4] px-3 py-1.5 rounded-sm border border-[#1f1f38] hover:border-[#7c3aed]/50 transition-colors hidden"
-          aria-label="Sign in">
-          Sign in
-        </button>
-        <button id="nav-get-pro"
-          class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-1.5 rounded-sm transition-colors">
-          Get Pro
-        </button>
+    <!-- anon state -->
+    <div id="nav-anon" class="nav-actions">
+      <button id="nav-signin-btn" class="btn btn-ghost btn-sm">Sign in</button>
+      <a href="#pricing" class="btn btn-primary btn-sm">Get started free</a>
+    </div>
+
+    <!-- authed state (hidden by default) -->
+    <div id="nav-user" class="nav-actions" style="display:none">
+      <div id="nav-usage" class="nav-usage-wrap" style="display:none">
+        <span id="nav-usage-label" class="nav-usage-label">0 / 100k</span>
+        <div class="nav-usage-track">
+          <div id="nav-usage-bar" class="nav-usage-fill" style="width:0%"></div>
+        </div>
       </div>
+      <span id="nav-plan-badge" class="badge badge-free">Free</span>
+      <button id="nav-get-pro" class="btn btn-primary btn-sm" style="display:none">Upgrade</button>
+      <span id="nav-credits" class="nav-credits" style="display:none"></span>
+      <span id="nav-user-email" class="nav-user-email"></span>
+      <button id="nav-signout-btn" class="btn btn-ghost btn-sm">Sign out</button>
+    </div>
+  </nav>
+</header>
 
-      <!-- Logged-in state -->
-      <div id="nav-user" class="hidden items-center gap-3">
-        <div id="nav-usage" class="hidden items-center gap-2 text-xs text-[#6b6a8f]">
-          <div class="w-18 h-1 bg-[#16162a] rounded-full overflow-hidden" style="width:72px">
-            <div id="nav-usage-bar" class="h-full bg-[#7c3aed] rounded-full transition-all" style="width:0%"></div>
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero-section">
+  <div class="hero-bg-orb orb-1"></div>
+  <div class="hero-bg-orb orb-2"></div>
+  <div class="hero-bg-orb orb-3"></div>
+
+  <div class="container hero-grid">
+    <!-- Left: copy -->
+    <div class="hero-copy reveal">
+      <div class="hero-eyebrow">
+        <span class="badge badge-violet">✦ Now with prompt optimization</span>
+      </div>
+      <h1 class="hero-headline">
+        Count tokens.<br>
+        <span class="gradient-text">Cut costs.</span><br>
+        Ship faster.
+      </h1>
+      <p class="hero-sub">
+        The professional token counter &amp; cost estimator built for LLM developers.
+        Analyze any text or file against 18+ models — instantly, locally, accurately.
+      </p>
+      <div class="hero-ctas">
+        <a href="#demo" class="btn btn-primary btn-lg">
+          Start counting free
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#how-it-works" class="btn btn-outline btn-lg">See how it works</a>
+      </div>
+      <div class="hero-badges">
+        <span class="trust-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 4h4l-3.3 2.4 1.3 4L7 9 3.5 11.4l1.3-4L1.5 5h4z" fill="#f59e0b"/></svg>
+          18+ models
+        </span>
+        <span class="trust-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zm0 2a1 1 0 110 2 1 1 0 010-2zm0 3h.5a.5.5 0 01.5.5v3.5h.5a.5.5 0 010 1h-2a.5.5 0 010-1h.5V7H7a.5.5 0 010-1z" fill="#10b981"/></svg>
+          100% local
+        </span>
+        <span class="trust-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11 12 4" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          98% accuracy
+        </span>
+        <span class="trust-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="7" rx="1.5" stroke="#3b82f6" stroke-width="1.5"/><path d="M5 4V3a2 2 0 114 0v1" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg>
+          $0 to count
+        </span>
+      </div>
+    </div>
+
+    <!-- Right: illustration -->
+    <div class="hero-illustration reveal delay-2">
+      <div class="hero-card-float">
+        <div class="hc-header">
+          <div class="hc-dot red"></div><div class="hc-dot yellow"></div><div class="hc-dot green"></div>
+          <span class="hc-label">token analyzer</span>
+        </div>
+        <div class="hc-body">
+          <div class="hc-input-row">
+            <span class="hc-prompt-label">Input</span>
+            <span class="mono" style="color:var(--text-dim);font-size:12px">claude-3-5-sonnet</span>
           </div>
-          <span id="nav-usage-label"></span>
+          <div class="hc-chip-row">
+            <span class="token-chip t-purple">You</span>
+            <span class="token-chip t-blue">are</span>
+            <span class="token-chip t-green">a</span>
+            <span class="token-chip t-amber">helpful</span>
+            <span class="token-chip t-pink">assistant</span>
+            <span class="token-chip t-cyan">that</span>
+            <span class="token-chip t-purple">an</span>
+            <span class="token-chip t-blue">swers</span>
+            <span class="token-chip t-green">con</span>
+            <span class="token-chip t-amber">cise</span>
+            <span class="token-chip t-pink">ly</span>
+          </div>
+          <div class="hc-stats-row">
+            <div class="hc-stat"><span class="hc-stat-val">11</span><span class="hc-stat-lbl">tokens</span></div>
+            <div class="hc-stat"><span class="hc-stat-val">$0.0033</span><span class="hc-stat-lbl">cost</span></div>
+            <div class="hc-stat"><span class="hc-stat-val">42</span><span class="hc-stat-lbl">chars</span></div>
+          </div>
+          <div class="hc-model-row">
+            <div class="hc-model-item">
+              <span class="provider-dot prov-anthropic"></span>Claude 3.5 Sonnet
+              <span class="hc-price">$0.0033</span>
+            </div>
+            <div class="hc-model-item">
+              <span class="provider-dot prov-openai"></span>GPT-4o
+              <span class="hc-price">$0.0055</span>
+            </div>
+            <div class="hc-model-item">
+              <span class="provider-dot prov-google"></span>Gemini 1.5 Pro
+              <span class="hc-price">$0.0017</span>
+            </div>
+          </div>
         </div>
-        <div class="flex items-center gap-2 border border-[#1f1f38] rounded-sm px-2.5 py-1 text-xs bg-[#0e0e1a]">
-          <span id="nav-credits" class="text-xs text-[#6b6a8f]" style="display:none"></span>
-          <span id="nav-plan-badge" class="font-medium text-[#a78bfa] font-mono">Free</span>
-          <span class="text-[#1f1f38]">|</span>
-          <span id="nav-user-email" class="text-[#6b6a8f] truncate max-w-[120px]"></span>
+        <div class="hc-savings-pill">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9 10 3" stroke="#10b981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Save 40% switching to Gemini Flash
         </div>
-        <button id="nav-signout-btn"
-          class="text-xs text-[#6b6a8f] hover:text-[#ef4444] transition-colors"
-          title="Sign out">
-          Sign out
-        </button>
       </div>
     </div>
   </div>
-</nav>
+</section>
 
-<!-- ── Hero ───────────────────────────────────────────────────────────────── -->
-<section id="hero" class="relative overflow-hidden">
-  <!-- Grid background -->
-  <div class="absolute inset-0 hero-grid hero-fade-bottom pointer-events-none" aria-hidden="true"></div>
-  <!-- Glow orb -->
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full pointer-events-none"
-    style="background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.18) 0%, transparent 70%)" aria-hidden="true"></div>
+<!-- ═══════════════════════════ STATS BAR ═══════════════════════════ -->
+<section class="stats-bar">
+  <div class="container stats-grid">
+    <div class="stat-item reveal">
+      <span class="stat-number gradient-text">18+</span>
+      <span class="stat-label">LLM models supported</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item reveal delay-1">
+      <span class="stat-number gradient-text">100%</span>
+      <span class="stat-label">Runs in your browser</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item reveal delay-2">
+      <span class="stat-number gradient-text">98%</span>
+      <span class="stat-label">Tokenizer accuracy</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item reveal delay-3">
+      <span class="stat-number gradient-text">$0</span>
+      <span class="stat-label">To count tokens</span>
+    </div>
+  </div>
+</section>
 
-  <div class="relative max-w-6xl mx-auto px-6 pt-20 pb-12 text-center">
-    <!-- Eyebrow badge -->
-    <div class="inline-flex items-center gap-1.5 bg-[#0e0e1a] border border-[#1f1f38] rounded-full px-3 py-1 text-xs text-[#6b6a8f] mb-6 font-mono">
-      <span class="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse"></span>
-      OpenAI · Anthropic · Google · Meta · Mistral
+<!-- ═══════════════════════════ DEMO / TOOL ═══════════════════════════ -->
+<section id="demo" class="tool-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Token Counter</span>
+      <h2 class="section-title">Paste text or upload a file</h2>
+      <p class="section-sub">Get an instant count and cost breakdown across every major model.</p>
     </div>
 
-    <h1 class="text-4xl sm:text-5xl font-bold tracking-tight leading-[1.15] mb-5">
-      Count tokens.<br>
-      <span class="gradient-text">Estimate costs.</span> Ship smarter.
-    </h1>
-    <p class="text-[#6b6a8f] text-lg max-w-lg mx-auto mb-8 leading-relaxed">
-      Know what your AI API calls will cost before you make them. Compare across providers with exact or clearly-labelled estimated counts.
-    </p>
-
-    <!-- Precision tier badges -->
-    <div class="flex flex-wrap justify-center gap-2 mb-12 text-sm">
-      <span class="badge-exact">✓ Exact — OpenAI tiktoken</span>
-      <span class="badge-official">~ Official — Anthropic API</span>
-      <span class="badge-estimated">~ Estimated — calibrated heuristic</span>
-      <span class="badge-local">✓ Local processing</span>
-    </div>
-
-    <!-- ── Input card ──────────────────────────────────────────────────────── -->
-    <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-5 text-left max-w-3xl mx-auto shadow-2xl">
-
-      <!-- Tabs -->
-      <div class="flex gap-0 mb-4 border-b border-[#1f1f38]">
-        <button class="tab-btn active-tab" data-tab="text">Paste Text</button>
-        <button class="tab-btn" data-tab="file">Upload File</button>
-        <button class="tab-btn flex items-center gap-1.5" data-tab="batch">
-          Batch
-          <span class="badge-paid" style="font-size:.58rem;padding:1px 6px">Pro</span>
-        </button>
-      </div>
-
-      <!-- Text tab -->
-      <div id="tab-text" class="tab-panel">
-        <textarea id="text-input"
-          class="w-full bg-[#08080f] border border-[#1f1f38] rounded px-4 py-3 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed]/60 resize-none font-mono transition-colors"
-          rows="8"
-          placeholder="Paste your prompt, system instruction, document, or code here…"
-          spellcheck="false"></textarea>
-        <div class="flex items-center justify-between mt-2.5 text-xs text-[#6b6a8f]">
-          <div class="flex gap-3 font-mono">
-            <span id="char-count">0 chars</span>
-            <span class="text-[#1f1f38]">&middot;</span>
-            <span id="word-count">0 words</span>
-            <span class="text-[#1f1f38]">&middot;</span>
-            <span id="line-count">0 lines</span>
-          </div>
-          <div class="flex gap-2">
-            <button id="btn-clear-text" class="text-[#6b6a8f] hover:text-[#ef4444] transition-colors disabled:opacity-30" disabled>Clear</button>
-            <button id="btn-analyze-text"
-              class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white px-4 py-1.5 rounded-sm text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              disabled>
-              Calculate Tokens
+    <div class="tool-layout">
+      <!-- Input card -->
+      <div class="tool-card reveal">
+        <div class="tool-card-header">
+          <div class="tool-tabs">
+            <button class="tab-btn active-tab" data-tab="text-tab">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 5h6M4 7.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Text
+            </button>
+            <button class="tab-btn" data-tab="file-tab">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8 2H4a1 1 0 00-1 1v8a1 1 0 001 1h6a1 1 0 001-1V5l-3-3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 2v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              File
+            </button>
+            <button class="tab-btn" data-tab="clean-tab">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3h8M3 6h5M3 9h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Clean
+              <span id="clean-badge" class="tab-badge" style="display:none">Pro</span>
+            </button>
+            <button class="tab-btn" data-tab="retrieve-tab">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 9.5l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Retrieve
+              <span id="retrieve-badge" class="tab-badge" style="display:none">Pro</span>
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- File tab -->
-      <div id="tab-file" class="tab-panel hidden">
-        <div id="dropzone" class="dropzone cursor-pointer">
-          <input type="file" id="file-input" hidden
-            accept=".txt,.md,.pdf,.docx,.doc,.js,.ts,.jsx,.tsx,.py,.rb,.go,.rs,.java,.kt,.swift,.c,.cpp,.cs,.php,.sh,.bash,.sql,.html,.css,.scss,.json,.yaml,.yml,.xml,.toml,.r" />
-          <div class="flex flex-col items-center gap-2.5 pointer-events-none">
-            <svg class="text-[#6b6a8f]" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            <p class="text-sm text-[#6b6a8f]">Drop a file or <span class="text-[#a78bfa] pointer-events-auto cursor-pointer hover:text-[#c4b5fd]" id="btn-browse">browse</span></p>
-            <p class="text-xs text-[#3d3c5c] font-mono">.txt · .md · .pdf · .docx · .py · .js · .ts · .go · .rs · .java and 20+ more · max 10 MB</p>
+        <!-- TEXT TAB -->
+        <div id="text-tab" class="tab-panel active-panel">
+          <div class="textarea-wrap">
+            <textarea
+              id="text-input"
+              class="tool-textarea"
+              placeholder="Paste your prompt, system message, or document here…"
+              spellcheck="false"
+              rows="10"
+            ></textarea>
+            <div class="textarea-meta">
+              <span class="meta-count"><span id="char-count">0</span> chars</span>
+              <span class="meta-sep">·</span>
+              <span class="meta-count"><span id="word-count">0</span> words</span>
+              <span class="meta-sep">·</span>
+              <span class="meta-count"><span id="line-count">0</span> lines</span>
+            </div>
+          </div>
+          <div class="tool-actions">
+            <button id="btn-clear-text" class="btn btn-ghost btn-sm">Clear</button>
+            <button id="btn-analyze-text" class="btn btn-primary">
+              Analyze tokens
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
           </div>
         </div>
-        <div id="file-info" class="hidden flex items-center gap-2 mt-3 text-sm text-[#6b6a8f] bg-[#16162a] rounded-sm px-3 py-2 border border-[#1f1f38]">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-          <span id="file-name" class="flex-1 truncate text-[#e4e2f4] font-mono text-xs"></span>
-          <span id="file-size" class="text-xs text-[#6b6a8f] font-mono"></span>
-          <button id="btn-remove-file" class="text-[#6b6a8f] hover:text-[#ef4444] transition-colors ml-1">&times;</button>
+
+        <!-- FILE TAB -->
+        <div id="file-tab" class="tab-panel">
+          <input type="file" id="file-input" class="sr-only" accept=".txt,.md,.pdf,.docx,.py,.js,.ts,.jsx,.tsx,.json,.yaml,.yml,.csv,.html,.css">
+          <div id="dropzone" class="dropzone">
+            <div class="dropzone-icon">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="rgba(124,58,237,.12)"/><path d="M20 12v12M16 16l4-4 4 4" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 28h14" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <p class="dropzone-title">Drop your file here</p>
+            <p class="dropzone-sub">or <button id="btn-browse" class="link-btn">browse to upload</button></p>
+            <p class="dropzone-types">TXT · MD · PDF · DOCX · Code files up to 10 MB</p>
+          </div>
+
+          <div id="file-info" class="file-info" style="display:none">
+            <div class="file-info-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#7c3aed" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="file-info-text">
+              <span id="file-name" class="file-name-text"></span>
+              <span id="file-size" class="file-size-text"></span>
+            </div>
+            <button id="btn-remove-file" class="btn-icon" aria-label="Remove file">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="tool-actions">
+            <button id="btn-analyze-file" class="btn btn-primary" style="display:none">
+              Analyze file
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
         </div>
-        <div class="flex justify-end mt-3">
-          <button id="btn-analyze-file"
-            class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white px-4 py-1.5 rounded-sm text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            disabled>
-            Calculate Tokens
+
+        <!-- CLEAN TAB -->
+        <div id="clean-tab" class="tab-panel">
+          <div id="clean-demo-banner" class="demo-banner">
+            <span id="clean-demo-msg">✨ Pro feature — optimize your prompts for token efficiency</span>
+          </div>
+
+          <div id="clean-result" class="clean-result-panel" style="display:none">
+            <div class="clean-stats-row">
+              <div class="clean-stat-pill">
+                <span>Original</span>
+                <strong id="clean-orig-chars">–</strong>
+              </div>
+              <div class="clean-stat-arrow">→</div>
+              <div class="clean-stat-pill accent">
+                <span>Cleaned</span>
+                <strong id="clean-new-chars">–</strong>
+              </div>
+              <div class="savings-chip">
+                <span id="clean-saved-chars">–</span> saved
+                <span class="savings-pct-inline" id="clean-pct"></span>
+              </div>
+            </div>
+            <pre id="clean-text-out" class="clean-text-pre"></pre>
+            <div id="clean-cmp-body" class="cmp-table"></div>
+            <div class="clean-actions">
+              <button id="btn-copy-clean" class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="5" y="5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2 9V3a1 1 0 011-1h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                Copy
+              </button>
+              <button id="btn-download-clean" class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Download
+              </button>
+            </div>
+          </div>
+
+          <input type="file" id="clean-file-input" class="sr-only" accept=".txt,.md,.pdf,.docx">
+          <div class="tool-actions" style="margin-top:var(--sp-4)">
+            <button id="btn-clean-upload" class="btn btn-outline btn-sm">Upload file to clean</button>
+          </div>
+          <div id="clean-loading" class="loading-indicator" style="display:none">
+            <div class="spinner"></div><span>Optimizing…</span>
+          </div>
+          <div id="clean-error" class="error-panel" style="display:none"></div>
+        </div>
+
+        <!-- RETRIEVE TAB -->
+        <div id="retrieve-tab" class="tab-panel">
+          <div id="retrieve-demo-banner" class="demo-banner">
+            <span id="retrieve-demo-msg">🔍 Pro feature — semantic chunk retrieval for RAG pipelines</span>
+          </div>
+
+          <div id="retrieve-result" class="retrieve-result-panel" style="display:none">
+            <div id="retrieve-meta" class="retrieve-meta-bar"></div>
+            <div id="retrieve-cmp-body" class="cmp-table"></div>
+            <div id="chunks-list" class="chunks-list"></div>
+            <div class="retrieve-actions">
+              <button id="btn-copy-chunks" class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="5" y="5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2 9V3a1 1 0 011-1h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                Copy chunks
+              </button>
+            </div>
+          </div>
+
+          <input type="file" id="retrieve-file-input" class="sr-only" accept=".txt,.md,.pdf,.docx">
+          <div id="retrieve-file-name" class="file-name-inline" style="display:none"></div>
+
+          <div class="retrieve-query-wrap" style="margin-top:var(--sp-4)">
+            <input id="retrieve-query" type="text" class="tool-input" placeholder="Enter your retrieval query…">
+            <div class="retrieve-topk-row">
+              <label for="retrieve-topk" class="input-label">Top-K chunks</label>
+              <input id="retrieve-topk" type="number" class="tool-input input-sm" value="5" min="1" max="20">
+            </div>
+          </div>
+          <div class="tool-actions" style="margin-top:var(--sp-3)">
+            <button id="btn-retrieve-upload" class="btn btn-outline btn-sm">Upload document</button>
+            <button id="btn-retrieve" class="btn btn-primary">Retrieve chunks</button>
+          </div>
+          <div id="retrieve-loading" class="loading-indicator" style="display:none">
+            <div class="spinner"></div><span>Retrieving…</span>
+          </div>
+          <div id="retrieve-error" class="error-panel" style="display:none"></div>
+        </div>
+
+      </div><!-- /tool-card -->
+
+      <!-- Results / output column -->
+      <div class="results-col">
+
+        <!-- Error banner -->
+        <div id="error-banner" class="error-banner" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span id="error-text"></span>
+          <button id="btn-dismiss-error" class="btn-icon">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </button>
         </div>
-      </div>
 
-      <!-- Batch tab (Pro locked) -->
-      <div id="tab-batch" class="tab-panel hidden">
-        <div class="flex flex-col items-center justify-center py-12 gap-4 text-center">
-          <div class="w-12 h-12 rounded-lg bg-[#16162a] border border-[#1f1f38] flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b6a8f" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-[#e4e2f4] mb-1">Batch processing — Pro feature</h3>
-            <p class="text-sm text-[#6b6a8f] max-w-xs">Upload up to 50 files at once, get a CSV report of token counts and cost projections per file.</p>
-          </div>
-          <button class="upgrade-trigger bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-5 py-2 rounded-sm transition-colors mt-1" data-feature="batch">
-            Próximamente: Batch Pro
-          </button>
+        <!-- Loading -->
+        <div id="loading" class="loading-state" style="display:none">
+          <div class="loading-orb"></div>
+          <div class="loading-pulse">Analyzing tokens…</div>
         </div>
-      </div>
-    </div><!-- /input-card -->
 
-    <!-- ── Model selector ────────────────────────────────────────────────── -->
-    <div id="model-selector" class="max-w-3xl mx-auto mt-4 text-left">
-      <p class="text-xs text-[#6b6a8f] mb-2 font-medium uppercase tracking-wider font-mono">Compare models</p>
-      <div id="model-checkboxes" class="flex flex-wrap gap-2"></div>
-    </div>
+        <!-- File stats block -->
+        <div id="s-file-block" class="file-stat-block" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 5.5V12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1h4l3 3z" stroke="var(--violet-light)" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span id="s-file" class="file-stat-name"></span>
+          <span>·</span>
+          <span id="s-chars" class="file-stat-val">0</span> chars
+          <span>·</span>
+          <span id="s-words" class="file-stat-val">0</span> words
+          <span>·</span>
+          <span id="s-lines" class="file-stat-val">0</span> lines
+        </div>
+
+        <!-- Provider pills -->
+        <div id="results" class="results-panel" style="display:none">
+          <div id="provider-pills" class="provider-pills-row"></div>
+          <div id="model-checkboxes" class="model-checkboxes-grid"></div>
+          <div id="token-results" class="token-results-panel"></div>
+          <div id="results-body" class="results-table-wrap"></div>
+        </div>
+
+        <!-- Savings card -->
+        <div id="savings-card" class="savings-card" style="display:none">
+          <div class="savings-card-header">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2l1.8 5.4H17L12 11l1.8 5.4L9 13l-4.8 3.4L6 11 1 7.4h6.2z" fill="url(#sg)"/><defs><linearGradient id="sg" x1="1" y1="2" x2="17" y2="18"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs></svg>
+            <span>Cost Optimizer</span>
+          </div>
+          <p id="savings-msg" class="savings-msg"></p>
+          <div id="savings-opt" class="savings-opt-row"></div>
+          <div id="savings-orig" class="savings-orig-row"></div>
+          <div id="savings-pct" class="savings-pct"></div>
+          <p id="savings-disclaimer" class="savings-disclaimer"></p>
+        </div>
+
+      </div><!-- /results-col -->
+    </div><!-- /tool-layout -->
   </div>
 </section>
 
-<!-- ── Loading ────────────────────────────────────────────────────────────── -->
-<div id="loading" class="hidden flex flex-col items-center gap-3 py-10">
-  <div class="spinner"></div>
-  <span class="text-sm text-[#6b6a8f] loading-pulse font-mono">Counting tokens…</span>
-</div>
+<!-- ═══════════════════════════ FEATURES ═══════════════════════════ -->
+<section id="features" class="features-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Why developers choose Tokenia</span>
+      <h2 class="section-title">Everything you need to ship smarter</h2>
+      <p class="section-sub">From quick token checks to full prompt optimization pipelines — all in one tool.</p>
+    </div>
 
-<!-- ── Error banner ───────────────────────────────────────────────────────── -->
-<div id="error-banner" class="hidden max-w-3xl mx-auto px-6 mb-4">
-  <div class="bg-[#ef4444]/08 border border-[#ef4444]/25 rounded-sm px-4 py-3 flex items-start gap-3">
-    <svg class="text-[#ef4444] mt-0.5 shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <span id="error-text" class="text-sm text-[#ef4444] flex-1"></span>
-    <button id="btn-dismiss-error" class="text-[#6b6a8f] hover:text-[#e4e2f4] transition-colors">&times;</button>
-  </div>
-</div>
-
-<!-- ── Results ────────────────────────────────────────────────────────────── -->
-<div id="results" class="hidden max-w-6xl mx-auto px-6 pb-12 space-y-5">
-
-  <!-- Savings card — hero protagonist -->
-  <div id="savings-card" class="savings-card hidden">
-    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
-      <div>
-        <p id="savings-msg" class="text-xs text-[#6b6a8f] mb-3 font-mono uppercase tracking-wider"></p>
-        <div class="flex items-end gap-4 flex-wrap">
-          <div>
-            <p class="text-xs text-[#6b6a8f] mb-0.5">Original</p>
-            <p id="savings-orig" class="savings-card-amount text-[#6b6a8f]"></p>
-          </div>
-          <svg class="mb-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3d3c5c" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-          <div>
-            <p class="text-xs text-[#6b6a8f] mb-0.5">Optimized</p>
-            <p id="savings-opt" class="savings-card-amount text-[#4ade80]"></p>
-          </div>
-          <span id="savings-pct" class="savings-pct mb-1"></span>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="icon-box icon-violet">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M7 14h14M14 7v14" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="5" stroke="#7c3aed" stroke-width="2"/>
+          </svg>
         </div>
+        <h3 class="feature-title">Exact token counts</h3>
+        <p class="feature-desc">Uses official tokenizers (tiktoken, transformers) where available. Clearly labeled when estimates are used — never passes an approximation as an exact figure.</p>
       </div>
-      <p class="text-xs text-[#6b6a8f] max-w-xs italic sm:text-right leading-relaxed" id="savings-disclaimer"></p>
-    </div>
-  </div>
 
-  <!-- Token results table -->
-  <div id="token-results">
-    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-      <h2 class="text-sm font-semibold text-[#e4e2f4] tracking-wide uppercase font-mono">Token counts &amp; costs</h2>
-      <div class="flex gap-2 flex-wrap" id="provider-pills"></div>
-    </div>
-
-    <!-- Stats bar -->
-    <div class="flex gap-5 mb-4 text-xs text-[#6b6a8f] font-mono flex-wrap">
-      <span>chars: <span class="text-[#e4e2f4]" id="s-chars">—</span></span>
-      <span>words: <span class="text-[#e4e2f4]" id="s-words">—</span></span>
-      <span>lines: <span class="text-[#e4e2f4]" id="s-lines">—</span></span>
-      <span id="s-file-block" class="hidden">file: <span class="text-[#e4e2f4]" id="s-file">—</span></span>
-    </div>
-
-    <div class="overflow-x-auto bg-[#0e0e1a] border border-[#1f1f38] rounded-xl">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-[#1f1f38] text-[.7rem] text-[#6b6a8f] uppercase tracking-wider font-mono">
-            <th class="px-4 py-3 text-left font-medium">Model</th>
-            <th class="px-4 py-3 text-right font-medium">Tokens</th>
-            <th class="px-4 py-3 text-right font-medium">Context used</th>
-            <th class="px-4 py-3 text-right font-medium">Input cost</th>
-            <th class="px-4 py-3 text-right font-medium">Output cost</th>
-            <th class="px-4 py-3 text-center font-medium">Precision</th>
-          </tr>
-        </thead>
-        <tbody id="results-body"></tbody>
-      </table>
-    </div>
-    <p class="text-xs text-[#3d3c5c] mt-2 font-mono">* Output cost assumes reply ≈ same length as input. Based on public pricing, may be outdated.</p>
-  </div>
-
-  <!-- Clean section -->
-  <div id="clean-section" class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-5">
-    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
-      <div>
-        <div class="flex items-center gap-2.5 mb-1">
-          <h3 class="text-sm font-semibold text-[#e4e2f4]">Format Cleaner</h3>
-          <span id="clean-badge" class="badge-demo">Demo</span>
+      <div class="feature-card reveal delay-1">
+        <div class="icon-box icon-cyan">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect x="6" y="8" width="16" height="12" rx="2" stroke="#67e8f9" stroke-width="2"/>
+            <path d="M10 12l4 4 4-4" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <p class="text-xs text-[#6b6a8f] max-w-md">Removes layout noise from PDFs, DOCX and HTML without touching meaning. Typical savings: 10–40% tokens.</p>
+        <h3 class="feature-title">Clean file output</h3>
+        <p class="feature-desc">Strip redundant whitespace, boilerplate, and filler phrases from prompts and documents. See real before/after token savings with a single click.</p>
       </div>
-      <div class="flex gap-2">
-        <button id="btn-clean-upload" class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2 rounded-sm transition-colors">
-          Clean a file
-        </button>
+
+      <div class="feature-card reveal delay-2">
+        <div class="icon-box icon-green">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="12" cy="12" r="7" stroke="#4ade80" stroke-width="2"/>
+            <path d="M17 17l5 5" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Smart retrieval</h3>
+        <p class="feature-desc">Semantic chunk retrieval for RAG pipelines. Upload your document, enter a query, and get back the most relevant chunks ranked by relevance — with token cost for each.</p>
+      </div>
+
+      <div class="feature-card reveal delay-3">
+        <div class="icon-box icon-amber">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M14 5v4M14 19v4M5 14h4M19 14h4" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="4" stroke="#fbbf24" stroke-width="2"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">100% local processing</h3>
+        <p class="feature-desc">Your text never leaves the browser. No server uploads, no data retention, no API keys needed for counting. Private by design — your IP stays yours.</p>
       </div>
     </div>
 
-    <input type="file" id="clean-file-input" hidden accept=".pdf,.docx,.doc,.html,.htm,.txt,.md" />
-
-    <div id="clean-result" class="hidden space-y-4 mt-2">
-      <!-- Demo banner -->
-      <div id="clean-demo-banner" class="demo-banner hidden">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span id="clean-demo-msg"></span>
-        <button class="upgrade-trigger ml-auto text-xs text-[#f97316] hover:underline shrink-0" data-feature="cleanFull">Próximamente: Pro</button>
-      </div>
-
-      <!-- Stats grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
-          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Original chars</p>
-          <p class="font-mono font-semibold text-sm" id="clean-orig-chars">—</p>
+    <!-- Bonus feature row -->
+    <div class="features-wide reveal">
+      <div class="feature-wide-card">
+        <div class="icon-box icon-violet" style="flex-shrink:0">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M6 14h16M10 8l-4 6 4 6M18 8l4 6-4 6" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
-          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Cleaned chars</p>
-          <p class="font-mono font-semibold text-sm text-[#4ade80]" id="clean-new-chars">—</p>
-        </div>
-        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
-          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Chars removed</p>
-          <p class="font-mono font-semibold text-sm text-[#4ade80]" id="clean-saved-chars">—</p>
-        </div>
-        <div class="bg-[#16162a] rounded-sm px-3 py-2.5 border border-[#1f1f38]">
-          <p class="text-[.7rem] text-[#6b6a8f] mb-1">Savings</p>
-          <p class="font-mono font-semibold text-sm text-[#4ade80]" id="clean-pct">—</p>
+        <div>
+          <h3 class="feature-title">Multi-model cost comparison</h3>
+          <p class="feature-desc">Compare the same prompt across Claude, GPT-4o, Gemini, Mistral, Llama and 13 more models simultaneously. Prices live in a config file — update once when models change.</p>
         </div>
       </div>
-
-      <!-- Token comparison -->
-      <div>
-        <p class="text-xs text-[#6b6a8f] mb-2 font-mono uppercase tracking-wider">Token savings per model:</p>
-        <div class="overflow-x-auto rounded-sm border border-[#1f1f38] bg-[#0e0e1a]">
-          <table class="cmp-table w-full">
-            <thead><tr>
-              <th>Model</th><th class="text-right">Before</th><th class="text-right">After</th><th class="text-right">Saved</th><th class="text-right">%</th>
-            </tr></thead>
-            <tbody id="clean-cmp-body"></tbody>
-          </table>
+      <div class="feature-wide-card">
+        <div class="icon-box icon-cyan" style="flex-shrink:0">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect x="5" y="8" width="18" height="12" rx="2" stroke="#67e8f9" stroke-width="2"/>
+            <path d="M9 12h10M9 16h6" stroke="#67e8f9" stroke-width="2" stroke-linecap="round"/>
+          </svg>
         </div>
-      </div>
-
-      <!-- Cleaned text preview -->
-      <div>
-        <p class="text-xs text-[#6b6a8f] mb-1.5 font-mono">Cleaned text (ready to paste):</p>
-        <div class="clean-text-pre" id="clean-text-out"></div>
-        <div class="flex gap-2 mt-2">
-          <button id="btn-copy-clean" class="text-xs text-[#6b6a8f] hover:text-[#e4e2f4] border border-[#1f1f38] hover:border-[#7c3aed]/50 rounded-sm px-3 py-1 transition-colors font-mono">Copy</button>
-          <button id="btn-download-clean" class="text-xs text-[#6b6a8f] hover:text-[#e4e2f4] border border-[#1f1f38] hover:border-[#7c3aed]/50 rounded-sm px-3 py-1 transition-colors font-mono hidden">Download .txt</button>
+        <div>
+          <h3 class="feature-title">File format support</h3>
+          <p class="feature-desc">Upload TXT, Markdown, PDF, DOCX, and source code files. Token counts are extracted from the actual text content — not raw file bytes.</p>
         </div>
-      </div>
-    </div>
-
-    <div id="clean-loading" class="hidden flex items-center gap-2.5 text-sm text-[#6b6a8f] py-4">
-      <div class="spinner"></div><span class="font-mono loading-pulse">Cleaning document…</span>
-    </div>
-    <div id="clean-error" class="hidden text-xs text-[#ef4444] bg-[#ef4444]/08 border border-[#ef4444]/20 rounded-sm px-3 py-2 mt-2 font-mono"></div>
-  </div>
-
-  <!-- Retrieve section -->
-  <div id="retrieve-section" class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-5">
-    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
-      <div>
-        <div class="flex items-center gap-2.5 mb-1">
-          <h3 class="text-sm font-semibold text-[#e4e2f4]">Smart Retrieval</h3>
-          <span id="retrieve-badge" class="badge-demo">Demo</span>
-        </div>
-        <p class="text-xs text-[#6b6a8f] max-w-md">Upload a large doc + your question — returns only relevant chunks. TF-IDF keyword search. Best for focused queries.</p>
-      </div>
-    </div>
-
-    <div class="space-y-3">
-      <div class="flex gap-2 flex-wrap items-center">
-        <button id="btn-retrieve-upload" class="text-sm border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#7c3aed]/50 px-4 py-2 rounded-sm transition-colors font-mono text-xs">
-          Choose document
-        </button>
-        <span id="retrieve-file-name" class="text-xs text-[#6b6a8f] font-mono"></span>
-      </div>
-      <input type="file" id="retrieve-file-input" hidden accept=".pdf,.docx,.doc,.txt,.md,.html,.htm" />
-      <input id="retrieve-query" type="text"
-        class="w-full bg-[#08080f] border border-[#1f1f38] rounded-sm px-4 py-2.5 text-sm text-[#e4e2f4] placeholder-[#6b6a8f] focus:outline-none focus:border-[#7c3aed]/60 transition-colors"
-        placeholder="What do you want to know? e.g. 'What are the termination clauses?'" />
-      <div class="flex items-center gap-3 flex-wrap">
-        <label class="text-xs text-[#6b6a8f] font-mono">Top chunks:</label>
-        <select id="retrieve-topk"
-          class="bg-[#16162a] border border-[#1f1f38] rounded-sm px-2 py-1.5 text-sm text-[#e4e2f4] focus:outline-none focus:border-[#7c3aed]/60 font-mono text-xs">
-          <option value="3">3 (demo limit)</option>
-          <option value="5" selected>5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-        </select>
-        <button id="btn-retrieve"
-          class="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-sm font-medium px-4 py-2 rounded-sm transition-colors disabled:opacity-40"
-          disabled>
-          Find Relevant Chunks
-        </button>
-      </div>
-    </div>
-
-    <div id="retrieve-result" class="hidden mt-5 space-y-4">
-      <div id="retrieve-demo-banner" class="demo-banner hidden">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span id="retrieve-demo-msg"></span>
-        <button class="upgrade-trigger ml-auto text-xs text-[#f97316] hover:underline shrink-0" data-feature="ragFull">Próximamente: Pro</button>
-      </div>
-      <p id="retrieve-meta" class="text-xs text-[#6b6a8f] font-mono"></p>
-
-      <!-- Token comparison -->
-      <div>
-        <p class="text-xs text-[#6b6a8f] mb-2 font-mono uppercase tracking-wider">Token savings per model:</p>
-        <div class="overflow-x-auto rounded-sm border border-[#1f1f38] bg-[#0e0e1a]">
-          <table class="cmp-table w-full">
-            <thead><tr>
-              <th>Model</th><th class="text-right">Full doc</th><th class="text-right">Retrieved</th><th class="text-right">Saved</th><th class="text-right">%</th>
-            </tr></thead>
-            <tbody id="retrieve-cmp-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Chunks -->
-      <div>
-        <p class="text-xs text-[#6b6a8f] mb-2 font-mono">Relevant passages (sorted by relevance):</p>
-        <div class="chunks-scroll" id="chunks-list"></div>
-      </div>
-      <div class="flex gap-2">
-        <button id="btn-copy-chunks" class="text-xs text-[#6b6a8f] hover:text-[#e4e2f4] border border-[#1f1f38] hover:border-[#7c3aed]/50 rounded-sm px-3 py-1 transition-colors font-mono">Copy context</button>
-      </div>
-    </div>
-
-    <div id="retrieve-loading" class="hidden flex items-center gap-2.5 text-sm text-[#6b6a8f] py-4">
-      <div class="spinner"></div><span class="font-mono loading-pulse">Finding relevant chunks…</span>
-    </div>
-    <div id="retrieve-error" class="hidden text-xs text-[#ef4444] bg-[#ef4444]/08 border border-[#ef4444]/20 rounded-sm px-3 py-2 mt-2 font-mono"></div>
-  </div>
-
-</div><!-- /results -->
-
-<!-- ── How it works ───────────────────────────────────────────────────────── -->
-<section id="how-it-works" class="py-20 px-6 border-t border-[#1f1f38]">
-  <div class="max-w-6xl mx-auto">
-    <div class="text-center mb-12">
-      <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-3">Under the hood</p>
-      <h2 class="text-2xl font-bold tracking-tight">How tokenization works</h2>
-    </div>
-    <div class="grid sm:grid-cols-3 gap-5">
-      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/30 transition-colors">
-        <div class="w-10 h-10 rounded-lg bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center mb-4">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        </div>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">Tokens are the chunks LLMs process — roughly 3–4 characters of English text. Code and non-Latin scripts often produce more tokens per character.</p>
-      </div>
-      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/30 transition-colors">
-        <div class="w-10 h-10 rounded-lg bg-[#06b6d4]/10 border border-[#06b6d4]/20 flex items-center justify-center mb-4">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <h3 class="font-semibold mb-2 text-[#e4e2f4]">Exact vs. estimated</h3>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">OpenAI uses the open-source tiktoken library — we run the same tokenizer server-side, so counts are exact. Anthropic, Google and others use proprietary tokenizers; we estimate and label it clearly.</p>
-      </div>
-      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 hover:border-[#7c3aed]/30 transition-colors">
-        <div class="w-10 h-10 rounded-lg bg-[#22c55e]/10 border border-[#22c55e]/20 flex items-center justify-center mb-4">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <h3 class="font-semibold mb-2 text-[#e4e2f4]">Cost formula</h3>
-        <p class="text-sm text-[#6b6a8f] leading-relaxed">Cost = (tokens ÷ 1,000,000) × price-per-million-tokens. Input and output tokens are billed separately by most providers.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── Pricing preview ────────────────────────────────────────────────────── -->
-<section id="pricing-preview" class="py-20 px-6 border-t border-[#1f1f38]">
-  <div class="max-w-6xl mx-auto">
-    <div class="text-center mb-12">
-      <p class="text-xs text-[#6b6a8f] font-mono uppercase tracking-widest mb-3">Plans</p>
-      <h2 class="text-2xl font-bold tracking-tight mb-2">Simple, transparent pricing</h2>
-      <p class="text-[#6b6a8f] text-sm">Start free. Upgrade when you need more power.</p>
+<!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+<section id="how-it-works" class="hiw-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">The basics</span>
+      <h2 class="section-title">How tokenization works</h2>
+      <p class="section-sub">LLMs don't see words — they see tokens. Understanding this is the key to controlling your API bill.</p>
     </div>
-    <div class="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
 
+    <div class="hiw-grid">
+      <div class="hiw-card reveal">
+        <div class="hiw-step">01</div>
+        <h3 class="hiw-title">Text is split into tokens</h3>
+        <p class="hiw-desc">Each model uses its own tokenizer to break text into subword units. The same words can produce different token counts on different models.</p>
+        <div class="hiw-demo">
+          <p class="hiw-demo-label">Example: "You are a helpful assistant"</p>
+          <div class="token-chip-row">
+            <span class="token-chip t-purple">You</span>
+            <span class="token-chip t-blue">are</span>
+            <span class="token-chip t-green">a</span>
+            <span class="token-chip t-amber">help</span>
+            <span class="token-chip t-pink">ful</span>
+            <span class="token-chip t-cyan">assist</span>
+            <span class="token-chip t-purple">ant</span>
+          </div>
+          <p class="hiw-demo-note">= 7 tokens (Claude) · 7 tokens (GPT-4) · 6 tokens (Llama)</p>
+        </div>
+      </div>
+
+      <div class="hiw-card reveal delay-1">
+        <div class="hiw-step">02</div>
+        <h3 class="hiw-title">Tokens × price = API cost</h3>
+        <p class="hiw-desc">Models charge per 1 million input and output tokens separately. Input is usually cheaper than output — prompts and system messages are input tokens.</p>
+        <div class="hiw-demo">
+          <div class="hiw-math">
+            <div class="hiw-math-row">
+              <span class="hiw-math-label">1,000 tokens</span>
+              <span class="hiw-math-op">×</span>
+              <span class="hiw-math-label">$3.00 / 1M</span>
+              <span class="hiw-math-op">=</span>
+              <span class="hiw-math-result gradient-text">$0.003</span>
+            </div>
+            <p class="hiw-math-note">Claude 3.5 Sonnet input pricing</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hiw-card reveal delay-2">
+        <div class="hiw-step">03</div>
+        <h3 class="hiw-title">Optimize to save money</h3>
+        <p class="hiw-desc">Shorter prompts → fewer tokens → lower cost. Tokenia shows you exactly how many tokens you can reclaim by cleaning redundant whitespace and boilerplate.</p>
+        <div class="hiw-demo">
+          <div class="hiw-before-after">
+            <div class="hiw-ba-row">
+              <span class="hiw-ba-label before">Before</span>
+              <span class="hiw-ba-val">2,480 tokens · $0.0074</span>
+            </div>
+            <div class="hiw-ba-arrow">↓ clean</div>
+            <div class="hiw-ba-row">
+              <span class="hiw-ba-label after">After</span>
+              <span class="hiw-ba-val" style="color:var(--success)">1,620 tokens · $0.0049</span>
+            </div>
+            <div class="hiw-ba-saved">Saved 34% · $0.0025 per call</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TESTIMONIALS ═══════════════════════════ -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Loved by developers</span>
+      <h2 class="section-title">From the teams building with LLMs</h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-quote">"We cut our Claude API bill by 28% in the first week just by running our system prompts through Tokenia's cleaner. ROI on day one."</p>
+        <div class="testimonial-author">
+          <div class="avatar-circle avatar-violet">MR</div>
+          <div>
+            <p class="author-name">Marcos R.</p>
+            <p class="author-role">Lead AI Engineer · Fintech startup</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal delay-1">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-quote">"Finally a tool that's honest about tokenizer accuracy. The 'estimated' label where exact counts aren't possible means I can actually trust the numbers I see."</p>
+        <div class="testimonial-author">
+          <div class="avatar-circle avatar-blue">SL</div>
+          <div>
+            <p class="author-name">Sarah L.</p>
+            <p class="author-role">ML Platform Engineer · Series B SaaS</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal delay-2">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-quote">"The multi-model comparison is a game changer for evaluations. I can see at a glance which model gives me the best cost/quality trade-off before committing to a provider."</p>
+        <div class="testimonial-author">
+          <div class="avatar-circle avatar-green">DK</div>
+          <div>
+            <p class="author-name">Daniel K.</p>
+            <p class="author-role">Founder · AI-native product studio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PRICING ═══════════════════════════ -->
+<section id="pricing" class="pricing-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Simple pricing</span>
+      <h2 class="section-title">Start free, upgrade when you're ready</h2>
+      <p class="section-sub">All plans include unlimited token counting. Upgrade for optimization and team features.</p>
+      <div class="pricing-coming-soon-banner">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#f59e0b" stroke-width="1.5"/><path d="M8 5v4M8 11v.5" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Próximamente: upgrade a Pro y Team.
+      </div>
+    </div>
+
+    <div class="pricing-grid">
       <!-- Free -->
-      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 flex flex-col">
-        <div class="mb-5">
-          <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#6b6a8f]">Free</p>
-          <div class="mt-2">
-            <span class="text-3xl font-bold font-mono text-[#e4e2f4]">$0</span>
-            <span class="text-sm text-[#6b6a8f]">/mo</span>
+      <div class="pricing-card reveal">
+        <div class="pricing-card-header">
+          <span class="plan-name">Free</span>
+          <div class="plan-price">
+            <span class="price-amount">$0</span>
+            <span class="price-period">/ month</span>
           </div>
+          <p class="plan-tagline">Everything you need to count tokens.</p>
         </div>
-        <ul class="space-y-2.5 text-sm text-[#6b6a8f] mb-6 flex-1">
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Token counting — all models</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> File uploads up to 2 MB</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Cleaning demo (first 5,000 chars)</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Retrieval demo (top 3 chunks)</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] shrink-0">✗</span> <span class="text-[#3d3c5c]">CSV export</span></li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#3d3c5c] shrink-0">✗</span> <span class="text-[#3d3c5c]">Batch upload</span></li>
+        <ul class="plan-features">
+          <li class="plan-feat included">Unlimited token counting</li>
+          <li class="plan-feat included">18+ LLM models</li>
+          <li class="plan-feat included">File upload (TXT, MD, PDF, DOCX)</li>
+          <li class="plan-feat included">Cost estimation with live prices</li>
+          <li class="plan-feat included">Multi-model comparison</li>
+          <li class="plan-feat excluded">Prompt optimizer / cleaner</li>
+          <li class="plan-feat excluded">Semantic chunk retrieval</li>
+          <li class="plan-feat excluded">Batch file processing</li>
+          <li class="plan-feat excluded">API access</li>
         </ul>
-        <button class="border border-[#1f1f38] text-[#6b6a8f] hover:text-[#e4e2f4] hover:border-[#7c3aed]/40 rounded-sm py-2 text-sm font-medium transition-colors">
-          Current plan
-        </button>
+        <a href="#demo" class="btn btn-outline btn-block">Get started free</a>
       </div>
 
-      <!-- Pro -->
-      <div class="bg-[#0e0e1a] rounded-xl p-6 flex flex-col relative pricing-card-pro">
-        <div class="mb-5">
-          <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#a78bfa]">Pro</p>
-          <div class="mt-2">
-            <span class="text-3xl font-bold font-mono text-[#e4e2f4]">$12</span>
-            <span class="text-sm text-[#6b6a8f]">/mo</span>
+      <!-- Pro (most popular) -->
+      <div class="pricing-card pricing-card-pro reveal delay-1">
+        <div class="pricing-card-header">
+          <span class="plan-name">Pro</span>
+          <div class="plan-price">
+            <span class="price-amount">$12</span>
+            <span class="price-period">/ month</span>
           </div>
+          <p class="plan-tagline">For developers using LLMs daily.</p>
         </div>
-        <ul class="space-y-2.5 text-sm text-[#6b6a8f] mb-6 flex-1">
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Everything in Free</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> CSV &amp; PDF export</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Batch upload (10 files)</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Full cleaning &amp; retrieval</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> API access + history</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> 500 credits/mo</li>
+        <ul class="plan-features">
+          <li class="plan-feat included">Everything in Free</li>
+          <li class="plan-feat included">Prompt optimizer &amp; cleaner</li>
+          <li class="plan-feat included">Semantic chunk retrieval (RAG)</li>
+          <li class="plan-feat included">Batch processing — up to 50 files</li>
+          <li class="plan-feat included">Usage history &amp; saved comparisons</li>
+          <li class="plan-feat included">API access (1,000 req/day)</li>
+          <li class="plan-feat excluded">Team collaboration</li>
+          <li class="plan-feat excluded">SSO / SAML</li>
+          <li class="plan-feat excluded">Priority support</li>
         </ul>
-        <button class="upgrade-trigger bg-[#7c3aed] hover:bg-[#8b5cf6] text-white rounded-sm py-2 text-sm font-medium transition-colors" data-feature="pro">
-          Próximamente
-        </button>
+        <button class="btn btn-primary btn-block" disabled>Coming soon</button>
       </div>
 
       <!-- Team -->
-      <div class="bg-[#0e0e1a] border border-[#1f1f38] rounded-xl p-6 flex flex-col hover:border-[#06b6d4]/20 transition-colors">
-        <div class="mb-5">
-          <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#22d3ee]">Team</p>
-          <div class="mt-2">
-            <span class="text-3xl font-bold font-mono text-[#e4e2f4]">$39</span>
-            <span class="text-sm text-[#6b6a8f]">/mo</span>
+      <div class="pricing-card reveal delay-2">
+        <div class="pricing-card-header">
+          <span class="plan-name">Team</span>
+          <div class="plan-price">
+            <span class="price-amount">$39</span>
+            <span class="price-period">/ month</span>
           </div>
+          <p class="plan-tagline">For engineering teams and AI product squads.</p>
         </div>
-        <ul class="space-y-2.5 text-sm text-[#6b6a8f] mb-6 flex-1">
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Everything in Pro</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Batch upload (50 files)</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Budget alerts</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Team shared projects</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> Priority support</li>
-          <li class="flex gap-2.5 items-start"><span class="text-[#4ade80] shrink-0">✓</span> 2,000 credits/mo</li>
+        <ul class="plan-features">
+          <li class="plan-feat included">Everything in Pro</li>
+          <li class="plan-feat included">Up to 10 seats</li>
+          <li class="plan-feat included">Team usage dashboard</li>
+          <li class="plan-feat included">Shared model presets</li>
+          <li class="plan-feat included">API access (10,000 req/day)</li>
+          <li class="plan-feat included">SSO / SAML</li>
+          <li class="plan-feat included">Priority support (4h SLA)</li>
+          <li class="plan-feat included">Custom model pricing config</li>
+          <li class="plan-feat included">Audit log</li>
         </ul>
-        <button class="upgrade-trigger border border-[#06b6d4]/30 text-[#22d3ee] hover:bg-[#06b6d4]/08 rounded-sm py-2 text-sm font-medium transition-colors" data-feature="team">
-          Próximamente
-        </button>
+        <button class="btn btn-outline btn-block" disabled>Coming soon</button>
       </div>
-
     </div>
-    <p class="text-center text-xs text-[#3d3c5c] mt-8 font-mono">
-      Cobro todavía no activo. <a href="/pricing.html" class="text-[#6b6a8f] hover:text-[#a78bfa] underline underline-offset-2">Ver detalles del plan →</a>
-    </p>
+
+    <!-- Comparison table -->
+    <div class="pricing-table-wrap reveal">
+      <h3 class="pricing-table-title">Full comparison</h3>
+      <div class="cmp-table pricing-cmp-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Free</th>
+              <th class="th-pro">Pro</th>
+              <th>Team</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Token counting</td><td>✓</td><td class="td-pro">✓</td><td>✓</td></tr>
+            <tr><td>Models supported</td><td>18+</td><td class="td-pro">18+</td><td>18+ + custom</td></tr>
+            <tr><td>File upload</td><td>✓</td><td class="td-pro">✓</td><td>✓</td></tr>
+            <tr><td>Cost estimation</td><td>✓</td><td class="td-pro">✓</td><td>✓</td></tr>
+            <tr><td>Prompt optimizer</td><td>—</td><td class="td-pro">✓</td><td>✓</td></tr>
+            <tr><td>Chunk retrieval</td><td>—</td><td class="td-pro">✓</td><td>✓</td></tr>
+            <tr><td>Batch processing</td><td>—</td><td class="td-pro">50 files</td><td>Unlimited</td></tr>
+            <tr><td>API access</td><td>—</td><td class="td-pro">1k req/day</td><td>10k req/day</td></tr>
+            <tr><td>Team seats</td><td>1</td><td class="td-pro">1</td><td>Up to 10</td></tr>
+            <tr><td>SSO / SAML</td><td>—</td><td class="td-pro">—</td><td>✓</td></tr>
+            <tr><td>Priority support</td><td>—</td><td class="td-pro">—</td><td>4h SLA</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
-<footer class="border-t border-[#1f1f38] py-10 px-6">
-  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5">
-    <div class="flex items-center gap-2.5">
-      <div class="w-6 h-6 rounded flex items-center justify-center bg-[#7c3aed]/12 border border-[#7c3aed]/25">
-        <span class="font-mono font-bold text-[#a78bfa] text-[.6rem]">T</span>
+<!-- ═══════════════════════════ CTA FINAL ═══════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-bg-orb cta-orb-1"></div>
+  <div class="cta-bg-orb cta-orb-2"></div>
+  <div class="container">
+    <div class="cta-inner reveal">
+      <span class="section-eyebrow" style="color:rgba(255,255,255,.7)">No credit card required</span>
+      <h2 class="cta-headline">Ready to ship smarter?</h2>
+      <p class="cta-sub">Join developers who use Tokenia to understand and control their LLM costs — starting for free.</p>
+      <a href="#demo" class="btn btn-primary btn-lg btn-bounce">
+        Start counting tokens free
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <p class="cta-footnote">100% browser-based · No signup required to count · Private by default</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <!-- Brand -->
+    <div class="footer-col footer-brand-col">
+      <a href="/" class="nav-brand footer-brand">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect width="28" height="28" rx="7" fill="url(#fb)"/>
+          <path d="M7 14h3.5l2-5 3 10 2-7 1.5 2H21" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="fb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7c3aed"/><stop offset="1" stop-color="#3b82f6"/>
+          </linearGradient></defs>
+        </svg>
+        <span>Tokenia</span>
+      </a>
+      <p class="footer-tagline">The professional token counter &amp; cost estimator for LLM developers.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-link" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="Twitter / X">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="Discord">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.1 13.1 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+        </a>
       </div>
-      <span class="font-semibold text-[#e4e2f4] text-sm">Tokenia</span>
-      <span class="text-[.65rem] bg-[#16162a] border border-[#1f1f38] rounded px-1.5 py-0.5 font-mono text-[#6b6a8f]">beta</span>
     </div>
-    <div class="flex items-center gap-6 text-xs text-[#6b6a8f]">
-      <a href="/pricing.html" class="hover:text-[#e4e2f4] transition-colors">Pricing</a>
-      <a href="/privacy.html" class="hover:text-[#e4e2f4] transition-colors">Privacy</a>
-      <a href="#how-it-works" class="hover:text-[#e4e2f4] transition-colors">How it works</a>
+
+    <!-- Product -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Product</h4>
+      <ul class="footer-links">
+        <li><a href="#demo" class="footer-link">Token counter</a></li>
+        <li><a href="#features" class="footer-link">Features</a></li>
+        <li><a href="#pricing" class="footer-link">Pricing</a></li>
+        <li><a href="#" class="footer-link">Changelog</a></li>
+        <li><a href="#" class="footer-link">Roadmap</a></li>
+      </ul>
     </div>
-    <p class="text-[.7rem] text-[#3d3c5c] text-center sm:text-right leading-relaxed">
-      Not affiliated with Anthropic, OpenAI, Google, or Meta.<br>
-      Prices are informational estimates and may lag behind provider changes.
-    </p>
+
+    <!-- Resources -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Resources</h4>
+      <ul class="footer-links">
+        <li><a href="#" class="footer-link">Documentation</a></li>
+        <li><a href="#" class="footer-link">API reference</a></li>
+        <li><a href="#how-it-works" class="footer-link">How tokenization works</a></li>
+        <li><a href="#" class="footer-link">Model price list</a></li>
+        <li><a href="#" class="footer-link">Blog</a></li>
+      </ul>
+    </div>
+
+    <!-- Legal -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Legal</h4>
+      <ul class="footer-links">
+        <li><a href="#" class="footer-link">Privacy policy</a></li>
+        <li><a href="#" class="footer-link">Terms of service</a></li>
+        <li><a href="#" class="footer-link">Cookie policy</a></li>
+        <li><a href="#" class="footer-link">Security</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
+      <span class="footer-copy">© 2026 Tokenia. All rights reserved.</span>
+      <span class="footer-tagline-sm">Token counts may vary by model. Prices updated regularly. See docs for accuracy notes.</span>
+    </div>
   </div>
 </footer>
 
+<!-- ═══════════════════════════ CHAT WIDGET ═══════════════════════════ -->
+<div class="chat-widget">
+  <button class="chat-bubble" aria-label="Help &amp; support" onclick="this.parentElement.classList.toggle('chat-open')">
+    <svg class="chat-icon-open" width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <path d="M11 2C6.03 2 2 5.69 2 10.2c0 2.37 1.07 4.5 2.79 6.03L4 20l3.97-1.43A9.5 9.5 0 0011 19c4.97 0 9-3.69 9-8.8C20 5.69 15.97 2 11 2z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M7 10h8M7 13h5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="chat-icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M3 3l12 12M15 3L3 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div class="chat-popup">
+    <div class="chat-popup-header">
+      <div class="chat-popup-avatar">T</div>
+      <div>
+        <p class="chat-popup-name">Tokenia Support</p>
+        <p class="chat-popup-status">
+          <span class="online-dot"></span>Typically replies in minutes
+        </p>
+      </div>
+    </div>
+    <div class="chat-popup-body">
+      <p>Hi there! 👋 How can we help?</p>
+    </div>
+    <div class="chat-popup-links">
+      <a href="#how-it-works" class="chat-link">How does tokenization work?</a>
+      <a href="#pricing" class="chat-link">What's included in Pro?</a>
+      <a href="#" class="chat-link">Report a bug or inaccuracy</a>
+      <a href="mailto:support@tokenia.live" class="chat-link">Email support</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ AUTH MODAL ═══════════════════════════ -->
+<div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
+  <div class="modal-panel">
+    <button id="auth-modal-close" class="modal-close" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="modal-logo">
+      <svg width="32" height="32" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="url(#am)"/><path d="M7 14h3.5l2-5 3 10 2-7 1.5 2H21" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="am" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs></svg>
+      <span class="modal-brand">Tokenia</span>
+    </div>
+
+    <!-- Sign in form -->
+    <div id="signin-section" class="modal-form-section">
+      <h2 class="modal-title">Welcome back</h2>
+      <p class="modal-sub">Sign in to access your usage history and Pro features.</p>
+      <div class="form-group">
+        <label class="form-label" for="signin-email">Email</label>
+        <input id="signin-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="signin-password">Password</label>
+        <input id="signin-password" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <p id="auth-msg" class="auth-msg" style="display:none"></p>
+      <button id="btn-signin" class="btn btn-primary btn-block">Sign in</button>
+      <p class="modal-switch">Don't have an account? <button class="link-btn" onclick="document.getElementById('signin-section').style.display='none';document.getElementById('signup-section').style.display='block'">Sign up free</button></p>
+    </div>
+
+    <!-- Sign up form -->
+    <div id="signup-section" class="modal-form-section" style="display:none">
+      <h2 class="modal-title">Create your account</h2>
+      <p class="modal-sub">Free forever. No credit card required.</p>
+      <div class="form-group">
+        <label class="form-label" for="signup-email">Email</label>
+        <input id="signup-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="signup-password">Password</label>
+        <input id="signup-password" type="password" class="form-input" placeholder="Create a password" autocomplete="new-password">
+      </div>
+      <button id="btn-signup" class="btn btn-primary btn-block">Create free account</button>
+      <p class="modal-switch">Already have an account? <button class="link-btn" onclick="document.getElementById('signup-section').style.display='none';document.getElementById('signin-section').style.display='block'">Sign in</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ UPGRADE MODAL ═══════════════════════════ -->
+<div id="upgrade-modal" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
+  <div class="modal-panel">
+    <button id="modal-close" class="modal-close" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="upgrade-modal-icon">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(124,58,237,.15)"/><path d="M18 10l2.2 6.6H27l-5.6 4.1 2.1 6.5L18 23.1l-5.5 4.1 2.1-6.5L9 16.6h6.8z" fill="url(#up)"/><defs><linearGradient id="up" x1="9" y1="10" x2="27" y2="27"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs></svg>
+    </div>
+    <h2 class="modal-title">Upgrade to Pro</h2>
+    <p class="modal-sub">Unlock prompt optimization, semantic retrieval, and API access.</p>
+    <p id="modal-msg" class="upgrade-modal-msg"></p>
+    <div class="form-group">
+      <label class="form-label" for="modal-email">Email address</label>
+      <input id="modal-email" type="email" class="form-input" placeholder="you@example.com">
+    </div>
+    <button id="modal-submit" class="btn btn-primary btn-block" disabled>Próximamente</button>
+    <p class="modal-coming-soon-note">Pagos aún no habilitados. Déjanos tu email y te avisamos cuando Pro esté disponible.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
+<script>
+// ── Scroll reveal ──────────────────────────────────────────────────
+(function() {
+  const obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('revealed');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(function(el) {
+    obs.observe(el);
+  });
+})();
+
+// ── Tab switching ──────────────────────────────────────────────────
+(function() {
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const tabId = btn.getAttribute('data-tab');
+      if (!tabId) return;
+      // Deactivate all in same group
+      const allBtns = btn.closest('.tool-tabs').querySelectorAll('.tab-btn');
+      const allPanels = btn.closest('.tool-card').querySelectorAll('.tab-panel');
+      allBtns.forEach(function(b) { b.classList.remove('active-tab'); });
+      allPanels.forEach(function(p) { p.classList.remove('active-panel'); });
+      // Activate selected
+      btn.classList.add('active-tab');
+      const panel = document.getElementById(tabId);
+      if (panel) panel.classList.add('active-panel');
+    });
+  });
+})();
+</script>
 <script src="/js/app.js"></script>
 </body>
 </html>
