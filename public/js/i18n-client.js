@@ -493,8 +493,9 @@ function _buildLangSelector() {
 
   btn.addEventListener('click', e => {
     e.stopPropagation();
+    // Toggle 'open' on the dropdown itself — matches CSS .lang-dropdown.open
     const open = dropdown.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
+    btn.setAttribute('aria-expanded', String(open));
   });
 
   host.querySelectorAll('.lang-option').forEach(opt => {
@@ -724,8 +725,9 @@ function _toggleChat() {
   const toggle = document.getElementById('chat-toggle');
   if (!popup) return;
 
+  // 'open' on popup matches CSS .chat-popup.open { display:flex }
   popup.classList.toggle('open', _chatOpen);
-  popup.setAttribute('aria-hidden', !_chatOpen);
+  popup.setAttribute('aria-hidden', String(!_chatOpen));
   toggle.classList.toggle('active', _chatOpen);
 
   // Show welcome message on first open
