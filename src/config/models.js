@@ -7,7 +7,7 @@
  *  2. Change `inputPer1M` / `outputPer1M` to the new USD price per 1M tokens.
  *  3. Save the file and restart the server — no other changes needed.
  *
- *  Prices last verified: May 2025
+ *  Prices last verified: May 2026
  *  Source: official pricing pages of each provider.
  * ─────────────────────────────────────────────────────────────────────────────
  *
@@ -34,6 +34,24 @@ const MODELS = {
     tokenizerPrecision: 'estimated',
     tokenizerNote: 'Anthropic uses a proprietary BPE tokenizer. Counts are heuristic approximations.',
     models: {
+      'claude-opus-4-6': {
+        name: 'Claude Opus 4.6',
+        inputPer1M:  15.00,
+        outputPer1M: 75.00,
+        contextWindow: 200_000,
+        precision: 'estimated',
+        active: true,
+        released: '2026-03',
+      },
+      'claude-sonnet-4-6': {
+        name: 'Claude Sonnet 4.6',
+        inputPer1M:   3.00,
+        outputPer1M: 15.00,
+        contextWindow: 200_000,
+        precision: 'estimated',
+        active: true,
+        released: '2026-03',
+      },
       'claude-opus-4-5': {
         name: 'Claude Opus 4.5',
         inputPer1M:  15.00,
@@ -187,6 +205,15 @@ const MODELS = {
     tokenizerPrecision: 'estimated',
     tokenizerNote: 'Google uses a SentencePiece tokenizer. Counts are heuristic approximations.',
     models: {
+      'gemini-2.5-pro': {
+        name: 'Gemini 2.5 Pro',
+        inputPer1M:  1.25,
+        outputPer1M: 10.00,
+        contextWindow: 1_048_576,
+        precision: 'estimated',
+        active: true,
+        released: '2025-09',
+      },
       'gemini-2.5-flash': {
         name: 'Gemini 2.5 Flash',
         inputPer1M:  0.15,
@@ -292,6 +319,45 @@ const MODELS = {
         precision: 'estimated',
         active: true,
         released: '2024-05',
+      },
+    },
+  },
+
+  // ── DeepSeek ───────────────────────────────────────────────────────────────
+  deepseek: {
+    name: 'DeepSeek',
+    color: '#4d9de0',
+    tokenizer: 'estimated',
+    tokenizerPrecision: 'estimated',
+    tokenizerNote: 'DeepSeek uses a custom BPE tokenizer. Counts are heuristic approximations.',
+    models: {
+      'deepseek-v3-flash': {
+        name: 'DeepSeek V3 Flash',
+        inputPer1M:  0.07,
+        outputPer1M: 0.28,
+        contextWindow: 128_000,
+        precision: 'estimated',
+        active: true,
+        released: '2025-03',
+      },
+      'deepseek-v3': {
+        name: 'DeepSeek V3',
+        inputPer1M:  0.27,
+        outputPer1M: 1.10,
+        contextWindow: 128_000,
+        precision: 'estimated',
+        active: true,
+        released: '2024-12',
+      },
+      'deepseek-r1': {
+        name: 'DeepSeek R1',
+        inputPer1M:  0.55,
+        outputPer1M: 2.19,
+        contextWindow: 128_000,
+        precision: 'estimated',
+        active: true,
+        released: '2025-01',
+        note: 'Reasoning model.',
       },
     },
   },

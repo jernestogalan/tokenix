@@ -253,8 +253,20 @@ input, textarea, select { font-family: var(--sans); }
 /* ── Hero ────────────────────────────────────────────────────────────── */
 .hero-section {
   position:relative;overflow:hidden;
-  padding: clamp(72px,10vw,120px) 0 clamp(56px,8vw,96px);
+  padding: clamp(40px,6vw,72px) 0 clamp(28px,4vw,48px);
   background: var(--bg);
+}
+/* Compact hero mode (analyzer-first layout) */
+.hero-compact-mode { padding:36px 0 28px; }
+.hero-compact-inner { text-align:center; }
+.hero-headline-compact {
+  font-size:clamp(1.8rem,4.5vw,3rem);
+  margin-bottom:var(--sp-3);
+}
+.hero-sub-compact {
+  font-size:var(--text-base);
+  max-width:620px;
+  margin:0 auto var(--sp-5);
 }
 .hero-bg-orb { position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px); }
 .orb-1 { width:500px;height:500px;top:-160px;left:-80px;background:radial-gradient(circle,rgba(255,107,44,.10) 0%,transparent 70%); }
@@ -916,4 +928,109 @@ input, textarea, select { font-family: var(--sans); }
   .tool-inner { padding:0 var(--sp-4); }
   .footer-inner { grid-template-columns:1fr;padding:0 var(--sp-4); }
   .nav-inner { padding:var(--sp-3) var(--sp-4); }
+  .hero-compact-inner { text-align:left; }
+  .hero-sub-compact { margin-left:0; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   2026 MODEL CHIPS + CONTRAST FIXES + SPACING + PROVIDER RESULTS
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── New chip colors for Meta & DeepSeek ──────────────────────────── */
+.t-meta     { background:rgba(24,119,242,.09);color:#1864c1;border:1px solid rgba(24,119,242,.22); }
+.t-deepseek { background:rgba(77,157,224,.10);color:#1a6fa8;border:1px solid rgba(77,157,224,.28); }
+
+/* ── Reduce tool section gap (was 6rem top padding, now 4rem) ──────── */
+.tool-section { padding-top:var(--sp-16); padding-bottom:var(--sp-16); }
+
+/* ── Reduce features/how-it-works/models/testimonials padding ──────── */
+.features-section    { padding:var(--sp-16) 0; }
+.hiw-section         { padding:var(--sp-16) 0; }
+.models-section      { padding:var(--sp-12) 0; }
+.testimonials-section{ padding:var(--sp-16) 0; }
+.pricing-section     { padding:var(--sp-16) 0; }
+
+/* ── Stats bar more compact ─────────────────────────────────────────── */
+.stats-bar { padding:var(--sp-5) 0; }
+
+/* ── Contrast fix: .link-btn (was orange #FF6B2C on white = 2.87:1 ❌) */
+/* New: #C94E18 on white = ~4.6:1 ✅ WCAG AA                          */
+.link-btn { color:#C94E18; }
+.link-btn:hover { color:#A83D11; }
+
+/* ── Precision badges (dark-mode classes left over in app.js) ────────  */
+.badge-exact     { display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0; }
+.badge-estimated { display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--surface2);color:var(--muted);border:1px solid var(--border); }
+.badge-local     { display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe; }
+
+/* ── Results table styling (was Tailwind-class heavy, now CSS vars) ── */
+.results-table-wrap table { font-size:var(--text-sm); }
+.results-table-wrap td { color:var(--text-dim); }
+.results-table-wrap td:first-child p:first-child { color:var(--text);font-weight:600; }
+
+/* Provider pills — active state override for light theme */
+.provider-pill.active {
+  background:var(--orange-dim);color:var(--orange);
+  border-color:var(--orange);
+}
+
+/* ── model-checkboxes: light-theme labels (was dark Tailwind styles) ─ */
+#model-checkboxes label {
+  display:inline-flex;align-items:center;gap:var(--sp-1);
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:var(--sp-1) var(--sp-3);
+  font-size:var(--text-xs);cursor:pointer;
+  transition:border-color var(--duration-fast);
+  color:var(--text-dim);
+}
+#model-checkboxes label:hover { border-color:var(--orange-border);color:var(--text); }
+#model-checkboxes input[type="checkbox"] { accent-color:var(--orange); }
+
+/* ── hidden utility (used by app.js) ────────────────────────────────── */
+.hidden { display:none !important; }
+
+/* ── Provider result groups (used by new renderResultsByProvider) ──── */
+.provider-group { margin-bottom:var(--sp-8); }
+.provider-group-header {
+  display:flex;align-items:center;gap:var(--sp-2);
+  margin-bottom:var(--sp-3);
+  padding-bottom:var(--sp-2);
+  border-bottom:2px solid var(--border);
+}
+.provider-group-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+.provider-group-name { font-size:var(--text-base);font-weight:700;color:var(--text); }
+.provider-group-count { font-size:var(--text-xs);color:var(--muted);margin-left:auto; }
+
+/* ── Nav active link ─────────────────────────────────────────────────── */
+.nav-link.active { color:var(--orange);font-weight:600; }
+
+/* ── Pricing FAQ (details/summary) ───────────────────────────────────── */
+.pricing-faq { max-width:680px;margin:0 auto; }
+.faq-list    { display:flex;flex-direction:column;gap:var(--sp-3); }
+.faq-item {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;
+}
+.faq-item summary {
+  padding:var(--sp-4) var(--sp-5);cursor:pointer;font-weight:600;
+  color:var(--text);font-size:var(--text-sm);list-style:none;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:background var(--duration-fast);
+}
+.faq-item summary::-webkit-details-marker { display:none; }
+.faq-item summary::after {
+  content:'＋';font-size:1rem;color:var(--orange);flex-shrink:0;
+  transition:transform var(--duration-fast);
+}
+.faq-item[open] summary::after { content:'−'; }
+.faq-item summary:hover { background:var(--surface2); }
+.faq-item p {
+  padding:0 var(--sp-5) var(--sp-4);
+  font-size:var(--text-sm);color:var(--text-dim);line-height:1.7;margin:0;
+}
+
+/* ── .scrolled nav (slight shadow when user scrolls) ─────────────────── */
+.nav.scrolled { box-shadow:var(--shadow-md); }
+
+/* ── --nav-h variable for padding-top in page layouts ────────────────── */
+:root { --nav-h: 64px; }

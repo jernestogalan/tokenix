@@ -57,7 +57,7 @@ let _lastChunks    = [];
 let _planOverride  = null; // from ?plan= query param
 let _activeProvider = 'all';
 let _allResults    = [];
-let _modelChecked  = new Set(['gpt-4o', 'claude-sonnet-4']); // defaults
+let _modelChecked  = new Set(['gpt-4o', 'claude-sonnet-4-6', 'gemini-2.5-flash']); // defaults 2026
 
 /* ── Plan from URL ────────────────────────────────────────────────────────── */
 (function() {
@@ -97,8 +97,8 @@ function buildModelSelector() {
       const checked = _modelChecked.has(mId) ? 'checked' : '';
       const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${prov.color || '#666'};margin-right:4px;"></span>`;
       const label = document.createElement('label');
-      label.className = 'flex items-center gap-1 bg-[#21262d] border border-[#30363d] rounded-lg px-2.5 py-1.5 text-xs cursor-pointer hover:border-[#6366f1] transition-colors';
-      label.innerHTML = `<input type="checkbox" class="model-check" data-model="${mId}" data-provider="${provId}" ${checked} style="accent-color:#6366f1;"> ${dot}${m.name}`;
+      label.title = m.name;
+      label.innerHTML = `<input type="checkbox" class="model-check" data-model="${mId}" data-provider="${provId}" ${checked}> ${dot}${m.name}`;
       wrap.appendChild(label);
     }
   }
@@ -318,8 +318,9 @@ function renderProviderPills() {
   if (!pf) return;
   const providers = ['all', ...new Set(_allResults.map(r => r.provider))];
   pf.innerHTML = providers.map(p => `
-    <button class="provider-pill text-xs px-3 py-1 rounded-full border transition-colors ${p === _activeProvider ? 'bg-[#6366f1] text-white border-[#6366f1]' : 'border-[#30363d] text-[#8b949e] hover:text-white'}"
-      data-p="${p}">${p === 'all' ? 'All' : (_models[p] ? _models[p].name : p)}</button>
+    <button class="provider-pill${p === _activeProvider ? ' active' : ''}" data-p="${p}">
+      ${p === 'all' ? 'All providers' : (_models[p] ? _models[p].name : p)}
+    </button>
   `).join('');
   pf.querySelectorAll('.provider-pill').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -331,8 +332,8 @@ function renderProviderPills() {
 }
 
 function renderResultsTable() {
-  const tbody = $('results-body');
-  if (!tbody) return;
+  const wrap = $('results-body');
+  if (!wrap) return;
 
   const filtered = _allResults.filter(r => {
     if (_activeProvider !== 'all' && r.provider !== _activeProvider) return false;
@@ -341,32 +342,59 @@ function renderResultsTable() {
   });
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-[#8b949e] text-sm">No results. Try selecting more models above.</td></tr>`;
+    wrap.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--muted);font-size:var(--text-sm)">No results. Try selecting more models above.</p>`;
     return;
   }
 
-  tbody.innerHTML = filtered.map(r => {
-    const prov = _models[r.provider] || {};
+  // Group by provider
+  const byProvider = {};
+  filtered.forEach(r => {
+    if (!byProvider[r.provider]) byProvider[r.provider] = [];
+    byProvider[r.provider].push(r);
+  });
+
+  wrap.innerHTML = Object.entries(byProvider).map(([provId, rows]) => {
+    const prov  = _models[provId] || {};
     const color = prov.color || '#8b949e';
-    const ctxPct = pctOfContext(r.tokens, r.contextWindow);
-    const ctxWarn = r.contextWindow && r.tokens > r.contextWindow
-      ? '<span class="text-[#f85149] ml-1" title="Exceeds context window!">⚠</span>' : '';
-    return `<tr class="border-b border-[#30363d]/50 hover:bg-[#21262d]/30 transition-colors">
-      <td class="px-4 py-3">
-        <div class="flex items-center gap-2">
-          <span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;"></span>
-          <div>
-            <p class="text-sm font-medium text-white">${r.modelName || r.model}</p>
-            <p class="text-xs text-[#8b949e]">${prov.name || r.provider}</p>
-          </div>
+    const tableRows = rows.map(r => {
+      const ctxPct  = pctOfContext(r.tokens, r.contextWindow);
+      const ctxWarn = r.contextWindow && r.tokens > r.contextWindow
+        ? ' <span style="color:var(--error)" title="Exceeds context window!">⚠</span>' : '';
+      return `<tr>
+        <td style="padding:10px 14px;border-bottom:1px solid var(--border)">
+          <span style="font-weight:600;color:var(--text)">${r.modelName || r.model}</span>
+        </td>
+        <td style="padding:10px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);color:var(--text)">${fmt(r.tokens)}</td>
+        <td style="padding:10px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);color:var(--text-dim)">${ctxPct}${ctxWarn}</td>
+        <td style="padding:10px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);color:var(--orange);font-weight:600">${fmtMoney(r.inputCost)}</td>
+        <td style="padding:10px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);color:var(--text-dim)">${fmtMoney(r.outputCost)}</td>
+        <td style="padding:10px 14px;border-bottom:1px solid var(--border);text-align:center">${precisionBadge(r.precision)}</td>
+      </tr>`;
+    }).join('');
+
+    return `
+      <div class="provider-group">
+        <div class="provider-group-header">
+          <span class="provider-group-dot" style="background:${color}"></span>
+          <span class="provider-group-name">${prov.name || provId}</span>
+          <span class="provider-group-count">${rows.length} model${rows.length !== 1 ? 's' : ''}</span>
         </div>
-      </td>
-      <td class="px-4 py-3 text-right font-mono text-sm">${fmt(r.tokens)}</td>
-      <td class="px-4 py-3 text-right text-sm font-mono">${ctxPct}${ctxWarn}</td>
-      <td class="px-4 py-3 text-right text-sm font-mono">${fmtMoney(r.inputCost)}</td>
-      <td class="px-4 py-3 text-right text-sm font-mono">${fmtMoney(r.outputCost)}</td>
-      <td class="px-4 py-3 text-center">${precisionBadge(r.precision)}</td>
-    </tr>`;
+        <div style="overflow-x:auto;border-radius:var(--radius-lg);border:1px solid var(--border)">
+          <table style="width:100%;border-collapse:collapse;font-size:var(--text-sm)">
+            <thead>
+              <tr style="background:var(--surface2)">
+                <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Model</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Tokens</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Context %</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Input Cost</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Output Cost</th>
+                <th style="padding:8px 14px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Precision</th>
+              </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+      </div>`;
   }).join('');
 }
 
