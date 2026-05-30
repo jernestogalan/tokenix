@@ -46,8 +46,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  var SUPABASE_URL      = '{{ SUPABASE_URL }}';
-  var SUPABASE_ANON_KEY = '{{ SUPABASE_ANON_KEY }}';
   var form     = document.getElementById('signin-form');
   var errorBox = document.getElementById('error-box');
 
@@ -56,11 +54,8 @@
     errorBox.style.display = 'block';
   }
 
-  if (!SUPABASE_URL || SUPABASE_URL === '{{ SUPABASE_URL }}' || SUPABASE_URL === '') {
-    showError('Auth not configured yet. Add SUPABASE_URL + SUPABASE_ANON_KEY to your Railway variables.');
-    form.style.display = 'none';
-  } else {
-    var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  function initSupabase(supabaseUrl, supabaseAnonKey) {
+    var supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -96,6 +91,22 @@
       }
     });
   }
+
+  // Load config from server (Railway env vars are exposed via /api/config)
+  fetch('/api/config')
+    .then(function(r) { return r.json(); })
+    .then(function(config) {
+      if (!config.supabaseUrl || !config.supabaseAnonKey || !config.authEnabled) {
+        showError('Auth not configured yet. Add SUPABASE_URL + SUPABASE_ANON_KEY to your Railway variables.');
+        form.style.display = 'none';
+      } else {
+        initSupabase(config.supabaseUrl, config.supabaseAnonKey);
+      }
+    })
+    .catch(function(err) {
+      console.error('Failed to load config:', err);
+      showError('Could not load configuration. Please refresh the page.');
+    });
 </script>
 </body>
 </html>
