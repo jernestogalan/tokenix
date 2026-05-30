@@ -41,7 +41,7 @@ function precisionBadge(precision) {
 
 function showEl(el, show = true) {
   if (!el) return;
-  if (show) el.classList.remove('hidden'); else el.classList.add('hidden');
+  el.style.display = show ? '' : 'none';
 }
 
 function setHtml(el, html) { if (el) el.innerHTML = html; }
@@ -83,7 +83,22 @@ function planHeaders() {
   buildModelSelector();
   setupUpgradeModal();
   setupNavPro();
+  setupProviderFilter();
 })();
+
+/* ── Provider filter dropdown (new simple selector) ───────────────────── */
+function setupProviderFilter() {
+  const sel = $('provider-filter');
+  if (!sel) return;
+  sel.addEventListener('change', () => {
+    _activeProvider = sel.value;
+    // Re-render pills and table if results already shown
+    if ($('results') && $('results').style.display !== 'none') {
+      renderProviderPills();
+      renderResultsTable();
+    }
+  });
+}
 
 /* ── Model selector ───────────────────────────────────────────────────────── */
 function buildModelSelector() {
@@ -113,26 +128,18 @@ function buildModelSelector() {
 /* ── Tabs ─────────────────────────────────────────────────────────────────── */
 qsa('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    qsa('.tab-btn').forEach(b => {
-      b.classList.remove('active-tab', 'bg-[#161b22]', 'text-white');
-      b.classList.add('text-[#8b949e]');
-    });
-    qsa('.tab-panel').forEach(p => p.classList.add('hidden'));
+    // Deactivate all tabs and panels
+    qsa('.tab-btn').forEach(b => b.classList.remove('active', 'active-tab'));
+    qsa('.tab-panel').forEach(p => p.classList.remove('active-panel'));
 
-    btn.classList.add('active-tab', 'bg-[#161b22]', 'text-white');
-    btn.classList.remove('text-[#8b949e]');
-
+    // Activate clicked tab and its panel
+    btn.classList.add('active', 'active-tab');
     const panel = $(`tab-${btn.dataset.tab}`);
-    if (panel) panel.classList.remove('hidden');
+    if (panel) panel.classList.add('active-panel');
   });
 });
 
-// Mark first tab active on load
-const firstTab = document.querySelector('.tab-btn');
-if (firstTab) {
-  firstTab.classList.add('active-tab', 'bg-[#161b22]', 'text-white');
-  firstTab.classList.remove('text-[#8b949e]');
-}
+// Mark first tab active on load — HTML already has class="tab-btn active" + active-panel
 
 /* ── Text input ───────────────────────────────────────────────────────────── */
 const textInput      = $('text-input');
@@ -148,9 +155,9 @@ if (textInput) {
     const chars = t.length;
     const words = t.trim() ? t.trim().split(/\s+/).length : 0;
     const lines = t ? t.split('\n').length : 0;
-    if (charCountEl) charCountEl.textContent = `${fmt(chars)} chars`;
-    if (wordCountEl) wordCountEl.textContent = `${fmt(words)} words`;
-    if (lineCountEl) lineCountEl.textContent = `${fmt(lines)} lines`;
+    if (charCountEl) charCountEl.textContent = fmt(chars);
+    if (wordCountEl) wordCountEl.textContent = fmt(words);
+    if (lineCountEl) lineCountEl.textContent = fmt(lines);
     if (btnAnalyzeText) btnAnalyzeText.disabled = chars === 0;
     if (btnClearText)   btnClearText.disabled   = chars === 0;
   });
@@ -205,7 +212,7 @@ function selectFile(file) {
   if (fileNameEl) fileNameEl.textContent = file.name;
   if (fileSizeEl) fileSizeEl.textContent = `(${(file.size / 1024).toFixed(1)} KB)`;
   showEl(fileInfo);
-  if (btnAnalyzeFile) btnAnalyzeFile.disabled = false;
+  if (btnAnalyzeFile) { btnAnalyzeFile.disabled = false; showEl(btnAnalyzeFile); }
 }
 
 if (dropzone) {
@@ -228,7 +235,7 @@ if (fileInput) fileInput.addEventListener('change', () => { if (fileInput.files[
 if (btnRemoveFile) btnRemoveFile.addEventListener('click', () => {
   _selectedFile = null;
   showEl(fileInfo, false);
-  if (btnAnalyzeFile) btnAnalyzeFile.disabled = true;
+  if (btnAnalyzeFile) { btnAnalyzeFile.disabled = true; showEl(btnAnalyzeFile, false); }
   if (fileInput) fileInput.value = '';
 });
 if (btnAnalyzeFile) btnAnalyzeFile.addEventListener('click', () => analyzeFile());
@@ -293,10 +300,10 @@ function renderResults(data, filename) {
   setHtml($('s-lines'), fmt(data.lineCount));
   const sfb = $('s-file-block');
   if (filename && sfb) {
-    sfb.classList.remove('hidden');
+    sfb.style.display = '';
     setHtml($('s-file'), filename);
   } else if (sfb) {
-    sfb.classList.add('hidden');
+    sfb.style.display = 'none';
   }
 
   // Provider pills
@@ -401,17 +408,17 @@ function renderResultsTable() {
 /* ── Loading / error / results visibility ─────────────────────────────────── */
 function showLoading(show) {
   const el = $('loading');
-  if (el) show ? el.classList.remove('hidden') : el.classList.add('hidden');
+  if (el) el.style.display = show ? '' : 'none';
 }
 function showError(msg) {
   const banner = $('error-banner');
   const txt    = $('error-text');
   if (txt)    txt.textContent = msg;
-  if (banner) banner.classList.remove('hidden');
+  if (banner) banner.style.display = '';
 }
 function hideError() {
   const banner = $('error-banner');
-  if (banner) banner.classList.add('hidden');
+  if (banner) banner.style.display = 'none';
 }
 function hideResults() {
   showEl($('results'), false);
@@ -489,7 +496,7 @@ function setupUpgradeModal() {
     modalSubmit.addEventListener('click', async () => {
       const email = modalEmail ? modalEmail.value.trim() : '';
       if (!email || !email.includes('@')) {
-        if (modalMsg) { modalMsg.textContent = 'Please enter a valid email.'; modalMsg.classList.remove('hidden'); }
+        if (modalMsg) { modalMsg.textContent = 'Please enter a valid email.'; modalMsg.style.display = ''; }
         return;
       }
       modalSubmit.disabled = true;
@@ -507,11 +514,11 @@ function setupUpgradeModal() {
         if (modalMsg) {
           modalMsg.textContent = "You're on the list! We'll reach out when Pro launches.";
           modalMsg.style.color = '#3fb950';
-          modalMsg.classList.remove('hidden');
+          modalMsg.style.display = '';
         }
         modalSubmit.textContent = 'Done!';
       } catch (_) {
-        if (modalMsg) { modalMsg.textContent = 'Something went wrong.'; modalMsg.classList.remove('hidden'); }
+        if (modalMsg) { modalMsg.textContent = 'Something went wrong.'; modalMsg.style.display = ''; }
         modalSubmit.disabled = false;
         modalSubmit.textContent = 'Join waitlist';
       }
@@ -560,7 +567,7 @@ async function runClean() {
   if (!_cleanFile) return;
   showEl(cleanResult, false);
   showEl(cleanLoading);
-  if (cleanError) cleanError.classList.add('hidden');
+  if (cleanError) cleanError.style.display = 'none';
 
   try {
     const fd = new FormData();
@@ -579,7 +586,7 @@ async function runClean() {
     renderCleanResult(data);
   } catch (e) {
     showEl(cleanLoading, false);
-    if (cleanError) { cleanError.textContent = e.message; cleanError.classList.remove('hidden'); }
+    if (cleanError) { cleanError.textContent = e.message; cleanError.style.display = ''; }
   }
 }
 
@@ -707,7 +714,7 @@ async function runRetrieve() {
   if (!_retrieveFile || !retrieveQuery?.value?.trim()) return;
   showEl(retrieveResult, false);
   showEl(retrieveLoading);
-  if (retrieveError) retrieveError.classList.add('hidden');
+  if (retrieveError) retrieveError.style.display = 'none';
 
   try {
     const fd = new FormData();
@@ -729,7 +736,7 @@ async function runRetrieve() {
     renderRetrieveResult(data);
   } catch (e) {
     showEl(retrieveLoading, false);
-    if (retrieveError) { retrieveError.textContent = e.message; retrieveError.classList.remove('hidden'); }
+    if (retrieveError) { retrieveError.textContent = e.message; retrieveError.style.display = ''; }
   }
 }
 
@@ -936,14 +943,14 @@ function updateNavAnon() {
   const navAnon = $('nav-anon');
   const navUser = $('nav-user');
   if (navAnon) navAnon.style.display = 'flex';
-  if (navUser) navUser.classList.add('hidden');
+  if (navUser) navUser.style.display = 'none';
 }
 
 function updateNavLoggedIn(email, plan, profile) {
   const navAnon = $('nav-anon');
   const navUser = $('nav-user');
   if (navAnon) navAnon.style.display = 'none';
-  if (navUser) navUser.classList.remove('hidden');
+  if (navUser) navUser.style.display = 'flex';
 
   const emailEl = $('nav-user-email');
   const badgeEl = $('nav-plan-badge');
@@ -970,7 +977,7 @@ function updateNavLoggedIn(email, plan, profile) {
     const navUsage = $('nav-usage');
     const navBar   = $('nav-usage-bar');
     const navLabel = $('nav-usage-label');
-    if (navUsage) navUsage.classList.remove('hidden');
+    if (navUsage) navUsage.style.display = '';
     if (navBar) {
       navBar.style.width = pct + '%';
       // Colour: red ≥90%, orange ≥75%, indigo otherwise
@@ -1031,13 +1038,13 @@ function setAuthMsg(msg, isError = false) {
   const el = $('auth-msg');
   if (!el) return;
   el.textContent = msg;
-  el.className   = `text-xs mt-3 ${isError ? 'text-[#f85149]' : 'text-[#3fb950]'}`;
-  el.classList.remove('hidden');
+  el.style.color = isError ? '#f85149' : '#3fb950';
+  el.style.display = '';
 }
 
 function clearAuthMsg() {
   const el = $('auth-msg');
-  if (el) { el.textContent = ''; el.classList.add('hidden'); }
+  if (el) { el.textContent = ''; el.style.display = 'none'; }
 }
 
 async function handleSignIn() {
