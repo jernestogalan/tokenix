@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Tokenia</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=5">
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand" style="text-decoration:none">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/></linearGradient></defs><rect width="28" height="28" rx="7" fill="url(#nb)"/><path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Tokenia</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Analyzer</a>
+      <a href="/pricing.html" class="nav-link">Pricing</a>
+    </div>
+    <div class="nav-right">
+      <span id="nav-email" style="font-size:var(--text-xs);color:var(--muted);"></span>
+      <button id="logout-btn" class="btn btn-ghost btn-sm">Log Out</button>
+    </div>
+  </div>
+</nav>
+
+<div style="min-height:100vh;padding:calc(64px + var(--sp-10)) 0 var(--sp-16);background:var(--bg);">
+  <div class="section-container" style="max-width:720px;">
+
+    <!-- Loading state -->
+    <div id="loading-state" style="text-align:center;padding:var(--sp-16);">
+      <div class="spinner-lg"></div>
+      <p style="color:var(--muted);margin-top:var(--sp-4);">Loading your account…</p>
+    </div>
+
+    <!-- Dashboard content -->
+    <div id="dashboard-content" style="display:none;">
+      <div style="margin-bottom:var(--sp-8);">
+        <h1 style="font-size:var(--text-3xl);font-weight:800;margin-bottom:var(--sp-2);">Dashboard</h1>
+        <p style="color:var(--muted);">Welcome back, <span id="user-email-display" style="color:var(--text);font-weight:600;"></span></p>
+      </div>
+
+      <!-- Confirmed banner -->
+      <div id="confirmed-banner" class="auth-success" style="display:none;margin-bottom:var(--sp-6);">
+        ✓ Email confirmed! Your account is now active.
+      </div>
+
+      <!-- Account card -->
+      <div class="card" style="margin-bottom:var(--sp-5);">
+        <h2 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--sp-4);">Account Information</h2>
+        <div id="user-info" style="display:flex;flex-direction:column;gap:var(--sp-3);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) 0;border-bottom:1px solid var(--border);">
+            <span style="font-weight:600;color:var(--text-dim);font-size:var(--text-sm);">Email</span>
+            <span id="info-email" style="font-size:var(--text-sm);color:var(--text);"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) 0;border-bottom:1px solid var(--border);">
+            <span style="font-weight:600;color:var(--text-dim);font-size:var(--text-sm);">Plan</span>
+            <span id="info-plan" style="font-size:var(--text-sm);color:var(--orange);font-weight:700;">Free</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) 0;">
+            <span style="font-weight:600;color:var(--text-dim);font-size:var(--text-sm);">Member since</span>
+            <span id="info-created" style="font-size:var(--text-sm);color:var(--text);"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan upgrade card -->
+      <div class="card" style="background:var(--orange-dim);border-color:var(--orange-border);margin-bottom:var(--sp-5);">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4);">
+          <div>
+            <h3 style="font-size:var(--text-base);font-weight:700;color:var(--orange);margin-bottom:var(--sp-1);">Free Plan</h3>
+            <p style="font-size:var(--text-sm);color:var(--text-dim);margin:0;">Unlimited token counting, all 30+ models, no limits.</p>
+          </div>
+          <a href="/pricing/pro" class="btn btn-primary btn-sm" style="text-decoration:none;white-space:nowrap;">Upgrade to Pro</a>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="card">
+        <h2 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--sp-4);">Quick Actions</h2>
+        <div style="display:flex;gap:var(--sp-3);flex-wrap:wrap;">
+          <a href="/" class="btn btn-primary btn-sm" style="text-decoration:none;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5 10.5L12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Analyze Tokens
+          </a>
+          <a href="/pricing.html" class="btn btn-ghost btn-sm" style="text-decoration:none;">View Plans</a>
+          <a href="#contact-section" class="btn btn-ghost btn-sm" style="text-decoration:none;" onclick="window.location.href='/#contact-section'">Contact Support</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unauthenticated state -->
+    <div id="unauth-state" style="display:none;text-align:center;padding:var(--sp-16);">
+      <p style="font-size:var(--text-lg);color:var(--muted);margin-bottom:var(--sp-6);">Please sign in to view your dashboard.</p>
+      <a href="/auth/signin" class="btn btn-primary" style="text-decoration:none;">Sign In</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+(async function() {
+  const loadingState    = document.getElementById('loading-state');
+  const dashboardContent= document.getElementById('dashboard-content');
+  const unauthState     = document.getElementById('unauth-state');
+  const confirmedBanner = document.getElementById('confirmed-banner');
+
+  // Show confirmed banner if redirected from email confirmation
+  if (new URLSearchParams(window.location.search).get('confirmed') === 'true') {
+    confirmedBanner.style.display = '';
+  }
+
+  try {
+    const res  = await fetch('/api/auth/user', {
+      headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('supabase_access_token') || '') }
+    });
+    const data = await res.json();
+
+    if (res.ok && data.authenticated && data.user) {
+      const user = data.user;
+      document.getElementById('nav-email').textContent           = user.email || '';
+      document.getElementById('user-email-display').textContent  = user.email || '';
+      document.getElementById('info-email').textContent          = user.email || '—';
+      document.getElementById('info-plan').textContent           = data.plan?.name || 'Free';
+      document.getElementById('info-created').textContent        = user.created_at
+        ? new Date(user.created_at).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
+        : '—';
+
+      loadingState.style.display     = 'none';
+      dashboardContent.style.display = '';
+    } else {
+      loadingState.style.display = 'none';
+      unauthState.style.display  = '';
+    }
+  } catch {
+    loadingState.style.display = 'none';
+    unauthState.style.display  = '';
+  }
+
+  // Logout
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    localStorage.removeItem('supabase_user');
+    localStorage.removeItem('supabase_access_token');
+    localStorage.removeItem('supabase_refresh_token');
+    window.location.href = '/';
+  });
+})();
+</script>
+</body>
+</html>

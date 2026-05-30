@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirming email… — Tokenia</title>
+  <style>
+    body { background-color:#FAFAFA; display:flex; align-items:center; justify-content:center; min-height:100vh; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .loader { text-align:center; }
+    .spinner { width:32px; height:32px; border:3px solid #E5E5E5; border-top-color:#FF6B2C; border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 20px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="loader">
+  <div class="spinner"></div>
+  <p style="color:#666;margin:0;font-size:16px;">Confirming your email…</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+(function() {
+  // Parse hash params (Supabase email confirmation delivers tokens in the hash)
+  const hash   = window.location.hash.slice(1);
+  const params = new URLSearchParams(hash);
+  const type   = params.get('type');
+  const token  = params.get('access_token');
+
+  if (token) {
+    // Store token and redirect to dashboard
+    localStorage.setItem('supabase_access_token', token);
+    const refresh = params.get('refresh_token');
+    if (refresh) localStorage.setItem('supabase_refresh_token', refresh);
+    setTimeout(() => { window.location.href = '/dashboard?confirmed=true'; }, 800);
+  } else {
+    // No token — check query params (some Supabase versions use search, not hash)
+    const sp = new URLSearchParams(window.location.search);
+    const code = sp.get('code');
+    if (code) {
+      // PKCE flow — redirect home, Supabase SDK will handle the exchange
+      setTimeout(() => { window.location.href = '/'; }, 800);
+    } else {
+      // Unrecognized — send home
+      setTimeout(() => { window.location.href = '/'; }, 1200);
+    }
+  }
+})();
+</script>
+</body>
+</html>

@@ -137,10 +137,12 @@ function serveAuthPage(filePath, res) {
   }
 }
 
-app.get('/auth/signin',   (_req, res) => serveAuthPage('auth/signin.html',  res));
-app.get('/auth/signup',   (_req, res) => serveAuthPage('auth/signup.html',  res));
-app.get('/pricing/pro',   (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/pro.html')));
-app.get('/pricing/team',  (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/team.html')));
+app.get('/auth/signin',    (_req, res) => serveAuthPage('auth/signin.html',  res));
+app.get('/auth/signup',    (_req, res) => serveAuthPage('auth/signup.html',  res));
+app.get('/auth/callback',  (_req, res) => res.sendFile(path.join(__dirname, 'public/auth/callback.html')));
+app.get('/dashboard',      (_req, res) => res.sendFile(path.join(__dirname, 'public/dashboard.html')));
+app.get('/pricing/pro',    (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/pro.html')));
+app.get('/pricing/team',   (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/team.html')));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
