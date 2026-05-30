@@ -85,6 +85,7 @@ function estimateTokens(text) {
 /* ── State ────────────────────────────────────────────────────────────────── */
 let _activeProvider = 'all';
 let _lastTokenCount = 0;
+let _activeTab      = 'paste';
 
 /* ── Init ─────────────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -95,14 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (textInput) {
     textInput.addEventListener('input', updateStats);
-    // Enable/disable analyze button based on content
     textInput.addEventListener('input', () => {
       if (btnAnalyze) btnAnalyze.disabled = !textInput.value.trim();
     });
   }
 
   if (btnAnalyze) {
-    btnAnalyze.disabled = true; // starts disabled until text entered
+    btnAnalyze.disabled = true;
     btnAnalyze.addEventListener('click', analyzeTokens);
   }
 
@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (textInput) textInput.value = '';
       updateStats();
       hideResults();
+      resetUploadUI();
       if (btnAnalyze) btnAnalyze.disabled = true;
     });
   }
@@ -126,8 +127,175 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Analyzer tabs (Paste / Upload)
+  document.querySelectorAll('.atab').forEach(btn => {
+    btn.addEventListener('click', () => switchAnalyzerTab(btn.dataset.atab));
+  });
+
+  // File upload wiring
+  setupFileUpload();
+
   console.log('✅ Tokenia Token Analyzer v5 ready');
 });
+
+/* ── Analyzer tabs ────────────────────────────────────────────────────────── */
+function switchAnalyzerTab(tabName) {
+  _activeTab = tabName;
+  document.querySelectorAll('.atab').forEach(b => {
+    b.classList.toggle('atab-active', b.dataset.atab === tabName);
+    b.setAttribute('aria-selected', b.dataset.atab === tabName);
+  });
+  document.querySelectorAll('.atab-panel').forEach(p => {
+    p.style.display = p.id === `atab-${tabName}` ? '' : 'none';
+  });
+}
+
+/* ── File upload ──────────────────────────────────────────────────────────── */
+const ALLOWED_EXTENSIONS = new Set([
+  'txt','md','pdf','doc','docx','csv','json',
+  'py','js','ts','jsx','tsx','html','css','rb','go','rs','java','kt','swift',
+  'c','cpp','cs','php','sh','sql','yaml','yml','toml','r','ipynb',
+]);
+
+function getExt(name) {
+  const i = name.lastIndexOf('.');
+  return i >= 0 ? name.slice(i + 1).toLowerCase() : '';
+}
+
+function setupFileUpload() {
+  const dropZone    = $('drop-zone');
+  const fileInput   = $('file-input');
+  const browseBtn   = $('btn-browse-file');
+  const removeBtn   = $('btn-remove-file');
+  const uploadStatus= $('upload-status');
+  const btnAnalyze  = $('btn-analyze');
+
+  if (!dropZone || !fileInput) return;
+
+  // Click → browse
+  dropZone.addEventListener('click', () => fileInput.click());
+  browseBtn && browseBtn.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+
+  // Keyboard accessibility
+  dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+
+  // Drag over
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('drop-zone-active');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drop-zone-active'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drop-zone-active');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+  });
+
+  removeBtn && removeBtn.addEventListener('click', () => {
+    resetUploadUI();
+    const textInput = $('text-input');
+    if (textInput) textInput.value = '';
+    updateStats();
+    if (btnAnalyze) btnAnalyze.disabled = true;
+    fileInput.value = '';
+  });
+}
+
+async function handleFile(file) {
+  const ext = getExt(file.name);
+  if (!ALLOWED_EXTENSIONS.has(ext)) {
+    showUploadError(`File type ".${ext}" is not supported.`); return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showUploadError('File too large — max 10 MB.'); return;
+  }
+
+  // Show status
+  const uploadStatus = $('upload-status');
+  const filename     = $('upload-filename');
+  const progressFill = $('upload-progress-fill');
+  const btnAnalyze   = $('btn-analyze');
+
+  if (uploadStatus) uploadStatus.style.display = '';
+  if (filename)     filename.textContent = file.name;
+  if (progressFill) { progressFill.style.width = '0%'; progressFill.style.background = 'var(--orange)'; }
+
+  // Client-side reading for text files (no server round-trip)
+  if (['txt','md','json','csv','py','js','ts','jsx','tsx','html','css',
+       'rb','go','rs','java','kt','swift','c','cpp','cs','php','sh',
+       'sql','yaml','yml','toml','r','xml','toml'].includes(ext)) {
+    const text = await file.text();
+    if (progressFill) progressFill.style.width = '100%';
+    loadTextIntoAnalyzer(text);
+    return;
+  }
+
+  // Server-side parsing for PDF/DOCX
+  try {
+    // Animate progress
+    let pct = 0;
+    const interval = setInterval(() => {
+      pct = Math.min(pct + Math.random() * 25, 85);
+      if (progressFill) progressFill.style.width = pct + '%';
+    }, 150);
+
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/parse-file', { method: 'POST', body: fd });
+
+    clearInterval(interval);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Parse failed' }));
+      showUploadError(err.error || 'Could not parse file.');
+      return;
+    }
+
+    if (progressFill) progressFill.style.width = '100%';
+    const data = await res.json();
+    loadTextIntoAnalyzer(data.text || '');
+  } catch (err) {
+    showUploadError('Network error — please try again.');
+  }
+}
+
+function loadTextIntoAnalyzer(text) {
+  const textInput  = $('text-input');
+  const btnAnalyze = $('btn-analyze');
+  if (textInput) {
+    textInput.value = text;
+    updateStats();
+  }
+  if (btnAnalyze) btnAnalyze.disabled = !text.trim();
+  // Switch to paste tab so user sees the text
+  switchAnalyzerTab('paste');
+}
+
+function resetUploadUI() {
+  const uploadStatus = $('upload-status');
+  const progressFill = $('upload-progress-fill');
+  if (uploadStatus) uploadStatus.style.display = 'none';
+  if (progressFill) progressFill.style.width = '0%';
+}
+
+function showUploadError(msg) {
+  resetUploadUI();
+  const dropZone = $('drop-zone');
+  if (dropZone) {
+    const hint = dropZone.querySelector('.drop-zone-hint');
+    if (hint) {
+      const orig = hint.textContent;
+      hint.style.color = 'var(--error)';
+      hint.textContent = msg;
+      setTimeout(() => { hint.style.color = ''; hint.textContent = orig; }, 3000);
+    }
+  }
+}
 
 /* ── Update stats bar ─────────────────────────────────────────────────────── */
 function updateStats() {

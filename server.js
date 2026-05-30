@@ -13,6 +13,7 @@ const compression = require('compression');
 const multer      = require('multer');
 const cors        = require('cors');
 const path        = require('path');
+const fs          = require('fs');
 
 const { tokenizeAll } = require('./src/tokenizers');
 const { extractText } = require('./src/parsers');
@@ -121,6 +122,26 @@ app.use(cors({
 }));
 
 app.use(express.json({ limit: '10mb' }));
+
+// ── Auth pages — inject Supabase config server-side ──────────────────────────
+function serveAuthPage(filePath, res) {
+  try {
+    let html = fs.readFileSync(path.join(__dirname, 'public', filePath), 'utf8');
+    html = html.replace(/\{\{ SUPABASE_URL \}\}/g,      process.env.SUPABASE_URL      || '');
+    html = html.replace(/\{\{ SUPABASE_ANON_KEY \}\}/g, process.env.SUPABASE_ANON_KEY || '');
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err) {
+    console.error('[auth] serveAuthPage error:', err.message);
+    res.status(404).send('Page not found');
+  }
+}
+
+app.get('/auth/signin',   (_req, res) => serveAuthPage('auth/signin.html',  res));
+app.get('/auth/signup',   (_req, res) => serveAuthPage('auth/signup.html',  res));
+app.get('/pricing/pro',   (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/pro.html')));
+app.get('/pricing/team',  (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/team.html')));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Rate limiters (Redis-backed with in-memory fallback) ─────────────────────
@@ -618,6 +639,26 @@ app.post('/api/lead', (req, res) => {
 app.get('/api/leads', requireApiKey, (req, res) => {
   if (!API_KEY) return res.status(403).json({ error: 'API_KEY not configured.' });
   res.json({ count: _leads.length, leads: _leads });
+});
+
+// POST /api/parse-file — extract plain text from uploaded file (PDF, DOCX, TXT, etc.)
+app.post('/api/parse-file', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+
+    const text = await extractText(req.file.buffer, req.file.originalname);
+    if (!text || !text.trim()) return res.status(422).json({ error: 'Could not extract text from this file.' });
+
+    // Free-tier cap: 100k chars
+    const capped = text.length > 100_000
+      ? text.slice(0, 100_000) + '\n\n[Truncated — upgrade to Pro for full processing]'
+      : text;
+
+    res.json({ text: capped, chars: capped.length, truncated: text.length > 100_000 });
+  } catch (err) {
+    console.error('[/api/parse-file]', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // POST /api/contact — contact form (sends email via Resend if configured)

@@ -40,6 +40,7 @@
     <div class="nav-right">
       <div id="lang-selector"></div>
       <a href="#contact-section" class="btn btn-ghost btn-sm">Contact</a>
+      <a href="/auth/signin" class="btn btn-primary btn-sm" style="text-decoration:none">Sign In</a>
     </div>
   </div>
 </nav>
@@ -54,14 +55,55 @@
       <p class="analyzer-subtitle">Instant token count &amp; cost estimate across 30+ models</p>
     </div>
 
-    <!-- Textarea principal -->
-    <textarea
-      id="text-input"
-      class="main-textarea analyzer-textarea"
-      placeholder="Paste your prompt, document, or any text here…"
-      spellcheck="false"
-      aria-label="Text input for token analysis"
-    ></textarea>
+    <!-- Tabs: Paste / Upload -->
+    <div class="analyzer-tab-bar" role="tablist">
+      <button class="atab atab-active" data-atab="paste" role="tab" aria-selected="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="1.5" rx=".75" fill="currentColor"/><rect x="1" y="5.5" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="1" y="9" width="10.5" height="1.5" rx=".75" fill="currentColor"/></svg>
+        Paste Text
+      </button>
+      <button class="atab" data-atab="upload" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 1.5h5.5L11 4v8.5H3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M8.5 1.5V4H11" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Upload File
+      </button>
+    </div>
+
+    <!-- Tab: Paste Text -->
+    <div id="atab-paste" class="atab-panel atab-panel-active">
+      <textarea
+        id="text-input"
+        class="main-textarea analyzer-textarea"
+        placeholder="Paste your prompt, document, or any text here…"
+        spellcheck="false"
+        aria-label="Text input for token analysis"
+      ></textarea>
+    </div>
+
+    <!-- Tab: Upload File -->
+    <div id="atab-upload" class="atab-panel" style="display:none">
+      <input type="file" id="file-input" class="sr-only"
+        accept=".txt,.pdf,.doc,.docx,.csv,.json,.md,.py,.js,.ts">
+      <div id="drop-zone" class="drop-zone" role="button" tabindex="0"
+           aria-label="Click or drag a file here to upload">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="var(--orange-dim)"/>
+          <path d="M20 10v16M14 18l6-8 6 8" stroke="var(--orange)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11 30h18" stroke="var(--orange)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p class="drop-zone-title">Click to upload or drag &amp; drop</p>
+        <p class="drop-zone-hint">TXT, PDF, DOCX, CSV, JSON, MD, code files · Max 10 MB</p>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-browse-file">Browse File</button>
+      </div>
+      <div id="upload-status" class="upload-status" style="display:none">
+        <div class="upload-status-row">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h7.5L13 4.5V14H3z" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round" fill="none"/><path d="M10.5 2v2.5H13" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <span id="upload-filename" class="upload-filename"></span>
+          <button type="button" id="btn-remove-file" class="btn-icon" aria-label="Remove file">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><line x1="1" y1="1" x2="10" y2="10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="1" x2="1" y2="10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="upload-progress-bar"><div id="upload-progress-fill" class="upload-progress-fill"></div></div>
+      </div>
+    </div>
 
     <!-- Stats -->
     <div class="textarea-stats">
@@ -139,48 +181,30 @@
       <p class="section-eyebrow">Why Tokenia</p>
       <h2 class="section-title">Built for developers who care about costs</h2>
     </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="var(--orange)" stroke-width="1.8"/><path d="M7 11l3 3 5-6" stroke="var(--orange)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <h3>Exact + Estimated</h3>
-        <p>Official tokenizers where available (tiktoken, Claude). Clearly labeled estimates for all others.</p>
+    <div class="card-grid">
+      <div class="card card-clickable" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
+        <h3 class="card-title"><span class="card-icon">⚡</span> 30+ Models</h3>
+        <p class="card-body">Compare pricing across OpenAI, Anthropic, Google, Meta, Mistral, and DeepSeek in one table.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="5" width="8" height="6" rx="2" stroke="var(--orange)" stroke-width="1.8"/><rect x="12" y="11" width="8" height="6" rx="2" stroke="var(--orange)" stroke-width="1.8"/><path d="M10 8h2m0 0v5" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <h3>Multi-Provider</h3>
-        <p>Compare costs across OpenAI, Anthropic, Mistral, Google and more in one view.</p>
+      <div class="card card-clickable" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
+        <h3 class="card-title"><span class="card-icon">📊</span> Real-time Estimates</h3>
+        <p class="card-body">Get token counts and cost estimates in milliseconds — 100% client-side, no API calls.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="11" width="16" height="9" rx="2" stroke="var(--orange)" stroke-width="1.8"/><path d="M7 11V7.5a4 4 0 018 0V11" stroke="var(--orange)" stroke-width="1.8"/></svg>
-        </div>
-        <h3>Always Private</h3>
-        <p>Text is processed in memory only. Nothing is logged, stored, or shared with third parties.</p>
+      <div class="card card-clickable" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
+        <h3 class="card-title"><span class="card-icon">🔒</span> 100% Private</h3>
+        <p class="card-body">Your text never leaves your browser. No tracking, no logs, nothing stored.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M5 3h8.5L18 7.5V19H5z" stroke="var(--orange)" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 3v4.5H18" stroke="var(--orange)" stroke-width="1.8" stroke-linejoin="round"/></svg>
-        </div>
-        <h3>File Upload</h3>
-        <p>Analyze TXT, MD, PDF, DOCX and code files. Up to 10 MB. No data stored.</p>
+      <div class="card card-clickable" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
+        <h3 class="card-title"><span class="card-icon">📁</span> File Upload</h3>
+        <p class="card-body">Upload TXT, PDF, DOCX, CSV, JSON and code files. Drag &amp; drop supported. Max 10 MB.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 13.5l3-8 5 5-8 3z" stroke="var(--orange)" stroke-width="1.8" stroke-linejoin="round"/><path d="M11.5 5.5l4 4" stroke="var(--orange)" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </div>
-        <h3>Prompt Optimizer</h3>
-        <p>Get actionable tips to reduce token count while preserving meaning.</p>
+      <div class="card card-clickable" onclick="window.location.href='/pricing.html'">
+        <h3 class="card-title"><span class="card-icon">💼</span> Pro Features</h3>
+        <p class="card-body">Batch processing, API access, usage history, and CSV export — coming soon in Pro.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="var(--orange)" stroke-width="1.8"/><path d="M11 7v4l3 3" stroke="var(--orange)" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </div>
-        <h3>Real-time Updates</h3>
-        <p>Token counts and cost estimates update instantly as you type or switch providers.</p>
+      <div class="card card-clickable" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
+        <h3 class="card-title"><span class="card-icon">🆓</span> Always Free</h3>
+        <p class="card-body">No credit card required. No limits on the Free tier. Upgrade to Pro only when you need more.</p>
       </div>
     </div>
   </div>
@@ -211,12 +235,13 @@
           <li>All provider comparisons</li>
           <li>File upload (TXT, MD, DOCX, PDF)</li>
           <li>Cost estimations</li>
-          <li>Prompt optimizer tips</li>
+          <li>No credit card required</li>
         </ul>
         <a href="#analyzer" class="btn btn-outline btn-block">Get Started Free</a>
       </div>
       <!-- Pro -->
       <div class="pricing-card pricing-card-pro">
+        <span class="popular-badge">POPULAR</span>
         <div class="pricing-card-header">
           <h3>Pro</h3>
           <div class="price-row">
@@ -231,7 +256,7 @@
           <li>Usage history &amp; reports</li>
           <li>Priority support</li>
         </ul>
-        <button class="btn btn-primary btn-block" disabled>Coming Soon</button>
+        <a href="/pricing/pro" class="btn btn-primary btn-block">Upgrade to Pro</a>
       </div>
       <!-- Team -->
       <div class="pricing-card">
@@ -249,7 +274,7 @@
           <li>Admin dashboard</li>
           <li>SLA support</li>
         </ul>
-        <button class="btn btn-outline btn-block" disabled>Coming Soon</button>
+        <a href="/pricing/team" class="btn btn-outline btn-block">Upgrade to Team</a>
       </div>
     </div>
     <p class="pricing-note">Upgrades coming soon — currently free for everyone.</p>
