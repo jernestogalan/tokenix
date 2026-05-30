@@ -7,36 +7,31 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
   <link rel="stylesheet" href="/css/style.css?v=5">
   <style>
-    body { background-color:#FAFAFA; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
-    .auth-container { width:100%; max-width:420px; background:white; border-radius:8px; border:1px solid #E5E5E5; padding:40px 32px; margin-top:60px; }
+    body { background-color:#FAFAFA; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; margin:0; }
+    .auth-container { width:100%; max-width:420px; background:white; border-radius:8px; border:1px solid #E5E5E5; padding:40px 32px; }
   </style>
 </head>
 <body>
-<nav class="nav" style="position:fixed;top:0;left:0;right:0;z-index:1000;">
+<nav class="nav" style="position:fixed;top:0;left:0;right:0;width:100%;z-index:1000;">
   <div class="nav-inner">
-    <a href="/" class="nav-brand" style="text-decoration:none">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/></linearGradient></defs><rect width="28" height="28" rx="7" fill="url(#nb)"/><path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>Tokenia</span>
-    </a>
-    <div style="margin-left:auto;">
-      <a href="/auth/signin" class="btn btn-ghost btn-sm" style="text-decoration:none">Sign in</a>
-    </div>
+    <div class="nav-logo" style="cursor:pointer;font-size:18px;" onclick="window.location.href='/'">⚡ Tokenia</div>
+    <div style="margin-left:auto;"></div>
   </div>
 </nav>
 
 <div class="auth-container">
-  <h1 style="text-align:center;margin-bottom:8px;font-size:28px;font-weight:900;">Create your account</h1>
+  <h1 style="text-align:center;margin-bottom:8px;font-size:28px;font-weight:900;color:#1A1A1A;">Create your account</h1>
   <p style="text-align:center;color:#666;margin-bottom:32px;font-size:14px;">Free forever. No credit card required.</p>
 
   <form id="signup-form" style="display:flex;flex-direction:column;gap:16px;">
     <div>
       <label for="email" style="display:block;margin-bottom:8px;font-weight:600;color:#1A1A1A;">Email</label>
-      <input type="email" id="email" name="email" required placeholder="you@example.com"
+      <input type="email" id="email" name="email" required placeholder="you@example.com" autocomplete="email"
         style="width:100%;padding:12px;border:1px solid #E5E5E5;border-radius:6px;font-size:14px;box-sizing:border-box;">
     </div>
     <div>
       <label for="password" style="display:block;margin-bottom:8px;font-weight:600;color:#1A1A1A;">Password</label>
-      <input type="password" id="password" name="password" required placeholder="At least 8 characters" minlength="8"
+      <input type="password" id="password" name="password" required placeholder="At least 8 characters" minlength="8" autocomplete="new-password"
         style="width:100%;padding:12px;border:1px solid #E5E5E5;border-radius:6px;font-size:14px;box-sizing:border-box;">
       <p style="margin:6px 0 0 0;font-size:12px;color:#999;">Minimum 8 characters</p>
     </div>
@@ -50,59 +45,70 @@
   </p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL      = '{{ SUPABASE_URL }}';
-  const SUPABASE_ANON_KEY = '{{ SUPABASE_ANON_KEY }}';
-  const form     = document.getElementById('signup-form');
-  const errorBox = document.getElementById('error-box');
+  var SUPABASE_URL      = '{{ SUPABASE_URL }}';
+  var SUPABASE_ANON_KEY = '{{ SUPABASE_ANON_KEY }}';
+  var form     = document.getElementById('signup-form');
+  var errorBox = document.getElementById('error-box');
 
-  if (!SUPABASE_URL || SUPABASE_URL === '{{ SUPABASE_URL }}') {
-    errorBox.textContent = 'Auth not configured yet.';
+  function showError(msg) {
+    errorBox.textContent = msg;
     errorBox.style.display = 'block';
+  }
+
+  if (!SUPABASE_URL || SUPABASE_URL === '{{ SUPABASE_URL }}' || SUPABASE_URL === '') {
+    showError('Auth not configured yet. Add SUPABASE_URL + SUPABASE_ANON_KEY to your Railway variables.');
     form.style.display = 'none';
   } else {
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const btn      = e.target.querySelector('button[type="submit"]');
+      var email    = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+      var btn      = e.target.querySelector('button[type="submit"]');
 
       errorBox.style.display = 'none';
 
       if (password.length < 8) {
-        errorBox.textContent = 'Password must be at least 8 characters.';
-        errorBox.style.display = 'block';
+        showError('Password must be at least 8 characters.');
         return;
       }
 
       btn.disabled    = true;
-      btn.textContent = 'Creating account…';
+      btn.textContent = 'Creating account...';
 
       try {
-        const { data, error } = await supabase.auth.signUp({
-          email, password,
+        var result = await supabase.auth.signUp({
+          email: email,
+          password: password,
           options: { emailRedirectTo: window.location.origin + '/auth/callback' }
         });
-        if (error) throw error;
+        var data  = result.data;
+        var error = result.error;
 
-        if (data?.user) {
+        if (error) {
+          showError(error.message || 'Sign up failed. Please try again.');
+          btn.disabled    = false;
+          btn.textContent = 'Create Free Account';
+          return;
+        }
+        if (data && data.user) {
           form.innerHTML = `
             <div style="text-align:center;padding:20px;">
               <p style="font-size:32px;margin-bottom:16px;">✅</p>
-              <h2 style="margin-bottom:12px;">Check your email</h2>
-              <p style="color:#666;line-height:1.6;">
-                We sent a confirmation link to <strong>${email}</strong>. Click it to activate your account.
+              <h2 style="margin-bottom:12px;font-size:20px;color:#1A1A1A;">Check your email</h2>
+              <p style="color:#666;line-height:1.6;margin-bottom:16px;">
+                We sent a confirmation link to <strong>${email}</strong>.
               </p>
-              <p style="color:#999;font-size:12px;margin-top:16px;">Didn't receive it? Check your spam folder.</p>
+              <p style="color:#999;font-size:12px;">Click it to verify your account. Link expires in 24 hours.</p>
               <a href="/auth/signin" class="btn btn-primary" style="display:inline-block;margin-top:20px;text-decoration:none;">Go to Sign In</a>
             </div>`;
         }
       } catch (err) {
-        errorBox.textContent = err.message || 'Sign up failed. Please try again.';
-        errorBox.style.display = 'block';
+        console.error('Signup error:', err);
+        showError(err.message || 'An error occurred. Please try again.');
         btn.disabled    = false;
         btn.textContent = 'Create Free Account';
       }
