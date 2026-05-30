@@ -19,6 +19,7 @@ const { extractText } = require('./src/parsers');
 const { cleanText }   = require('./src/cleaner');
 const { retrieve }    = require('./src/retriever');
 const MODELS          = require('./src/config/models');
+const { sendContactEmail } = require('./src/lib/email');
 
 const { getAllPlans }            = require('./src/config/plans');
 const { checkEntitlement }      = require('./src/lib/entitlements');
@@ -617,6 +618,30 @@ app.post('/api/lead', (req, res) => {
 app.get('/api/leads', requireApiKey, (req, res) => {
   if (!API_KEY) return res.status(403).json({ error: 'API_KEY not configured.' });
   res.json({ count: _leads.length, leads: _leads });
+});
+
+// POST /api/contact — contact form (sends email via Resend if configured)
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, message } = req.body || {};
+    if (!name || typeof name !== 'string' || name.trim().length < 2)
+      return res.status(400).json({ error: 'Name is required.' });
+    if (!email || !email.includes('@'))
+      return res.status(400).json({ error: 'Valid email is required.' });
+    if (!message || typeof message !== 'string' || message.trim().length < 5)
+      return res.status(400).json({ error: 'Message is required.' });
+
+    const result = await sendContactEmail(name.trim(), email.trim(), message.trim());
+    if (result.success) {
+      res.json({ ok: true, message: "Message received! We'll get back to you soon." });
+    } else {
+      console.error('[/api/contact] email send failed:', result.error);
+      res.status(500).json({ error: 'Failed to send message. Please email support@tokenia.live directly.' });
+    }
+  } catch (err) {
+    console.error('[/api/contact]', err.message);
+    res.status(500).json({ error: 'Server error.' });
+  }
 });
 
 // POST /api/credits/check
