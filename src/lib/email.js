@@ -32,7 +32,7 @@ async function sendContactEmail(name, email, message) {
   }
   try {
     const { data, error } = await resend.emails.send({
-      from:    'Tokenia Contact <info@tokenia.live>',
+      from:    'Tokenia <noreply@mail.tokenia.live>',
       to:      ['info@tokenia.live'],
       replyTo: email,
       subject: `Contact from ${name} — tokenia.live`,

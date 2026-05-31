@@ -1112,7 +1112,8 @@ const _heartbeatInterval = setInterval(async () => {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            from: 'alerts@tokenia.live', to: ['info@tokenia.live'],
+            from: 'Tokenia Alerts <noreply@mail.tokenia.live>', to: ['info@tokenia.live'],
+            replyTo: 'info@tokenia.live',
             subject: `⚠️ Tokenia health degraded — ${new Date().toISOString()}`,
             html: `<p>Tokenia health check failed 3 consecutive times.</p><p>Error: ${err.message}</p><p>Time: ${new Date().toISOString()}</p>`,
           }),
@@ -1149,7 +1150,4 @@ app.listen(PORT, () => {
     credits:  CREDITS_ENABLED,
     history:  HISTORY_ENABLED,
     projects: PROJECTS_ENABLED,
-    redis:    isRedisReady(),
-    paid:     PAID_FEATURES_ENABLED,
-  });
-});
+    redis:  
