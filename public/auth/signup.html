@@ -75,6 +75,7 @@
       btn.textContent = 'Creating account...';
 
       try {
+        console.log('🔍 Auth signup attempt:', email);
         var result = await supabase.auth.signUp({
           email: email,
           password: password,
@@ -84,11 +85,13 @@
         var error = result.error;
 
         if (error) {
+          console.error('❌ Supabase signup error:', error.message, error);
           showError(error.message || 'Sign up failed. Please try again.');
           btn.disabled    = false;
           btn.textContent = 'Create Free Account';
           return;
         }
+        console.log('✅ Signup successful, confirmation email sent to:', email);
         if (data && data.user) {
           form.innerHTML = `
             <div style="text-align:center;padding:20px;">

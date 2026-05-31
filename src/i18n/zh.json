@@ -142,14 +142,14 @@
     "quick_accuracy": "精确度如何？",
     "quick_start": "如何开始？",
     "quick_cost": "是否免费？",
-    "fallback": "我暂时没有这个问题的答案。请发邮件至 support@tokenia.live，我们会尽快回复。",
+    "fallback": "我暂时没有这个问题的答案。请发邮件至 info@tokenia.live，我们会尽快回复。",
     "fallback_form": "或发送消息给我们：",
     "form_name": "您的姓名",
     "form_email": "您的邮箱",
     "form_message": "您的问题或留言",
     "form_submit": "发送消息",
     "form_success": "消息已发送！我们将在 24 小时内回复。",
-    "form_error": "发送失败，请直接发邮件至 support@tokenia.live。",
+    "form_error": "发送失败，请直接发邮件至 info@tokenia.live。",
     "char_limit": "剩余字符"
   }
 }

@@ -142,14 +142,14 @@
     "quick_accuracy": "Wie genau?",
     "quick_start": "Wie anfangen?",
     "quick_cost": "Ist es kostenlos?",
-    "fallback": "Darauf habe ich noch keine Antwort. Schreib uns an support@tokenia.live und wir melden uns bald.",
+    "fallback": "Darauf habe ich noch keine Antwort. Schreib uns an info@tokenia.live und wir melden uns bald.",
     "fallback_form": "Oder sende uns eine Nachricht:",
     "form_name": "Dein Name",
     "form_email": "Deine E-Mail",
     "form_message": "Deine Frage oder Nachricht",
     "form_submit": "Nachricht senden",
     "form_success": "Nachricht gesendet! Wir antworten innerhalb von 24 Stunden.",
-    "form_error": "Konnte nicht senden. Bitte schreib direkt an support@tokenia.live.",
+    "form_error": "Konnte nicht senden. Bitte schreib direkt an info@tokenia.live.",
     "char_limit": "Zeichen verbleibend"
   }
 }

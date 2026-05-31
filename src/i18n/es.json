@@ -142,14 +142,14 @@
     "quick_accuracy": "¿Qué tan preciso?",
     "quick_start": "¿Cómo empezar?",
     "quick_cost": "¿Es gratis?",
-    "fallback": "Aún no tengo respuesta para eso. Escríbenos a support@tokenia.live y te respondemos pronto.",
+    "fallback": "Aún no tengo respuesta para eso. Escríbenos a info@tokenia.live y te respondemos pronto.",
     "fallback_form": "O envíanos un mensaje:",
     "form_name": "Tu nombre",
     "form_email": "Tu correo",
     "form_message": "Tu pregunta o mensaje",
     "form_submit": "Enviar Mensaje",
     "form_success": "¡Mensaje enviado! Te respondemos en 24 horas.",
-    "form_error": "No se pudo enviar. Escríbenos directamente a support@tokenia.live.",
+    "form_error": "No se pudo enviar. Escríbenos directamente a info@tokenia.live.",
     "char_limit": "caracteres restantes"
   }
 }

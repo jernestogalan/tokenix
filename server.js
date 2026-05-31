@@ -124,21 +124,37 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 
 // ── Auth pages — inject Supabase config server-side ──────────────────────────
-function serveAuthPage(filePath, res) {
+app.get('/auth/signup', (req, res) => {
   try {
-    let html = fs.readFileSync(path.join(__dirname, 'public', filePath), 'utf8');
-    html = html.replace(/\{\{ SUPABASE_URL \}\}/g,      process.env.SUPABASE_URL      || '');
-    html = html.replace(/\{\{ SUPABASE_ANON_KEY \}\}/g, process.env.SUPABASE_ANON_KEY || '');
+    let html = fs.readFileSync(path.join(__dirname, 'public/auth/signup.html'), 'utf8');
+    const supabaseUrl = process.env.SUPABASE_URL || '';
+    const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+    html = html.replace(/{{ SUPABASE_URL }}/g,      supabaseUrl);
+    html = html.replace(/{{ SUPABASE_ANON_KEY }}/g, supabaseKey);
+    console.log('✅ signup.html served | SUPABASE_URL:', supabaseUrl ? 'SET' : 'NOT SET', '| ANON_KEY:', supabaseKey ? 'SET' : 'NOT SET');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   } catch (err) {
-    console.error('[auth] serveAuthPage error:', err.message);
-    res.status(404).send('Page not found');
+    console.error('❌ Error serving signup:', err.message);
+    res.status(500).send('Error loading sign up page');
   }
-}
+});
 
-app.get('/auth/signin',    (_req, res) => serveAuthPage('auth/signin.html',  res));
-app.get('/auth/signup',    (_req, res) => serveAuthPage('auth/signup.html',  res));
+app.get('/auth/signin', (req, res) => {
+  try {
+    let html = fs.readFileSync(path.join(__dirname, 'public/auth/signin.html'), 'utf8');
+    const supabaseUrl = process.env.SUPABASE_URL || '';
+    const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+    html = html.replace(/{{ SUPABASE_URL }}/g,      supabaseUrl);
+    html = html.replace(/{{ SUPABASE_ANON_KEY }}/g, supabaseKey);
+    console.log('✅ signin.html SUPABASE_URL:', supabaseUrl ? 'SET' : 'NOT SET');
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err) {
+    console.error('❌ Error serving signin:', err.message);
+    res.status(500).send('Error loading sign in page');
+  }
+});
 app.get('/auth/callback',  (_req, res) => res.sendFile(path.join(__dirname, 'public/auth/callback.html')));
 app.get('/dashboard',      (_req, res) => res.sendFile(path.join(__dirname, 'public/dashboard.html')));
 app.get('/pricing/pro',    (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/pro.html')));
@@ -678,90 +694,4 @@ app.post('/api/contact', async (req, res) => {
     if (result.success) {
       res.json({ ok: true, message: "Message received! We'll get back to you soon." });
     } else {
-      console.error('[/api/contact] email send failed:', result.error);
-      res.status(500).json({ error: 'Failed to send message. Please email support@tokenia.live directly.' });
-    }
-  } catch (err) {
-    console.error('[/api/contact]', err.message);
-    res.status(500).json({ error: 'Server error.' });
-  }
-});
-
-// POST /api/credits/check
-app.post('/api/credits/check', (req, res) => {
-  const { userId = 'anonymous', planId = 'free' } = req.body || {};
-  const summary = getCreditsSummary(userId, planId);
-  const { getPlan, CREDIT_COSTS } = require('./src/config/plans');
-  const plan = getPlan(planId);
-  res.json({
-    plan:           planId,
-    planName:       plan.name,
-    monthlyCredits: plan.limits.monthlyCredits,
-    creditsEnabled: CREDITS_ENABLED,
-    features:       plan.features,
-    limits:         plan.limits,
-    creditCosts:    CREDIT_COSTS,
-    ...summary,
-  });
-});
-
-// POST /api/billing/checkout
-app.post('/api/billing/checkout', async (req, res) => {
-  if (!BILLING_ENABLED || !stripe)
-    return res.status(503).json({ error: 'Billing not configured.', code: 'BILLING_DISABLED' });
-  try {
-    const {
-      priceId    = process.env.STRIPE_PRO_MONTHLY_PRICE_ID,
-      successUrl = `${req.protocol}://${req.get('host')}/?checkout=success`,
-      cancelUrl  = `${req.protocol}://${req.get('host')}/?checkout=cancel`,
-    } = req.body;
-    if (!priceId) return res.status(400).json({ error: 'priceId is required.' });
-    const session = await stripe.checkout.sessions.create({
-      mode:       'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: successUrl,
-      cancel_url:  cancelUrl,
-      billing_address_collection: 'auto',
-    });
-    res.json({ url: session.url, sessionId: session.id });
-  } catch (err) {
-    console.error('[/api/billing/checkout]', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ── Error handler ─────────────────────────────────────────────────────────────
-// eslint-disable-next-line no-unused-vars
-app.use((err, _req, res, _next) => {
-  if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'File too large — max 50 MB.' });
-  if (err.type === 'entity.too.large')  return res.status(413).json({ error: 'Request body too large.' });
-  console.error('[unhandled]', err.message);
-  res.status(500).json({ error: IS_PRODUCTION ? 'Internal server error.' : (err.message || 'Internal server error.') });
-});
-
-// ── SPA fallback ──────────────────────────────────────────────────────────────
-app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-
-// ── Graceful shutdown ─────────────────────────────────────────────────────────
-function gracefulShutdown(signal) {
-  console.log(`[server] ${signal} received — shutting down gracefully`);
-  // isRedisReady() from rateLimitRedis — non-blocking, best-effort flush
-  process.exit(0);
-}
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT',  () => gracefulShutdown('SIGINT'));
-
-// ── Start ────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`[server] Tokenia listening on port ${PORT} (${NODE_ENV})`);
-  console.log('[server] Flags:', {
-    auth:     AUTH_ENABLED,
-    billing:  BILLING_ENABLED,
-    stripe:   BILLING_ENABLED && !!stripe,
-    credits:  CREDITS_ENABLED,
-    history:  HISTORY_ENABLED,
-    projects: PROJECTS_ENABLED,
-    redis:    isRedisReady(),
-    paid:     PAID_FEATURES_ENABLED,
-  });
-});
+      console.error('[/api/con

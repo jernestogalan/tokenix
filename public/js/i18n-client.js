@@ -75,11 +75,11 @@ const TRANSLATIONS = {
       welcome:"Hi! I’m Tokenia’s assistant. Ask me anything about token counting, costs, or how to get started.",
       input_placeholder:"Ask a question…", btn_send:"Send", btn_close:"Close",
       quick_what:"What is Tokenia?", quick_accuracy:"How accurate?", quick_start:"How to start?", quick_cost:"Is it free?",
-      fallback:"I don’t have an answer for that yet. You can reach us at support@tokenia.live and we’ll get back to you shortly.",
+      fallback:"I don’t have an answer for that yet. You can reach us at info@tokenia.live and we’ll get back to you shortly.",
       fallback_form:"Or send us a message:", form_name:"Your name", form_email:"Your email",
       form_message:"Your question or message", form_submit:"Send Message",
       form_success:"Message sent! We’ll reply within 24 hours.",
-      form_error:"Could not send. Please email support@tokenia.live directly.", char_limit:"characters remaining"
+      form_error:"Could not send. Please email info@tokenia.live directly.", char_limit:"characters remaining"
     }
   },
 
@@ -144,11 +144,11 @@ const TRANSLATIONS = {
       welcome:"¡Hola! Soy el asistente de Tokenia. Pregúntame sobre conteo de tokens, costos o cómo empezar.",
       input_placeholder:"Haz una pregunta…", btn_send:"Enviar", btn_close:"Cerrar",
       quick_what:"¿Qué es Tokenia?", quick_accuracy:"¿Qué tan preciso?", quick_start:"¿Cómo empezar?", quick_cost:"¿Es gratis?",
-      fallback:"Aún no tengo respuesta para eso. Eschíbenos a support@tokenia.live y te respondemos pronto.",
+      fallback:"Aún no tengo respuesta para eso. Eschíbenos a info@tokenia.live y te respondemos pronto.",
       fallback_form:"O envíanos un mensaje:", form_name:"Tu nombre", form_email:"Tu correo",
       form_message:"Tu pregunta o mensaje", form_submit:"Enviar Mensaje",
       form_success:"¡Mensaje enviado! Te respondemos en 24 horas.",
-      form_error:"No se pudo enviar. Escíbenos directamente a support@tokenia.live.", char_limit:"caracteres restantes"
+      form_error:"No se pudo enviar. Escíbenos directamente a info@tokenia.live.", char_limit:"caracteres restantes"
     }
   },
 
@@ -213,11 +213,11 @@ const TRANSLATIONS = {
       welcome:"你好！我是 Tokenia 的助手。可以问我关于 Token 计数、费用或如何入门的任何问题。",
       input_placeholder:"输入你的问题…", btn_send:"发送", btn_close:"关闭",
       quick_what:"什么是 Tokenia？", quick_accuracy:"精确度如何？", quick_start:"如何开始？", quick_cost:"是否免费？",
-      fallback:"我暂时没有这个问题的答案。请发邮件至 support@tokenia.live，我们会尽快回复。",
+      fallback:"我暂时没有这个问题的答案。请发邮件至 info@tokenia.live，我们会尽快回复。",
       fallback_form:"或发送消息给我们：", form_name:"您的姓名", form_email:"您的邮箔",
       form_message:"您的问题或留言", form_submit:"发送消息",
       form_success:"消息已发送！我们将在 24 小时内回复。",
-      form_error:"发送失败，请直接发邮件至 support@tokenia.live。", char_limit:"剩余字符"
+      form_error:"发送失败，请直接发邮件至 info@tokenia.live。", char_limit:"剩余字符"
     }
   },
 
@@ -282,11 +282,11 @@ const TRANSLATIONS = {
       welcome:"Hallo! Ich bin Tokenias Assistent. Frag mich alles über Token-Zählung, Kosten oder den Einstieg.",
       input_placeholder:"Frage stellen…", btn_send:"Senden", btn_close:"Schließen",
       quick_what:"Was ist Tokenia?", quick_accuracy:"Wie genau?", quick_start:"Wie anfangen?", quick_cost:"Ist es kostenlos?",
-      fallback:"Darauf habe ich noch keine Antwort. Schreib uns an support@tokenia.live und wir melden uns bald.",
+      fallback:"Darauf habe ich noch keine Antwort. Schreib uns an info@tokenia.live und wir melden uns bald.",
       fallback_form:"Oder sende uns eine Nachricht:", form_name:"Dein Name", form_email:"Deine E-Mail",
       form_message:"Deine Frage oder Nachricht", form_submit:"Nachricht senden",
       form_success:"Nachricht gesendet! Wir antworten innerhalb von 24 Stunden.",
-      form_error:"Konnte nicht senden. Bitte schreib direkt an support@tokenia.live.", char_limit:"Zeichen verbleibend"
+      form_error:"Konnte nicht senden. Bitte schreib direkt an info@tokenia.live.", char_limit:"Zeichen verbleibend"
     }
   }
 };
@@ -390,10 +390,10 @@ const FAQ = [
   {
     keywords: ['contact','support','help','email','reach','question','problema','contacto','ayuda','kontakt','hilfe','联系','支持','帮助','邮件'],
     answer: {
-      en: "You can reach us at support@tokenia.live — we typically respond within 24 hours. For bug reports or feature requests, use the contact form below.",
-      es: "Puedes contactarnos en support@tokenia.live — normalmente respondemos en 24 horas. Para reportes de errores o solicitudes de funciones, usa el formulario de contacto a continuación.",
-      zh: "您可以通过 support@tokenia.live 联系我们——我们通常在 24 小时内回复。如需报告错误或提交功能请求，请使用下面的联系表单。",
-      de: "Erreichbar unter support@tokenia.live — Antwort typischerweise innerhalb von 24 Stunden. Für Fehlermeldungen oder Feature-Anfragen das untenstehende Kontaktformular nutzen."
+      en: "You can reach us at info@tokenia.live — we typically respond within 24 hours. For bug reports or feature requests, use the contact form below.",
+      es: "Puedes contactarnos en info@tokenia.live — normalmente respondemos en 24 horas. Para reportes de errores o solicitudes de funciones, usa el formulario de contacto a continuación.",
+      zh: "您可以通过 info@tokenia.live 联系我们——我们通常在 24 小时内回复。如需报告错误或提交功能请求，请使用下面的联系表单。",
+      de: "Erreichbar unter info@tokenia.live — Antwort typischerweise innerhalb von 24 Stunden. Für Fehlermeldungen oder Feature-Anfragen das untenstehende Kontaktformular nutzen."
     }
   },
   {

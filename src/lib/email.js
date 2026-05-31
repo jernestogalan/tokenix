@@ -21,7 +21,7 @@ function getResend() {
 }
 
 /**
- * Send a contact-form email to support@tokenia.live
+ * Send a contact-form email to info@tokenia.live
  */
 async function sendContactEmail(name, email, message) {
   const resend = getResend();
@@ -32,8 +32,8 @@ async function sendContactEmail(name, email, message) {
   }
   try {
     const { data, error } = await resend.emails.send({
-      from:    'Tokenia Contact <support@tokenia.live>',
-      to:      ['support@tokenia.live'],
+      from:    'Tokenia Contact <info@tokenia.live>',
+      to:      ['info@tokenia.live'],
       replyTo: email,
       subject: `Contact from ${name} — tokenia.live`,
       html: `

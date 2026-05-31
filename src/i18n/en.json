@@ -142,14 +142,14 @@
     "quick_accuracy": "How accurate?",
     "quick_start": "How to start?",
     "quick_cost": "Is it free?",
-    "fallback": "I don't have an answer for that yet. You can reach us at support@tokenia.live and we'll get back to you shortly.",
+    "fallback": "I don't have an answer for that yet. You can reach us at info@tokenia.live and we'll get back to you shortly.",
     "fallback_form": "Or send us a message:",
     "form_name": "Your name",
     "form_email": "Your email",
     "form_message": "Your question or message",
     "form_submit": "Send Message",
     "form_success": "Message sent! We'll reply within 24 hours.",
-    "form_error": "Could not send. Please email support@tokenia.live directly.",
+    "form_error": "Could not send. Please email info@tokenia.live directly.",
     "char_limit": "characters remaining"
   }
 }
