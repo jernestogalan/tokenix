@@ -1,0 +1,61 @@
+# Tokenia
+> Free LLM token calculator for AI developers worldwide. Privacy-first, browser-based, no signup required.
+
+## What it does
+- Counts tokens for 30+ AI models including GPT-4o, GPT-4.1, Claude Opus/Sonnet/Haiku, Gemini 2.5, Llama 3, Mistral, DeepSeek
+- Estimates API costs in USD per request and at scale (monthly projection)
+- Side-by-side model comparison with Best Value badge
+- Token Visualizer: shows text colored by tokens for visual understanding
+- Prompt Optimizer: detects filler words and estimates token savings
+- File upload support: PDF, DOCX, TXT, CSV, JSON, code files (browser-parsed, never uploaded)
+- Export results as CSV or Markdown
+- 100% private: all processing happens in browser, no data ever leaves the user's device
+
+## Languages
+Available in 5 languages: English (en), Spanish (es), Portuguese Brazil (pt), Chinese (zh), German (de)
+
+## Free Public API
+Endpoint: POST https://tokenia.live/api/v1/count
+Rate limit: 100 requests/hour per IP, no authentication required
+Request: {"text": "your text here", "provider": "openai"} (provider is optional)
+Response: {"tokens": 1250, "chars": 5000, "words": 820, "results": [...]}
+
+## Key pages
+- Home / Token Analyzer: https://tokenia.live
+- API Documentation: https://tokenia.live/api-docs.html
+- Security & Privacy: https://tokenia.live/security.html
+- Status: https://tokenia.live/status.html
+- Blog: https://tokenia.live/blog
+- Embed Widget: https://tokenia.live/embed.html
+- OpenAPI Spec: https://tokenia.live/openapi.yaml
+- Changelog: https://tokenia.live/changelog.html
+
+## Pricing
+100% free forever. No signup required. No credit card. No tracking cookies.
+
+## Technology
+- Frontend: Vanilla JS, Inter font, CSS custom properties
+- Backend: Node.js / Express on Railway
+- Auth: Supabase (optional, for history saving)
+- Token counting: Client-side heuristic (~4 chars/token); server-enhanced exact counts via tiktoken for OpenAI models
+- Privacy: No analytics cookies, IP hashed (non-reversible) for deduplication only
+
+## Contact
+Email: info@tokenia.live
+Made in El Salvador 🇸🇻
+
+## Model pricing data (May 2026)
+OpenAI GPT-4.1: $2.00/$8.00 per 1M tokens (input/output)
+OpenAI GPT-4o: $2.50/$10.00 per 1M tokens
+OpenAI GPT-4o mini: $0.15/$0.60 per 1M tokens
+Anthropic Claude Opus 4.6: $15.00/$75.00 per 1M tokens
+Anthropic Claude Sonnet 4.6: $3.00/$15.00 per 1M tokens
+Anthropic Claude Haiku 4.5: $0.80/$4.00 per 1M tokens
+Google Gemini 2.5 Pro: $1.25/$10.00 per 1M tokens
+Google Gemini 2.5 Flash: $0.15/$0.60 per 1M tokens
+Google Gemini 2.0 Flash: $0.10/$0.40 per 1M tokens
+DeepSeek V3: $0.27/$1.10 per 1M tokens
+DeepSeek V3 Flash: $0.07/$0.28 per 1M tokens
+Meta Llama 3.3 70B: $0.59/$0.79 per 1M tokens
+Mistral Large 2: $2.00/$6.00 per 1M tokens
+Mistral Small 3: $0.10/$0.30 per 1M tokens

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /auth/
+Disallow: /dashboard.html
+Disallow: /api/
+
+Sitemap: https://tokenia.live/sitemap.xml

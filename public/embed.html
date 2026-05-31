@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embed Tokenia — Free Token Calculator Widget</title>
+  <meta name="description" content="Embed the Tokenia token calculator on your website for free. One line of HTML. Fully private.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=6">
+</head>
+<body>
+
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <span class="trust-bar-item">🔒 HTTPS Secure</span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">🛡️ Privacy First</span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">🚫 No Tracking</span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">✅ Free Forever</span>
+  </div>
+</div>
+
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <defs><linearGradient id="nb3" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+        </linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#nb3)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Tokenia</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Analyzer</a>
+      <a href="/security.html" class="nav-link">Security</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="section-container">
+    <p class="section-eyebrow">Embed Widget</p>
+    <h1 class="page-title">Add Tokenia to your website</h1>
+    <p class="page-sub">One line of HTML. Free forever. No API key. No signup.</p>
+  </div>
+</div>
+
+<div class="prose-section">
+  <div class="section-container">
+    <div style="max-width:760px;margin:0 auto;">
+
+      <div class="card" style="margin-bottom:32px;">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:12px;color:var(--text);">Iframe Embed</h3>
+        <p style="font-size:14px;color:var(--text-dim);margin-bottom:16px;">Copy and paste this into any HTML page:</p>
+        <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:20px;font-family:monospace;font-size:13px;color:var(--text);overflow-x:auto;position:relative;">
+          <code id="embed-code">&lt;iframe src="https://tokenia.live" width="100%" height="600" style="border:none;border-radius:12px;" title="Tokenia Token Calculator"&gt;&lt;/iframe&gt;</code>
+          <button onclick="copyEmbed()" style="position:absolute;top:12px;right:12px;background:var(--orange);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;" id="copy-btn">Copy</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:32px;">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:12px;color:var(--text);">Link Badge</h3>
+        <p style="font-size:14px;color:var(--text-dim);margin-bottom:16px;">Add a badge linking to Tokenia (generates backlinks that help us stay free):</p>
+        <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:20px;font-family:monospace;font-size:13px;color:var(--text);overflow-x:auto;">
+          <code>&lt;a href="https://tokenia.live" target="_blank" rel="noopener"&gt;Token counting by Tokenia — Free &amp; Private&lt;/a&gt;</code>
+        </div>
+      </div>
+
+      <h2 style="font-size:22px;font-weight:800;margin-bottom:16px;color:var(--text);">Why embed Tokenia?</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;">
+        <div class="card" style="text-align:center;padding:24px 16px;">
+          <div style="font-size:24px;margin-bottom:8px;">💰</div>
+          <strong style="display:block;margin-bottom:4px;font-size:14px;">100% Free</strong>
+          <p style="font-size:12px;color:var(--muted);margin:0;">No cost. No API key required. Forever.</p>
+        </div>
+        <div class="card" style="text-align:center;padding:24px 16px;">
+          <div style="font-size:24px;margin-bottom:8px;">🔒</div>
+          <strong style="display:block;margin-bottom:4px;font-size:14px;">Privacy First</strong>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Text never leaves the user's browser.</p>
+        </div>
+        <div class="card" style="text-align:center;padding:24px 16px;">
+          <div style="font-size:24px;margin-bottom:8px;">⚡</div>
+          <strong style="display:block;margin-bottom:4px;font-size:14px;">Instant</strong>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Zero latency. Client-side processing.</p>
+        </div>
+        <div class="card" style="text-align:center;padding:24px 16px;">
+          <div style="font-size:24px;margin-bottom:8px;">🌍</div>
+          <strong style="display:block;margin-bottom:4px;font-size:14px;">Multilingual</strong>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Works in 5 languages automatically.</p>
+        </div>
+      </div>
+
+      <p style="font-size:14px;color:var(--muted);">Questions about embedding? <a href="/#contact-section" style="color:var(--orange);">Contact us</a>.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <a href="/" class="nav-brand footer-brand">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <defs><linearGradient id="fb3" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+          </linearGradient></defs>
+          <rect width="28" height="28" rx="7" fill="url(#fb3)"/>
+          <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Tokenia</span>
+      </a>
+      <p class="footer-tagline">Free forever. Privacy first.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="/">Analyzer</a></li>
+        <li><a href="/security.html">Security</a></li>
+        <li><a href="/embed.html">Embed</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/privacy.html">Privacy</a></li>
+        <li><a href="/#contact-section">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <p class="footer-disclaimer">Token counts marked "Est." are approximations.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Tokenia. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+  function copyEmbed() {
+    const code = document.getElementById('embed-code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+  const nav = document.getElementById('main-nav');
+  if (nav) window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 8), { passive: true });
+</script>
+</body>
+</html>

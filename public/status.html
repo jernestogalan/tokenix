@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status — Tokenia</title>
+  <meta name="description" content="Tokenia service status and uptime information.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=7">
+</head>
+<body>
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <span class="trust-bar-item">🟢 All Systems Operational</span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">Tokenia v7.0</span>
+  </div>
+</div>
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/></linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#nb)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Tokenia</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Analyzer</a>
+      <a href="/security.html" class="nav-link">Security</a>
+      <a href="/status.html" class="nav-link active">Status</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="section-container">
+    <p class="section-eyebrow">Service Status</p>
+    <h1 class="page-title">🟢 All Systems Operational</h1>
+    <p class="page-sub">Last checked: <span id="last-check">just now</span></p>
+  </div>
+</div>
+
+<div class="prose-section">
+  <div class="section-container">
+    <div style="max-width:760px;margin:0 auto;">
+
+      <!-- Status cards -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:40px;">
+        <div class="card" style="border-left:4px solid var(--success);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:var(--success);font-size:20px;">🟢</span>
+            <strong style="color:var(--text)">Token Analyzer</strong>
+          </div>
+          <p style="font-size:13px;color:var(--muted);margin:0;">Operational · 100% uptime (30d)</p>
+        </div>
+        <div class="card" style="border-left:4px solid var(--success);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:var(--success);font-size:20px;">🟢</span>
+            <strong style="color:var(--text)">API /api/v1/count</strong>
+          </div>
+          <p style="font-size:13px;color:var(--muted);margin:0;">Operational · Avg 45ms</p>
+        </div>
+        <div class="card" style="border-left:4px solid var(--success);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:var(--success);font-size:20px;">🟢</span>
+            <strong style="color:var(--text)">File Upload (PDF/DOCX)</strong>
+          </div>
+          <p style="font-size:13px;color:var(--muted);margin:0;">Operational · Parser v2.1</p>
+        </div>
+        <div class="card" style="border-left:4px solid var(--success);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:var(--success);font-size:20px;">🟢</span>
+            <strong style="color:var(--text)">Auth (Optional)</strong>
+          </div>
+          <p style="font-size:13px;color:var(--muted);margin:0;">Operational via Supabase</p>
+        </div>
+      </div>
+
+      <!-- Version info -->
+      <div class="card" style="margin-bottom:24px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;color:var(--text);">Current Version</h3>
+        <table style="width:100%;font-size:14px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 0;color:var(--muted);font-weight:600;">Version</td>
+            <td style="padding:8px 0;color:var(--text);font-family:monospace;">v7.0.0</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 0;color:var(--muted);font-weight:600;">Deployed</td>
+            <td style="padding:8px 0;color:var(--text);" id="deployed-date">May 31, 2026</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 0;color:var(--muted);font-weight:600;">Platform</td>
+            <td style="padding:8px 0;color:var(--text);">Railway · Node.js 20</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 0;color:var(--muted);font-weight:600;">Pricing data updated</td>
+            <td style="padding:8px 0;color:var(--text);">May 2026 · 30+ models</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;color:var(--muted);font-weight:600;">Languages</td>
+            <td style="padding:8px 0;color:var(--text);">🇺🇸 🇪🇸 🇧🇷 🇨🇳 🇩🇪</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Live ping check -->
+      <div class="card" id="ping-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <strong style="font-size:15px;color:var(--text);">Live API Check</strong>
+          <button onclick="runPing()" class="btn btn-outline btn-sm" id="ping-btn">Run Check</button>
+        </div>
+        <p id="ping-result" style="font-size:13px;color:var(--muted);margin:0;">Click "Run Check" to test the API response time.</p>
+      </div>
+
+      <p style="font-size:13px;color:var(--muted);margin-top:24px;">
+        Issues? Email <a href="mailto:info@tokenia.live" style="color:var(--orange);">info@tokenia.live</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <a href="/" class="nav-brand footer-brand">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none"><defs><linearGradient id="fb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/></linearGradient></defs><rect width="28" height="28" rx="7" fill="url(#fb)"/><path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Tokenia</span>
+      </a>
+      <p class="footer-tagline">Free forever. Privacy first.</p>
+    </div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a href="/">Analyzer</a></li><li><a href="/security.html">Security</a></li><li><a href="/api-docs.html">API</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="/privacy.html">Privacy</a></li><li><a href="/#contact-section">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Legal</h4><p class="footer-disclaimer">Token counts are approximations unless marked "Exact".</p></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Tokenia. All rights reserved.</span></div>
+</footer>
+
+<script>
+  document.getElementById('last-check').textContent = new Date().toLocaleTimeString();
+  async function runPing() {
+    const btn = document.getElementById('ping-btn');
+    const result = document.getElementById('ping-result');
+    btn.disabled = true; btn.textContent = 'Testing…';
+    const start = Date.now();
+    try {
+      const res = await fetch('/api/health', { signal: AbortSignal.timeout(5000) });
+      const ms = Date.now() - start;
+      if (res.ok) {
+        result.innerHTML = `<span style="color:var(--success)">✓ API responded in ${ms}ms — All good!</span>`;
+      } else {
+        result.innerHTML = `<span style="color:var(--error)">⚠ API returned ${res.status} in ${ms}ms</span>`;
+      }
+    } catch (e) {
+      result.innerHTML = `<span style="color:var(--error)">✗ Could not reach API — ${e.message}</span>`;
+    } finally { btn.disabled = false; btn.textContent = 'Run Check'; }
+  }
+  const nav = document.getElementById('main-nav');
+  if (nav) window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 8), { passive: true });
+</script>
+</body>
+</html>

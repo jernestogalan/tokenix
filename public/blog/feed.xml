@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Tokenia Blog — LLM Cost Optimization for Developers</title>
+    <link>https://tokenia.live/blog/</link>
+    <description>Practical guides on reducing LLM API costs, comparing GPT-4o vs Claude vs Gemini, token-saving techniques, and more for AI developers.</description>
+    <language>en-us</language>
+    <copyright>© 2026 Tokenia</copyright>
+    <managingEditor>team@tokenia.live (Tokenia Team)</managingEditor>
+    <webMaster>team@tokenia.live (Tokenia Team)</webMaster>
+    <pubDate>Sat, 31 May 2026 00:00:00 +0000</pubDate>
+    <lastBuildDate>Sat, 31 May 2026 00:00:00 +0000</lastBuildDate>
+    <ttl>1440</ttl>
+    <image>
+      <url>https://tokenia.live/og-image.png</url>
+      <title>Tokenia Blog</title>
+      <link>https://tokenia.live/blog/</link>
+    </image>
+    <atom:link href="https://tokenia.live/blog/feed.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+      <title>How to Reduce LLM API Costs by 80% in 2026</title>
+      <link>https://tokenia.live/blog/en/reduce-llm-costs.html</link>
+      <guid isPermaLink="true">https://tokenia.live/blog/en/reduce-llm-costs.html</guid>
+      <pubDate>Sat, 31 May 2026 00:00:00 +0000</pubDate>
+      <dc:creator>Tokenia Team</dc:creator>
+      <description><![CDATA[
+        Ten concrete techniques to cut LLM API costs by up to 80% — prompt compression, semantic caching, model routing, context pruning, batch requests, output length control, task-appropriate model selection, embeddings optimization, streaming best practices, and retry logic with jitter. Includes before/after token count examples and a technique comparison table.
+      ]]></description>
+      <category>LLM Cost Optimization</category>
+    </item>
+
+    <item>
+      <title>GPT-4o vs Claude Sonnet 4.6 vs Gemini 2.5 Flash: 2026 Cost Comparison</title>
+      <link>https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html</link>
+      <guid isPermaLink="true">https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html</guid>
+      <pubDate>Sat, 31 May 2026 00:00:00 +0000</pubDate>
+      <dc:creator>Tokenia Team</dc:creator>
+      <description><![CDATA[
+        A detailed side-by-side breakdown of the three leading LLM APIs in 2026. Actual prices: GPT-4o at $2.50/$10 per 1M tokens, Claude Sonnet 4.6 at $3/$15, Gemini 2.5 Flash at $0.15/$0.60. Includes context window comparison, real-world cost calculations for 1M requests/month, use-case recommendations, and the hybrid routing strategy.
+      ]]></description>
+      <category>Model Comparison</category>
+    </item>
+
+    <item>
+      <title>10 Token-Saving Prompting Techniques for AI Developers</title>
+      <link>https://tokenia.live/blog/en/token-saving-techniques.html</link>
+      <guid isPermaLink="true">https://tokenia.live/blog/en/token-saving-techniques.html</guid>
+      <pubDate>Sat, 31 May 2026 00:00:00 +0000</pubDate>
+      <dc:creator>Tokenia Team</dc:creator>
+      <description><![CDATA[
+        Every token costs money. Ten concrete prompting techniques to cut LLM API costs: removing filler words, using structured formats, using abbreviations, compressing context with rolling summaries, efficient few-shot examples, splitting complex prompts, trimming whitespace, model-specific optimizations, Anthropic prompt caching, and measuring with a token counter. Each technique includes before/after examples.
+      ]]></description>
+      <category>Prompting Techniques</category>
+    </item>
+
+    <item>
+      <title>The Hidden Costs of LLM APIs in Production (2026 Guide)</title>
+      <link>https://tokenia.live/blog/en/hidden-llm-costs.html</link>
+      <guid isPermaLink="true">https://tokenia.live/blog/en/hidden-llm-costs.html</guid>
+      <pubDate>Sat, 31 May 2026 00:00:00 +0000</pubDate>
+      <dc:creator>Tokenia Team</dc:creator>
+      <description><![CDATA[
+        The production LLM costs nobody warns you about: context window bloat, retry multiplication, failed calls that still bill you, the context stuffing antipattern, dev/production gaps, streaming cost traps, and how to set up budget alerts. Includes a real case study of a chatbot that went viral and racked up $12,400 in 48 hours instead of the budgeted $400.
+      ]]></description>
+      <category>Production Engineering</category>
+    </item>
+
+    <item>
+      <title>Best Free LLM Token Calculator Tools in 2026 (Honest Comparison)</title>
+      <link>https://tokenia.live/blog/en/best-token-calculators.html</link>
+      <guid isPermaLink="true">https://tokenia.live/blog/en/best-token-calculators.html</guid>
+      <pubDate>Sat, 31 May 2026 00:00:00 +0000</pubDate>
+      <dc:creator>Tokenia Team</dc:creator>
+      <description><![CDATA[
+        An honest comparison of the four leading free LLM token calculator tools in 2026: Tokenia, TokenCost.app, LLMGateway, and tiktokenizer. Evaluated on privacy (browser-only vs server-side), model coverage, UI quality, features (visualizer, comparison, projections, file upload), API access, and multilingual support. Includes a clear verdict on which tool wins for which use case.
+      ]]></description>
+      <category>Tools &amp; Resources</category>
+    </item>
+
+  </channel>
+</rss>

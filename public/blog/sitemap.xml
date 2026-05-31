@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Blog Index -->
+  <url>
+    <loc>https://tokenia.live/blog/</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/"/>
+  </url>
+
+  <!-- Post 1: Reduce LLM Costs -->
+  <url>
+    <loc>https://tokenia.live/blog/en/reduce-llm-costs.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/reduce-llm-costs.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/reducir-costos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/reduzir-custos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/reduce-llm-costs.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/es/reducir-costos-llm.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/reduce-llm-costs.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/reducir-costos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/reduzir-custos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/reduce-llm-costs.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/pt/reduzir-custos-llm.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/reduce-llm-costs.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/reducir-costos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/reduzir-custos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/reduce-llm-costs.html"/>
+  </url>
+
+  <!-- Post 2: GPT vs Claude vs Gemini -->
+  <url>
+    <loc>https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/es/gpt-vs-claude-vs-gemini.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/pt/gpt-vs-claude-vs-gemini.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/gpt-vs-claude-vs-gemini.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/gpt-vs-claude-vs-gemini.html"/>
+  </url>
+
+  <!-- Post 3: Token-Saving Techniques -->
+  <url>
+    <loc>https://tokenia.live/blog/en/token-saving-techniques.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/token-saving-techniques.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/tecnicas-ahorro-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/tecnicas-economia-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/token-saving-techniques.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/es/tecnicas-ahorro-tokens.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/token-saving-techniques.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/tecnicas-ahorro-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/tecnicas-economia-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/token-saving-techniques.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/pt/tecnicas-economia-tokens.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/token-saving-techniques.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/tecnicas-ahorro-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/tecnicas-economia-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/token-saving-techniques.html"/>
+  </url>
+
+  <!-- Post 4: Hidden LLM Costs -->
+  <url>
+    <loc>https://tokenia.live/blog/en/hidden-llm-costs.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/hidden-llm-costs.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/costos-ocultos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/custos-ocultos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/hidden-llm-costs.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/es/costos-ocultos-llm.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/hidden-llm-costs.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/costos-ocultos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/custos-ocultos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/hidden-llm-costs.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/pt/custos-ocultos-llm.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/hidden-llm-costs.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/costos-ocultos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/custos-ocultos-llm.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/hidden-llm-costs.html"/>
+  </url>
+
+  <!-- Post 5: Best Token Calculators -->
+  <url>
+    <loc>https://tokenia.live/blog/en/best-token-calculators.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/best-token-calculators.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/mejores-calculadoras-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/melhores-calculadoras-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/best-token-calculators.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/es/mejores-calculadoras-tokens.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/best-token-calculators.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/mejores-calculadoras-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/melhores-calculadoras-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/best-token-calculators.html"/>
+  </url>
+  <url>
+    <loc>https://tokenia.live/blog/pt/melhores-calculadoras-tokens.html</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/best-token-calculators.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/mejores-calculadoras-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/melhores-calculadoras-tokens.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/best-token-calculators.html"/>
+  </url>
+
+</urlset>

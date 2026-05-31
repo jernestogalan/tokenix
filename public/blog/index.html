@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokenia Blog — LLM Cost Optimization Tips for Developers</title>
+  <meta name="description" content="Practical guides on reducing LLM API costs, comparing GPT-4o vs Claude vs Gemini, token-saving techniques, and more. Free resources for AI developers.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tokenia.live/blog/">
+  <meta property="og:title" content="Tokenia Blog — LLM Cost Optimization for Developers">
+  <meta property="og:description" content="Practical guides on reducing LLM API costs, comparing models, and token-saving techniques for AI developers.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tokenia.live/blog/">
+  <meta property="og:image" content="https://tokenia.live/og-image.png">
+  <link rel="alternate" type="application/rss+xml" title="Tokenia Blog" href="https://tokenia.live/blog/feed.xml">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=7">
+  <style>
+    .blog-hero { background: linear-gradient(135deg, #fff7f3 0%, #fff 100%); border-bottom: 1px solid var(--border); padding: 3rem 1.5rem 2.5rem; text-align: center; }
+    .blog-hero h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 800; color: var(--text); margin-bottom: 0.75rem; }
+    .blog-hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 540px; margin: 0 auto 1.5rem; }
+    .blog-container { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .post-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 1.5rem; transition: box-shadow 0.2s, border-color 0.2s; }
+    .post-card:hover { box-shadow: var(--shadow-md); border-color: var(--orange-border); }
+    .post-card h2 { font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .post-card h2 a { color: inherit; text-decoration: none; }
+    .post-card h2 a:hover { color: var(--orange); }
+    .post-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; }
+    .post-desc { color: var(--text-dim); font-size: 0.95rem; line-height: 1.65; margin-bottom: 1rem; }
+    .lang-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .lang-link { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 500; color: var(--text-dim); text-decoration: none; transition: all 0.15s; }
+    .lang-link:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+    .lang-link.en { border-color: rgba(37,99,235,.3); color: #2563eb; }
+    .lang-link.es { border-color: rgba(220,38,38,.3); color: #dc2626; }
+    .lang-link.pt { border-color: rgba(22,163,74,.3); color: #16a34a; }
+    .rss-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--muted); font-size: 0.85rem; text-decoration: none; margin-top: 0.25rem; }
+    .rss-link:hover { color: var(--orange); }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand" aria-label="Tokenia home">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+        </linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#nb)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Tokenia</span>
+    </a>
+    <div class="nav-links">
+      <a href="/#demo" class="nav-link">Analyzer</a>
+      <a href="/pricing.html" class="nav-link">Pricing</a>
+      <a href="/blog/" class="nav-link" style="color:var(--orange);font-weight:600;">Blog</a>
+    </div>
+    <div class="nav-right">
+      <a href="/" class="btn btn-primary btn-sm">Try Free</a>
+    </div>
+  </div>
+</nav>
+
+<main style="padding-top:var(--nav-h)">
+  <div class="blog-hero">
+    <h1>Tokenia Blog</h1>
+    <p>Practical guides on cutting LLM API costs, comparing models, and building smarter AI applications.</p>
+    <a href="/blog/feed.xml" class="rss-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--orange)"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/></svg>
+      RSS Feed
+    </a>
+  </div>
+
+  <div class="blog-container">
+
+    <div class="post-card">
+      <div class="post-meta">May 31, 2026 · 8 min read · LLM Cost Optimization</div>
+      <h2><a href="/blog/en/reduce-llm-costs.html">How to Reduce LLM API Costs by 80% in 2026</a></h2>
+      <p class="post-desc">Ten concrete techniques — from prompt compression and semantic caching to model routing and batch requests — with before/after token counts and real cost savings data.</p>
+      <div class="lang-links">
+        <a href="/blog/en/reduce-llm-costs.html" class="lang-link en">🇺🇸 English</a>
+        <a href="/blog/es/reducir-costos-llm.html" class="lang-link es">🇪🇸 Español</a>
+        <a href="/blog/pt/reduzir-custos-llm.html" class="lang-link pt">🇧🇷 Português</a>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-meta">May 31, 2026 · 10 min read · Model Comparison</div>
+      <h2><a href="/blog/en/gpt-vs-claude-vs-gemini.html">GPT-4o vs Claude Sonnet 4.6 vs Gemini 2.5 Flash: 2026 Cost Comparison</a></h2>
+      <p class="post-desc">A detailed side-by-side breakdown of the three leading LLM APIs in 2026 — actual prices, context windows, strengths, and real-world cost calculations for common workloads.</p>
+      <div class="lang-links">
+        <a href="/blog/en/gpt-vs-claude-vs-gemini.html" class="lang-link en">🇺🇸 English</a>
+        <a href="/blog/es/gpt-vs-claude-vs-gemini.html" class="lang-link es">🇪🇸 Español</a>
+        <a href="/blog/pt/gpt-vs-claude-vs-gemini.html" class="lang-link pt">🇧🇷 Português</a>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-meta">May 31, 2026 · 9 min read · Prompting Techniques</div>
+      <h2><a href="/blog/en/token-saving-techniques.html">10 Token-Saving Prompting Techniques for AI Developers</a></h2>
+      <p class="post-desc">Every token costs money. Learn how to remove filler words, use structured formats, compress context with summaries, and cache system prompts — with concrete before/after examples.</p>
+      <div class="lang-links">
+        <a href="/blog/en/token-saving-techniques.html" class="lang-link en">🇺🇸 English</a>
+        <a href="/blog/es/tecnicas-ahorro-tokens.html" class="lang-link es">🇪🇸 Español</a>
+        <a href="/blog/pt/tecnicas-economia-tokens.html" class="lang-link pt">🇧🇷 Português</a>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-meta">May 31, 2026 · 11 min read · Production Engineering</div>
+      <h2><a href="/blog/en/hidden-llm-costs.html">The Hidden Costs of LLM APIs in Production (2026 Guide)</a></h2>
+      <p class="post-desc">Context window bloat, retry storms, failed calls that still bill you, and the "context stuffing" antipattern — the production costs nobody warns you about, with a real chatbot case study.</p>
+      <div class="lang-links">
+        <a href="/blog/en/hidden-llm-costs.html" class="lang-link en">🇺🇸 English</a>
+        <a href="/blog/es/costos-ocultos-llm.html" class="lang-link es">🇪🇸 Español</a>
+        <a href="/blog/pt/custos-ocultos-llm.html" class="lang-link pt">🇧🇷 Português</a>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-meta">May 31, 2026 · 7 min read · Tools & Resources</div>
+      <h2><a href="/blog/en/best-token-calculators.html">Best Free LLM Token Calculator Tools in 2026 (Honest Comparison)</a></h2>
+      <p class="post-desc">An honest comparison of Tokenia, TokenCost.app, LLMGateway, and tiktokenizer — covering privacy, model coverage, UI quality, and which tool wins for which use case.</p>
+      <div class="lang-links">
+        <a href="/blog/en/best-token-calculators.html" class="lang-link en">🇺🇸 English</a>
+        <a href="/blog/es/mejores-calculadoras-tokens.html" class="lang-link es">🇪🇸 Español</a>
+        <a href="/blog/pt/melhores-calculadoras-tokens.html" class="lang-link pt">🇧🇷 Português</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer style="background:var(--surface);border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;">
+  <p style="color:var(--muted);font-size:0.875rem;">© 2026 Tokenia · <a href="/" style="color:var(--orange);text-decoration:none;">tokenia.live</a> · <a href="/privacy.html" style="color:var(--muted);text-decoration:none;">Privacy</a></p>
+</footer>
+
+</body>
+</html>

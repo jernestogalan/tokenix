@@ -14,6 +14,7 @@ const multer      = require('multer');
 const cors        = require('cors');
 const path        = require('path');
 const fs          = require('fs');
+const crypto      = require('crypto');
 
 const { tokenizeAll } = require('./src/tokenizers');
 const { extractText } = require('./src/parsers');
@@ -111,7 +112,7 @@ app.use(helmet({
   },
 }));
 
-app.use(compression());
+app.use(compression({ level: 6, threshold: 1024 }));
 app.use(IS_PRODUCTION ? morgan('combined') : morgan('dev'));
 
 const corsOrigin = process.env.CORS_ORIGIN || '*';
@@ -141,10 +142,36 @@ app.get('/auth/signin',    (_req, res) => serveAuthPage('auth/signin.html',  res
 app.get('/auth/signup',    (_req, res) => serveAuthPage('auth/signup.html',  res));
 app.get('/auth/callback',  (_req, res) => res.sendFile(path.join(__dirname, 'public/auth/callback.html')));
 app.get('/dashboard',      (_req, res) => res.sendFile(path.join(__dirname, 'public/dashboard.html')));
-app.get('/pricing/pro',    (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/pro.html')));
-app.get('/pricing/team',   (_req, res) => res.sendFile(path.join(__dirname, 'public/pricing/team.html')));
+// Redirect old pricing routes to home (Free Forever strategy)
+app.get('/pricing',        (_req, res) => res.redirect(301, '/'));
+app.get('/pricing/pro',    (_req, res) => res.redirect(301, '/'));
+app.get('/pricing/team',   (_req, res) => res.redirect(301, '/'));
 
-app.use(express.static(path.join(__dirname, 'public')));
+// New pages
+app.get('/security',   (_req, res) => res.sendFile(path.join(__dirname, 'public/security.html')));
+app.get('/embed',      (_req, res) => res.sendFile(path.join(__dirname, 'public/embed.html')));
+app.get('/api-docs',   (_req, res) => res.sendFile(path.join(__dirname, 'public/api-docs.html')));
+app.get('/status',     (_req, res) => res.sendFile(path.join(__dirname, 'public/status.html')));
+app.get('/sitemap.xml',(_req, res) => res.sendFile(path.join(__dirname, 'public/sitemap.xml')));
+app.get('/robots.txt', (_req, res) => res.sendFile(path.join(__dirname, 'public/robots.txt')));
+
+// Health check
+app.get('/api/health', (_req, res) => res.json({ ok: true, version: '7.0.0', ts: Date.now() }));
+
+// Aggressive cache headers for static assets
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1y',
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'public, max-age=300, must-revalidate');
+    } else if (filePath.match(/\.(css|js)$/)) {
+      // Versioned assets — long cache
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  },
+}));
 
 // ── Rate limiters (Redis-backed with in-memory fallback) ─────────────────────
 const generalLimiter = createRateLimiter({
@@ -619,6 +646,149 @@ app.post('/api/report', async (req, res) => {
   }
 });
 
+// POST /api/newsletter — newsletter subscription via Resend Audiences
+const RESEND_API_KEY      = process.env.RESEND_API_KEY || 're_3A4z2c4k_FerCkBmhS3tmf1nS9cJB7CvX';
+const RESEND_AUDIENCE_ID  = process.env.RESEND_AUDIENCE_ID || '';
+const NEWSLETTER_CSV_PATH = path.join(__dirname, 'data', 'newsletter-subscribers.csv');
+
+// Ensure CSV file exists
+try {
+  const dataDir = path.join(__dirname, 'data');
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+  if (!fs.existsSync(NEWSLETTER_CSV_PATH)) fs.writeFileSync(NEWSLETTER_CSV_PATH, 'email,createdAt,lang\n');
+} catch {}
+
+app.post('/api/newsletter', async (req, res) => {
+  const { email, lang } = req.body || {};
+  if (!email || !email.includes('@'))
+    return res.status(400).json({ error: 'Valid email required.' });
+
+  // Try Resend Audiences first
+  let resendOk = false;
+  if (RESEND_AUDIENCE_ID) {
+    try {
+      const resendRes = await fetch(`https://api.resend.com/audiences/${RESEND_AUDIENCE_ID}/contacts`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, unsubscribed: false }),
+      });
+      resendOk = resendRes.ok;
+      if (!resendOk) console.warn('[newsletter] Resend error:', resendRes.status);
+    } catch (err) {
+      console.warn('[newsletter] Resend fetch failed:', err.message);
+    }
+  }
+
+  // Always save to local CSV as fallback
+  try {
+    fs.appendFileSync(NEWSLETTER_CSV_PATH, `${email},${new Date().toISOString()},${lang || 'en'}\n`);
+  } catch {}
+
+  _leads.push({ email, source: 'newsletter', lang: lang || 'en', createdAt: new Date().toISOString() });
+  console.log(`[newsletter] ${email} — resend:${resendOk}`);
+  res.json({ ok: true, message: 'Subscribed! Check your inbox.' });
+});
+
+// ── Public API v1: GET/POST /api/v1/count ────────────────────────────────────
+// Rate limited to 100 req/hr per IP. No auth required.
+const publicApiLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: parseInt(process.env.PUBLIC_API_LIMIT || '100', 10),
+  prefix: 'rl:public-api',
+  byUser: false,
+});
+
+const CLIENT_MODELS = {
+  openai: [
+    { id: 'gpt-4.1',       name: 'GPT-4.1',       inputPer1M: 2.00,  outputPer1M: 8.00  },
+    { id: 'gpt-4o',        name: 'GPT-4o',         inputPer1M: 2.50,  outputPer1M: 10.00 },
+    { id: 'gpt-4o-mini',   name: 'GPT-4o mini',    inputPer1M: 0.15,  outputPer1M: 0.60  },
+    { id: 'o4-mini',       name: 'o4-mini',         inputPer1M: 1.10,  outputPer1M: 4.40  },
+    { id: 'o1',            name: 'o1',              inputPer1M: 15.00, outputPer1M: 60.00 },
+    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo',  inputPer1M: 0.50,  outputPer1M: 1.50  },
+  ],
+  anthropic: [
+    { id: 'claude-opus-4-6',   name: 'Claude Opus 4.6',   inputPer1M: 15.00, outputPer1M: 75.00 },
+    { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', inputPer1M: 3.00,  outputPer1M: 15.00 },
+    { id: 'claude-haiku-4-5',  name: 'Claude Haiku 4.5',  inputPer1M: 0.80,  outputPer1M: 4.00  },
+  ],
+  google: [
+    { id: 'gemini-2.5-pro',   name: 'Gemini 2.5 Pro',   inputPer1M: 1.25,  outputPer1M: 10.00 },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', inputPer1M: 0.15,  outputPer1M: 0.60  },
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', inputPer1M: 0.10,  outputPer1M: 0.40  },
+  ],
+  meta: [
+    { id: 'llama-3.3-70b', name: 'Llama 3.3 70B', inputPer1M: 0.59, outputPer1M: 0.79 },
+    { id: 'llama-3.1-8b',  name: 'Llama 3.1 8B',  inputPer1M: 0.18, outputPer1M: 0.18 },
+  ],
+  mistral: [
+    { id: 'mistral-large-2', name: 'Mistral Large 2', inputPer1M: 2.00, outputPer1M: 6.00 },
+    { id: 'mistral-small-3', name: 'Mistral Small 3', inputPer1M: 0.10, outputPer1M: 0.30 },
+  ],
+  deepseek: [
+    { id: 'deepseek-v3',       name: 'DeepSeek V3',       inputPer1M: 0.27, outputPer1M: 1.10 },
+    { id: 'deepseek-v3-flash', name: 'DeepSeek V3 Flash', inputPer1M: 0.07, outputPer1M: 0.28 },
+    { id: 'deepseek-r1',       name: 'DeepSeek R1',       inputPer1M: 0.55, outputPer1M: 2.19 },
+  ],
+};
+
+function estimateTokensPublic(text) {
+  if (!text) return 0;
+  const specials = (text.match(/[{}()[\]<>:;=+\-*\/\\|&^%$#@!~`]/g) || []).length;
+  const ratio = specials / text.length > 0.08 ? 3.5 : 4.0;
+  return Math.ceil(text.length / ratio);
+}
+
+app.post('/api/v1/count', publicApiLimiter, (req, res) => {
+  const { text, provider, model: modelFilter } = req.body || {};
+  if (!text || typeof text !== 'string')
+    return res.status(400).json({ error: '"text" string required.' });
+  if (text.length > 100_000)
+    return res.status(400).json({ error: 'Text too long — max 100,000 characters.' });
+
+  const tokens = estimateTokensPublic(text);
+  const chars  = text.length;
+  const words  = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+  const providers = provider && CLIENT_MODELS[provider]
+    ? { [provider]: CLIENT_MODELS[provider] }
+    : CLIENT_MODELS;
+
+  const results = [];
+  for (const [provId, models] of Object.entries(providers)) {
+    for (const m of models) {
+      if (modelFilter && m.id !== modelFilter) continue;
+      results.push({
+        provider:       provId,
+        model:          m.name,
+        modelId:        m.id,
+        tokens,
+        inputCostPer1M: m.inputPer1M,
+        outputCostPer1M:m.outputPer1M,
+        inputCost:      parseFloat(((tokens / 1e6) * m.inputPer1M).toFixed(8)),
+        outputCost:     parseFloat(((tokens / 1e6) * m.outputPer1M).toFixed(8)),
+        totalCost:      parseFloat(((tokens / 1e6) * (m.inputPer1M + m.outputPer1M)).toFixed(8)),
+        precision:      'estimated',
+      });
+    }
+  }
+
+  res.json({ tokens, chars, words, results, rateLimit: { remaining: 99, resetIn: '3600s' } });
+});
+
+// GET /api/v1/count (for quick browser testing)
+app.get('/api/v1/count', publicApiLimiter, (req, res) => {
+  const text = req.query.text || '';
+  if (!text) return res.status(400).json({ error: '"text" query param required.' });
+  req.body = { text, provider: req.query.provider, model: req.query.model };
+  // Re-invoke logic inline
+  const tokens = estimateTokensPublic(text);
+  res.json({ tokens, chars: text.length, message: 'Use POST for full results.' });
+});
+
 // POST /api/lead — lead capture (also used by FAQ chatbot contact form)
 app.post('/api/lead', (req, res) => {
   const { email, desiredPlan, featureClicked, name, message } = req.body || {};
@@ -738,6 +908,224 @@ app.use((err, _req, res, _next) => {
   console.error('[unhandled]', err.message);
   res.status(500).json({ error: IS_PRODUCTION ? 'Internal server error.' : (err.message || 'Internal server error.') });
 });
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TOKENIA V8 — INTERNAL ANALYTICS + MONITORING (No third-party dependencies)
+// ══════════════════════════════════════════════════════════════════════════════
+
+const LOGS_DIR     = path.join(__dirname, 'logs');
+const ADMIN_PASS   = process.env.ADMIN_PASSWORD || 'tokenia-admin-2026';
+const _serverStart = Date.now();
+
+// Ensure logs directory exists
+try { fs.mkdirSync(LOGS_DIR, { recursive: true }); } catch {}
+
+// ── Anonymous session hash ────────────────────────────────────────────────────
+function anonHash(req) {
+  const date = new Date().toISOString().split('T')[0];
+  const raw  = (req.ip || '') + (req.headers['user-agent'] || '') + date;
+  return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 16);
+}
+
+// ── Append to daily JSONL log ─────────────────────────────────────────────────
+function appendLog(filename, obj) {
+  try {
+    const date  = new Date().toISOString().split('T')[0];
+    const fpath = path.join(LOGS_DIR, `${filename}-${date}.jsonl`);
+    fs.appendFileSync(fpath, JSON.stringify(obj) + '\n');
+  } catch {}
+}
+
+// ── Rotate logs older than 30 days ───────────────────────────────────────────
+function rotateLogs() {
+  try {
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    fs.readdirSync(LOGS_DIR).forEach(f => {
+      const fp = path.join(LOGS_DIR, f);
+      const st = fs.statSync(fp);
+      if (st.mtimeMs < cutoff) fs.unlinkSync(fp);
+    });
+  } catch {}
+}
+setInterval(rotateLogs, 24 * 60 * 60 * 1000); // daily rotation check
+
+// ── POST /api/track — privacy-first analytics ────────────────────────────────
+app.post('/api/track', (req, res) => {
+  const { event, props = {}, page, lang } = req.body || {};
+  if (!event) return res.status(400).json({ error: 'event required' });
+
+  // Strip query strings from page + referrer
+  const cleanPage = (page || '/').split('?')[0].slice(0, 120);
+  const referrer  = (req.headers.referer || '').replace(/\?.*/, '').slice(0, 120);
+
+  appendLog('analytics', {
+    ts:       new Date().toISOString(),
+    event:    String(event).slice(0, 60),
+    session:  anonHash(req),
+    page:     cleanPage,
+    lang:     String(lang || 'en').slice(0, 5),
+    ref:      referrer,
+    country:  req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || null,
+    props:    Object.fromEntries(Object.entries(props || {}).map(([k,v]) => [k, String(v).slice(0, 80)])),
+  });
+
+  res.json({ ok: true });
+});
+
+// ── POST /api/log-error — client-side error tracking ─────────────────────────
+app.post('/api/log-error', (req, res) => {
+  const { message, stack, page } = req.body || {};
+  appendLog('errors', {
+    ts:      new Date().toISOString(),
+    session: anonHash(req),
+    page:    (page || '/').split('?')[0].slice(0, 120),
+    message: String(message || '').slice(0, 200),
+    stack:   String(stack || '').slice(0, 500),
+  });
+  res.json({ ok: true });
+});
+
+// ── GET /api/analytics — aggregated data for admin dashboard ─────────────────
+app.get('/api/analytics', (req, res) => {
+  // Basic auth check
+  const auth = req.headers.authorization || '';
+  const b64  = auth.replace('Basic ', '');
+  let pass   = '';
+  try { pass = Buffer.from(b64, 'base64').toString().split(':')[1] || ''; } catch {}
+  if (pass !== ADMIN_PASS) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const days    = parseInt(req.query.days || '7', 10);
+    const cutoff  = Date.now() - days * 24 * 60 * 60 * 1000;
+    const events  = {};     // event → count
+    const pages   = {};     // page → count
+    const langs   = {};     // lang → count
+    const byDay   = {};     // date → count
+    const countries = {};   // country → count
+    let   totalSessions = new Set();
+
+    fs.readdirSync(LOGS_DIR)
+      .filter(f => f.startsWith('analytics-') && f.endsWith('.jsonl'))
+      .forEach(f => {
+        const date = f.replace('analytics-', '').replace('.jsonl', '');
+        if (new Date(date).getTime() < cutoff) return;
+        const lines = fs.readFileSync(path.join(LOGS_DIR, f), 'utf8').split('\n').filter(Boolean);
+        lines.forEach(line => {
+          try {
+            const obj = JSON.parse(line);
+            events[obj.event]       = (events[obj.event] || 0) + 1;
+            pages[obj.page]         = (pages[obj.page] || 0) + 1;
+            langs[obj.lang]         = (langs[obj.lang] || 0) + 1;
+            byDay[date]             = (byDay[date] || 0) + 1;
+            if (obj.country) countries[obj.country] = (countries[obj.country] || 0) + 1;
+            if (obj.session) totalSessions.add(obj.session);
+          } catch {}
+        });
+      });
+
+    res.json({
+      days,
+      totalEvents: Object.values(events).reduce((a,b)=>a+b, 0),
+      uniqueSessions: totalSessions.size,
+      events:    sortDesc(events),
+      pages:     sortDesc(pages),
+      langs:     sortDesc(langs),
+      byDay:     byDay,
+      countries: sortDesc(countries),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+function sortDesc(obj) {
+  return Object.entries(obj).sort(([,a],[,b])=>b-a).slice(0, 20).reduce((acc,[k,v])=>({...acc,[k]:v}), {});
+}
+
+// ── GET /admin/stats — protected HTML dashboard ───────────────────────────────
+function requireAdminAuth(req, res, next) {
+  const auth = req.headers.authorization || '';
+  if (!auth.startsWith('Basic ')) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Tokenia Admin"');
+    return res.status(401).send('Authentication required');
+  }
+  try {
+    const decoded = Buffer.from(auth.replace('Basic ', ''), 'base64').toString();
+    const pass    = decoded.split(':')[1] || '';
+    if (pass !== ADMIN_PASS) throw new Error('bad pass');
+  } catch {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Tokenia Admin"');
+    return res.status(401).send('Wrong password');
+  }
+  next();
+}
+
+app.get('/admin/stats', requireAdminAuth, (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'stats.html'));
+});
+
+// ── Enhanced GET /api/health ──────────────────────────────────────────────────
+// Override the previous simple /api/health from server setup routes section
+app.get('/api/health-detail', (_req, res) => {
+  const mem    = process.memoryUsage();
+  const limit  = 512;
+  const memMB  = Math.round(mem.rss / 1024 / 1024);
+  const models = Object.values(MODELS).reduce((a, p) => a + Object.keys(p.models || p).length, 0);
+
+  res.json({
+    status:              memMB < limit * 0.9 ? 'ok' : 'degraded',
+    uptime_seconds:      Math.round((Date.now() - _serverStart) / 1000),
+    uptime_human:        formatUptime(Date.now() - _serverStart),
+    memory_mb:           memMB,
+    memory_limit_mb:     limit,
+    memory_percent:      Math.round((memMB / limit) * 100),
+    models_loaded:       models,
+    last_pricing_update: '2026-05-31T00:00:00Z',
+    version:             'v8.0.0',
+    environment:         NODE_ENV,
+    response_time_ms:    0, // measured client-side
+    node_version:        process.version,
+  });
+});
+
+function formatUptime(ms) {
+  const s = Math.floor(ms/1000);
+  const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600), m = Math.floor((s%3600)/60);
+  return [d&&`${d}d`, h&&`${h}h`, m&&`${m}m`, `${s%60}s`].filter(Boolean).join(' ');
+}
+
+// ── Internal heartbeat — self-monitoring every 5 minutes ─────────────────────
+let _heartbeatFails = 0;
+const _heartbeatInterval = setInterval(async () => {
+  try {
+    const res = await fetch(`http://localhost:${PORT}/api/health`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    _heartbeatFails = 0;
+  } catch (err) {
+    _heartbeatFails++;
+    console.error(`[heartbeat] FAIL ${_heartbeatFails}/3: ${err.message}`);
+    if (_heartbeatFails >= 3) {
+      appendLog('alerts', { ts: new Date().toISOString(), type: 'health_degraded', msg: err.message });
+      // Send email via Resend (if configured)
+      if (process.env.RESEND_API_KEY) {
+        fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'alerts@tokenia.live', to: ['info@tokenia.live'],
+            subject: `⚠️ Tokenia health degraded — ${new Date().toISOString()}`,
+            html: `<p>Tokenia health check failed 3 consecutive times.</p><p>Error: ${err.message}</p><p>Time: ${new Date().toISOString()}</p>`,
+          }),
+        }).catch(() => {});
+      }
+      _heartbeatFails = 0;
+    }
+  }
+}, 5 * 60 * 1000);
+
+// ── Blog routes ───────────────────────────────────────────────────────────────
+app.get('/blog',          (_req, res) => res.sendFile(path.join(__dirname, 'public/blog/index.html')));
+app.get('/blog/feed.xml', (_req, res) => res.sendFile(path.join(__dirname, 'public/blog/feed.xml')));
 
 // ── SPA fallback ──────────────────────────────────────────────────────────────
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));

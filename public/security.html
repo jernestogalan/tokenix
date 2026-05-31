@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security &amp; Privacy — Tokenia</title>
+  <meta name="description" content="How Tokenia keeps your data private. Browser-side processing, zero data retention, no tracking. Enterprise-grade security architecture.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=6">
+</head>
+<body>
+
+<!-- Trust Bar -->
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <span class="trust-bar-item">🔒 HTTPS Secure</span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">🛡️ Privacy First</span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">🚫 No Tracking</span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">✅ Open Standards</span>
+  </div>
+</div>
+
+<!-- Nav -->
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <defs><linearGradient id="nb2" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+        </linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#nb2)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Tokenia</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Analyzer</a>
+      <a href="/security.html" class="nav-link active">Security</a>
+      <a href="/#contact-section" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-right">
+      <div id="lang-selector"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="section-container">
+    <p class="section-eyebrow">Security &amp; Privacy</p>
+    <h1 class="page-title">Your data is yours. Period.</h1>
+    <p class="page-sub">We built Tokenia with a simple rule: never see your prompts. Here's exactly how we do it.</p>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="prose-section">
+  <div class="section-container">
+    <div class="prose" style="max-width:760px;margin:0 auto;">
+
+      <!-- Trust cards row -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:48px;">
+        <div class="card" style="border-color:var(--orange-border);background:var(--orange-dim);">
+          <div style="font-size:28px;margin-bottom:12px;">🔒</div>
+          <strong style="display:block;margin-bottom:6px;color:var(--text);">Browser-Side Processing</strong>
+          <p style="font-size:14px;color:var(--text-dim);margin:0;line-height:1.6;">Token counting runs 100% in your browser. Your text never leaves your device.</p>
+        </div>
+        <div class="card" style="border-color:var(--orange-border);">
+          <div style="font-size:28px;margin-bottom:12px;">🛡️</div>
+          <strong style="display:block;margin-bottom:6px;color:var(--text);">Zero Data Retention</strong>
+          <p style="font-size:14px;color:var(--text-dim);margin:0;line-height:1.6;">We don't store, log, or analyze your prompts. Technically impossible by design.</p>
+        </div>
+        <div class="card" style="border-color:var(--orange-border);">
+          <div style="font-size:28px;margin-bottom:12px;">🚫</div>
+          <strong style="display:block;margin-bottom:6px;color:var(--text);">No Third-Party Scripts</strong>
+          <p style="font-size:14px;color:var(--text-dim);margin:0;line-height:1.6;">No Google Analytics, no Facebook Pixel, no HubSpot. Zero third-party tracking scripts.</p>
+        </div>
+        <div class="card" style="border-color:var(--orange-border);">
+          <div style="font-size:28px;margin-bottom:12px;">🔐</div>
+          <strong style="display:block;margin-bottom:6px;color:var(--text);">TLS 1.3 Encryption</strong>
+          <p style="font-size:14px;color:var(--text-dim);margin:0;line-height:1.6;">All connections secured via HTTPS with TLS 1.3. Industry-standard encryption.</p>
+        </div>
+      </div>
+
+      <h2>How Token Counting Works</h2>
+      <p>When you paste text into Tokenia or upload a file, everything happens in your browser using WebAssembly tokenizers. The text is processed by JavaScript running locally on your device. The counting results (numbers only, never your actual text) are displayed in your browser. Your text never leaves your computer.</p>
+      <p>For OpenAI models, we use <strong>tiktoken</strong> — the official tokenizer — compiled to WebAssembly. For Anthropic's Claude models, we use their official algorithm. All of this runs client-side, in your browser tab.</p>
+
+      <h2>What Data We Collect</h2>
+      <p><strong>Nothing about your prompts.</strong> We are technically incapable of seeing your text because it never reaches our servers. Here's what we do and don't collect:</p>
+      <ul>
+        <li>✅ We DO collect: Standard web server logs (IP addresses, page URLs, timestamps) for infrastructure monitoring. These are deleted after 7 days.</li>
+        <li>❌ We DON'T collect: Any text you analyze, any files you upload, any tokens or costs you calculate.</li>
+        <li>❌ We DON'T use: Google Analytics, Facebook Pixel, HubSpot, Intercom, or any third-party tracking.</li>
+        <li>✅ Optional: If you create a free account (to save history), we store your email and analysis history. You can delete your account and all data at any time.</li>
+      </ul>
+
+      <h2>File Upload Security</h2>
+      <p>When you upload a file (PDF, DOCX, TXT, etc.), the file is parsed entirely in your browser using JavaScript libraries. The extracted text is tokenized locally. Nothing is uploaded to our servers. The file is never transmitted over the network during the analysis process.</p>
+
+      <h2>Infrastructure &amp; Architecture</h2>
+      <p>Tokenia is hosted on Railway with automatic TLS certificate management. Our infrastructure stack:</p>
+      <ul>
+        <li><strong>Runtime:</strong> Node.js / Express (server-side routing only)</li>
+        <li><strong>Database:</strong> Supabase (PostgreSQL) — used only for optional user accounts and saved history</li>
+        <li><strong>CDN:</strong> Railway's global edge network</li>
+        <li><strong>Encryption:</strong> HTTPS/TLS 1.3 on all connections</li>
+        <li><strong>Auth:</strong> Supabase Auth with JWT tokens (optional — the tool works without an account)</li>
+      </ul>
+
+      <h2>GDPR &amp; CCPA Compliance</h2>
+      <p>Because we don't collect personal data from unauthenticated users, Tokenia is inherently GDPR and CCPA friendly for the vast majority of usage. For users who create accounts, we comply with the right to access, right to deletion, and data portability requirements.</p>
+      <p>We do not sell, share, or license any user data to third parties. We never will.</p>
+
+      <h2>Reporting Security Issues</h2>
+      <p>If you discover a security vulnerability in Tokenia, please report it responsibly. Contact us at <a href="mailto:info@tokenia.live">info@tokenia.live</a> with subject line "Security Disclosure". We will respond within 48 hours and work to fix confirmed vulnerabilities promptly.</p>
+      <p>We appreciate security researchers and will credit you in our changelog (with your permission) for responsible disclosures.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about privacy or security? Email us at <a href="mailto:info@tokenia.live">info@tokenia.live</a>.</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:32px;">Last updated: May 2026 · Made in El Salvador 🇸🇻</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <a href="/" class="nav-brand footer-brand">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <defs><linearGradient id="fb2" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+          </linearGradient></defs>
+          <rect width="28" height="28" rx="7" fill="url(#fb2)"/>
+          <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Tokenia</span>
+      </a>
+      <p class="footer-tagline">The most private token calculator for LLM developers. Free forever.</p>
+      <div class="footer-compliance-badges">
+        <span class="compliance-badge">GDPR Friendly</span>
+        <span class="compliance-badge">CCPA Compliant</span>
+      </div>
+      <p class="footer-made-in">Made with ❤️ in El Salvador 🇸🇻</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="/#analyzer">Analyzer</a></li>
+        <li><a href="/security.html">Security</a></li>
+        <li><a href="/embed.html">Embed Widget</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/privacy.html">Privacy Policy</a></li>
+        <li><a href="/privacy.html">Terms of Use</a></li>
+        <li><a href="/#contact-section">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <p class="footer-disclaimer">Token counts marked "Est." are approximations. Exact counts use official tokenizers.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Tokenia. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('main-nav');
+  if (nav) window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+</script>
+<script src="/js/i18n-client.js?v=6" defer></script>
+</body>
+</html>

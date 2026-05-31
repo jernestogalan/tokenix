@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: Tokenia Token Counting API
+  description: |
+    Free LLM token counting and cost estimation API.
+    No authentication required. Rate limited to 100 requests/hour per IP.
+    All data is processed server-side without storage.
+  version: 1.0.0
+  contact:
+    email: info@tokenia.live
+  license:
+    name: Free to use
+    url: https://tokenia.live
+servers:
+  - url: https://tokenia.live/api/v1
+    description: Production
+
+paths:
+  /count:
+    post:
+      operationId: countTokens
+      summary: Count tokens and estimate costs
+      description: |
+        Estimates token count for the given text and returns cost estimates
+        for all major LLM providers (or a specific one).
+        Token counts are heuristic estimates (~4 chars/token).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                  description: The text to count tokens for (max 100,000 characters)
+                  maxLength: 100000
+                  example: "Summarize the following document in 3 bullet points:"
+                provider:
+                  type: string
+                  description: Filter results to a specific provider
+                  enum: [openai, anthropic, google, meta, mistral, deepseek]
+                  example: openai
+                model:
+                  type: string
+                  description: Filter results to a specific model ID
+                  example: gpt-4o
+            examples:
+              basic:
+                summary: Basic token count
+                value:
+                  text: "Hello world! How are you today?"
+              filtered:
+                summary: Filter to OpenAI models
+                value:
+                  text: "Summarize this document"
+                  provider: openai
+      responses:
+        '200':
+          description: Successful token count and cost estimate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+              example:
+                tokens: 8
+                chars: 31
+                words: 5
+                results:
+                  - provider: openai
+                    model: GPT-4o
+                    modelId: gpt-4o
+                    tokens: 8
+                    inputCostPer1M: 2.50
+                    outputCostPer1M: 10.00
+                    inputCost: 0.00000002
+                    outputCost: 0.00000008
+                    totalCost: 0.00000010
+                    precision: estimated
+                rateLimit:
+                  remaining: 99
+                  resetIn: "3600s"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: countTokensGet
+      summary: Quick token count (GET, no cost data)
+      description: Quick GET version for browser testing. Returns token count only.
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Text to count tokens for
+          example: Hello world
+      responses:
+        '200':
+          description: Quick token count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: integer
+                  chars:
+                    type: integer
+                  message:
+                    type: string
+
+components:
+  schemas:
+    CountResponse:
+      type: object
+      properties:
+        tokens:
+          type: integer
+          description: Estimated token count
+        chars:
+          type: integer
+          description: Character count
+        words:
+          type: integer
+          description: Word count
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelResult'
+        rateLimit:
+          $ref: '#/components/schemas/RateLimit'
+
+    ModelResult:
+      type: object
+      properties:
+        provider:
+          type: string
+          example: openai
+        model:
+          type: string
+          example: GPT-4o
+        modelId:
+          type: string
+          example: gpt-4o
+        tokens:
+          type: integer
+        inputCostPer1M:
+          type: number
+          description: Input cost per 1 million tokens in USD
+        outputCostPer1M:
+          type: number
+          description: Output cost per 1 million tokens in USD
+        inputCost:
+          type: number
+          description: Estimated input cost in USD for the given text
+        outputCost:
+          type: number
+          description: Estimated output cost in USD
+        totalCost:
+          type: number
+          description: Total estimated cost (input + output) in USD
+        precision:
+          type: string
+          enum: [exact, estimated]
+          description: Whether the token count is exact or estimated
+
+    RateLimit:
+      type: object
+      properties:
+        remaining:
+          type: integer
+        resetIn:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10 Token-Saving Prompting Techniques for AI Developers</title>
+  <meta name="description" content="Cut LLM API costs with 10 proven prompting techniques: remove filler words, use structured formats, compress context, cache system prompts, and more — with before/after examples.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tokenia.live/blog/en/token-saving-techniques.html">
+  <meta property="og:title" content="10 Token-Saving Prompting Techniques for AI Developers">
+  <meta property="og:description" content="Cut LLM API costs with 10 proven prompting techniques — remove filler words, use structured formats, compress context, and more.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://tokenia.live/blog/en/token-saving-techniques.html">
+  <meta property="og:image" content="https://tokenia.live/og-image.png">
+  <link rel="alternate" hreflang="en" href="https://tokenia.live/blog/en/token-saving-techniques.html">
+  <link rel="alternate" hreflang="es" href="https://tokenia.live/blog/es/tecnicas-ahorro-tokens.html">
+  <link rel="alternate" hreflang="pt" href="https://tokenia.live/blog/pt/tecnicas-economia-tokens.html">
+  <link rel="alternate" hreflang="x-default" href="https://tokenia.live/blog/en/token-saving-techniques.html">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "10 Token-Saving Prompting Techniques for AI Developers",
+    "description": "Cut LLM API costs with 10 proven prompting techniques — remove filler words, use structured formats, compress context, and more.",
+    "url": "https://tokenia.live/blog/en/token-saving-techniques.html",
+    "datePublished": "2026-05-31",
+    "dateModified": "2026-05-31",
+    "author": { "@type": "Organization", "name": "Tokenia Team", "url": "https://tokenia.live" },
+    "publisher": { "@type": "Organization", "name": "Tokenia", "url": "https://tokenia.live", "logo": { "@type": "ImageObject", "url": "https://tokenia.live/og-image.png" } },
+    "image": "https://tokenia.live/og-image.png",
+    "inLanguage": "en"
+  }
+  </script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=7">
+  <style>
+    .post-wrap { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--orange); }
+    .breadcrumb span { margin: 0 0.4rem; }
+    .post-wrap h1 { font-size: clamp(1.75rem, 4vw, 2.4rem); font-weight: 800; line-height: 1.2; color: var(--text); margin-bottom: 1rem; }
+    .post-meta { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .post-wrap h2 { font-size: 1.35rem; font-weight: 700; color: var(--text); margin: 2.5rem 0 0.75rem; }
+    .post-wrap h3 { font-size: 1.05rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .post-wrap p { color: var(--text-dim); line-height: 1.8; margin-bottom: 1.1rem; }
+    .post-wrap ul, .post-wrap ol { color: var(--text-dim); line-height: 1.8; margin: 0.5rem 0 1.1rem 1.4rem; }
+    .post-wrap li { margin-bottom: 0.4rem; }
+    .post-wrap strong { color: var(--text); }
+    pre { background: #F5F5F5; border-left: 3px solid #FF6B2C; border-radius: 8px; padding: 1.1rem 1.25rem; margin: 1.25rem 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.65; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #F5F5F5; padding: 0.15em 0.4em; border-radius: 4px; }
+    pre code { background: none; padding: 0; font-size: inherit; }
+    .technique-card { border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; }
+    .technique-num { display: inline-block; background: #FF6B2C; color: #fff; font-weight: 700; font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.5rem; }
+    .technique-card h3 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+    .savings-badge { display: inline-block; background: #dcfce7; color: #16a34a; font-size: 0.78rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.875rem; }
+    thead tr { background: #FF6B2C; color: #fff; }
+    thead th { padding: 0.75rem 1rem; text-align: left; font-weight: 600; }
+    tbody tr:nth-child(even) { background: #F5F5F5; }
+    tbody td { padding: 0.65rem 1rem; color: var(--text-dim); border-bottom: 1px solid var(--border); }
+    .cta-box { background: #FF6B2C; color: #fff; border-radius: 12px; padding: 2.5rem 2rem; text-align: center; margin: 3rem 0 1rem; }
+    .cta-box h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.6rem; color: #fff; }
+    .cta-box p { color: rgba(255,255,255,0.9); margin-bottom: 1.5rem; }
+    .cta-btn { display: inline-block; background: #fff; color: #FF6B2C; font-weight: 700; font-size: 1rem; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; transition: opacity 0.15s; }
+    .cta-btn:hover { opacity: 0.92; }
+    .lang-bar { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center; }
+    .lang-bar a { padding: 0.3rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; color: var(--text-dim); text-decoration: none; }
+    .lang-bar a:hover { border-color: var(--orange); color: var(--orange); }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand" aria-label="Tokenia home">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <defs><linearGradient id="nb" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF6B2C"/><stop offset="1" stop-color="#ff9a5c"/>
+        </linearGradient></defs>
+        <rect width="28" height="28" rx="7" fill="url(#nb)"/>
+        <path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Tokenia</span>
+    </a>
+    <div class="nav-links">
+      <a href="/#demo" class="nav-link">Analyzer</a>
+      <a href="/pricing.html" class="nav-link">Pricing</a>
+      <a href="/blog/" class="nav-link">Blog</a>
+    </div>
+    <div class="nav-right">
+      <a href="/" class="btn btn-primary btn-sm">← Back to Tokenia</a>
+    </div>
+  </div>
+</nav>
+
+<main style="padding-top:var(--nav-h)">
+  <div class="post-wrap">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog/">Blog</a><span>›</span>
+      10 Token-Saving Techniques
+    </nav>
+
+    <div class="lang-bar">
+      <strong style="font-size:0.8rem;color:var(--muted);">Also in:</strong>
+      <a href="/blog/es/tecnicas-ahorro-tokens.html">🇪🇸 Español</a>
+      <a href="/blog/pt/tecnicas-economia-tokens.html">🇧🇷 Português</a>
+    </div>
+
+    <h1>10 Token-Saving Prompting Techniques for AI Developers</h1>
+    <div class="post-meta">
+      <span>May 31, 2026</span>
+      <span>·</span>
+      <span>Tokenia Team</span>
+      <span>·</span>
+      <span>9 min read</span>
+    </div>
+
+    <p>Every token you send to an LLM API is a billable unit. At GPT-4o prices of $2.50 per million input tokens, a bloated 200-token system prompt repeated across 500,000 daily requests costs an extra $250 per month — for tokens that do nothing useful. This guide gives you ten concrete techniques you can implement today, each with a before/after example you can verify in Tokenia.</p>
+
+    <div class="technique-card">
+      <span class="technique-num">01</span>
+      <h3>Remove Filler Words and Politeness Padding</h3>
+      <div class="savings-badge">Saves 15–30% on system prompts</div>
+      <p>Models don't need "please", "kindly", "as an AI language model", or "I'd like you to". These phrases consume tokens without affecting output quality. Cut them ruthlessly.</p>
+      <pre><code># BEFORE — 47 tokens
+Please carefully analyze the following customer feedback and
+kindly provide a detailed sentiment analysis. As a helpful
+AI assistant, make sure to be thorough.
+
+# AFTER — 16 tokens
+Analyze customer feedback. Return: sentiment (pos/neg/neutral),
+key themes, confidence 0-1.</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">02</span>
+      <h3>Use Structured Formats Instead of Prose Instructions</h3>
+      <div class="savings-badge">Saves 20–40% on instructions</div>
+      <p>Prose instructions like "Please make sure to always format your response in JSON with the following fields..." are verbose. Showing the schema directly is more concise and often more effective.</p>
+      <pre><code># BEFORE — 52 tokens
+Please respond to the user's question in JSON format.
+The JSON should have a "answer" field containing your response,
+a "confidence" field with a number between 0 and 1, and a
+"sources" array if you have any relevant sources.
+
+# AFTER — 18 tokens
+Reply JSON: {"answer":"...","confidence":0.0-1.0,"sources":[]}</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">03</span>
+      <h3>Use Abbreviations in System Prompts</h3>
+      <div class="savings-badge">Saves 10–20% on repeated system prompts</div>
+      <p>In long system prompts, define abbreviations once and use them throughout. "UI" instead of "user interface", "req" instead of "requirement", "KB" instead of "knowledge base". Models understand abbreviations perfectly.</p>
+      <pre><code># BEFORE — 38 tokens
+When the user submits a support ticket, check the knowledge base
+for relevant documentation. If the knowledge base contains an
+answer, provide it with a link to the knowledge base article.
+
+# AFTER — 23 tokens
+On support ticket: check KB for relevant docs.
+If KB match found: answer + link KB article.</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">04</span>
+      <h3>Compress Context with Rolling Summaries</h3>
+      <div class="savings-badge">Saves 40–70% on long conversations</div>
+      <p>As conversations grow, you re-send the entire history on every turn. After 6–8 turns, replace older messages with a compact summary. Use a cheap model (Gemini Flash) for summarization to minimize the cost of compression itself.</p>
+      <pre><code">async def compress_history(messages, max_tokens=1500):
+    if count_tokens(messages) < max_tokens:
+        return messages
+
+    # Summarize all but last 3 user/assistant pairs
+    to_summarize = messages[1:-6]  # keep system + last 3 turns
+    summary_prompt = f"Summarize this conversation in ≤100 words: {to_summarize}"
+
+    summary = await call_llm(summary_prompt, model="gemini-2.5-flash")
+
+    return [
+        messages[0],  # system prompt
+        {"role": "assistant", "content": f"[Prior context: {summary}]"},
+        *messages[-6:]  # last 3 turns
+    ]</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">05</span>
+      <h3>Use Few-Shot Examples Efficiently</h3>
+      <div class="savings-badge">Saves 30–50% vs verbose examples</div>
+      <p>Few-shot examples are powerful but expensive if they're bloated. Use the shortest examples that still demonstrate the pattern. Remove explanatory text around the examples — the model infers the pattern from the input/output pairs alone.</p>
+      <pre><code># BEFORE — 78 tokens
+Here are some examples of how to classify customer messages:
+Example 1: When a customer says "My order hasn't arrived yet"
+this should be classified as a "delivery" issue.
+Example 2: When a customer says "I was charged twice"
+this should be classified as "billing".
+
+# AFTER — 28 tokens
+Classify message type.
+"My order hasn't arrived" → delivery
+"I was charged twice" → billing
+"{message}" →</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">06</span>
+      <h3>Split Complex Prompts into Smaller Calls</h3>
+      <div class="savings-badge">Reduces error cost, enables model routing</div>
+      <p>A single complex prompt that asks for 5 things often gets worse results than 5 focused prompts. More importantly, you can route sub-tasks to cheaper models. Extract → summarize → classify → generate can each be handled by the cheapest capable model.</p>
+      <pre><code># Instead of one expensive call that does everything:
+# "Extract entities, classify sentiment, generate response,
+#  translate to Spanish, and check for policy violations"
+
+# Break it into routed calls:
+entities   = await call(extract_prompt, model="gemini-flash")  # cheap
+sentiment  = await call(classify_prompt, model="gemini-flash")  # cheap
+response   = await call(generate_prompt, model="gpt-4o")        # expensive
+spanish    = await call(translate_prompt, model="gemini-flash")  # cheap
+safe       = await call(safety_prompt, model="gemini-flash")     # cheap</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">07</span>
+      <h3>Trim Whitespace and Blank Lines</h3>
+      <div class="savings-badge">Saves 2–8% with zero effort</div>
+      <p>Blank lines, trailing spaces, and excessive indentation all tokenize as separate tokens. It's a small savings, but it costs nothing to implement and adds up across millions of calls.</p>
+      <pre><code">import re
+
+def compress_whitespace(prompt: str) -> str:
+    # Remove trailing spaces on each line
+    prompt = re.sub(r'[ \t]+$', '', prompt, flags=re.MULTILINE)
+    # Collapse 2+ blank lines into one
+    prompt = re.sub(r'\n{3,}', '\n\n', prompt)
+    # Strip leading/trailing whitespace
+    return prompt.strip()
+
+# Example savings:
+before = "  You are a helpful   \n\n\n\n  assistant.  \n  "
+after  = compress_whitespace(before)
+# before: ~12 tokens  →  after: ~6 tokens</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">08</span>
+      <h3>Use Model-Specific Optimizations</h3>
+      <div class="savings-badge">Saves 10–25% with model-native features</div>
+      <p>Each model has features designed to reduce token overhead. Using them correctly means you get the same quality for fewer tokens:</p>
+      <ul>
+        <li><strong>OpenAI:</strong> Use <code>response_format: {"type": "json_object"}</code> instead of prompting for JSON — the model is more likely to produce compact valid JSON</li>
+        <li><strong>Anthropic:</strong> Use XML tags (<code>&lt;instructions&gt;</code>, <code>&lt;context&gt;</code>) for clearer structure that requires fewer explanatory words</li>
+        <li><strong>Gemini:</strong> Use <code>generationConfig.responseMimeType: "application/json"</code> for direct JSON output without prose wrapping</li>
+      </ul>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">09</span>
+      <h3>Cache System Prompts with Anthropic Prompt Caching</h3>
+      <div class="savings-badge">Saves 90% on repeated system prompt costs</div>
+      <p>Anthropic's prompt caching marks part of your prompt as cacheable. On subsequent requests, cached portions are read at $0.30/1M tokens instead of $3.00/1M — a 90% reduction. This is especially valuable for long system prompts or large knowledge base injections.</p>
+      <pre><code">import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": long_system_prompt,  # e.g. 4000 tokens
+            "cache_control": {"type": "ephemeral"}  # cache for 5 min
+        }
+    ],
+    messages=[{"role": "user", "content": user_message}]
+)
+# First call: writes cache (full price)
+# Calls 2-N: reads cache ($0.30/1M vs $3.00/1M)</code></pre>
+    </div>
+
+    <div class="technique-card">
+      <span class="technique-num">10</span>
+      <h3>Measure Before and After with a Token Counter</h3>
+      <div class="savings-badge">Essential for tracking actual impact</div>
+      <p>All the techniques above are only useful if you measure their effect. Different models tokenize text differently — a prompt that's 150 tokens for GPT-4o might be 180 tokens for Claude. Before deploying any prompt optimization, verify the actual token counts.</p>
+      <pre><code"># Use tiktoken for OpenAI-compatible counting:
+import tiktoken
+
+enc = tiktoken.encoding_for_model("gpt-4o")
+
+before_tokens = len(enc.encode(before_prompt))
+after_tokens  = len(enc.encode(after_prompt))
+
+print(f"Before: {before_tokens} tokens (${before_tokens/1e6 * 2.50:.6f}/call)")
+print(f"After:  {after_tokens} tokens (${after_tokens/1e6 * 2.50:.6f}/call)")
+print(f"Savings: {(before_tokens - after_tokens)/before_tokens:.0%}")</code></pre>
+      <p>Or paste your prompts directly into <a href="https://tokenia.live" style="color:var(--orange);">Tokenia</a> for instant cross-model token counts without writing any code.</p>
+    </div>
+
+    <h2>Summary: Expected Savings by Technique</h2>
+    <table>
+      <thead>
+        <tr><th>Technique</th><th>Typical Savings</th><th>Implementation Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Remove filler words</td><td>15–30%</td><td>Minutes</td></tr>
+        <tr><td>Structured formats</td><td>20–40%</td><td>Minutes</td></tr>
+        <tr><td>Abbreviations</td><td>10–20%</td><td>Minutes</td></tr>
+        <tr><td>Rolling summaries</td><td>40–70%</td><td>1–2 hours</td></tr>
+        <tr><td>Efficient few-shot</td><td>30–50%</td><td>30 minutes</td></tr>
+        <tr><td>Split complex prompts</td><td>Variable + quality gains</td><td>2–4 hours</td></tr>
+        <tr><td>Trim whitespace</td><td>2–8%</td><td>5 minutes</td></tr>
+        <tr><td>Model-specific features</td><td>10–25%</td><td>1 hour</td></tr>
+        <tr><td>Prompt caching (Anthropic)</td><td>Up to 90% on system prompt</td><td>30 minutes</td></tr>
+        <tr><td>Measure with token counter</td><td>Validates all above</td><td>Ongoing</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cta-box">
+      <h3>Measure your savings with Tokenia</h3>
+      <p>Paste your before and after prompts into Tokenia to see the exact token count difference and cost savings across every major model — free, instant, no sign-up.</p>
+      <a href="https://tokenia.live" class="cta-btn">Try Tokenia Free →</a>
+    </div>
+
+  </div>
+</main>
+
+<footer style="background:var(--surface);border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;">
+  <p style="color:var(--muted);font-size:0.875rem;">© 2026 Tokenia · <a href="/" style="color:var(--orange);text-decoration:none;">tokenia.live</a> · <a href="/privacy.html" style="color:var(--muted);text-decoration:none;">Privacy</a> · <a href="/blog/" style="color:var(--muted);text-decoration:none;">Blog</a></p>
+</footer>
+
+</body>
+</html>

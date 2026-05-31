@@ -1,0 +1,75 @@
+{
+  "info": {
+    "name": "Tokenia Token API",
+    "description": "Free LLM token counting and cost estimation API. No auth needed. 100 req/hour.",
+    "_postman_id": "tokenia-v1-2026",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://tokenia.live", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Count tokens (all providers)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/api/v1/count", "host": ["{{baseUrl}}"], "path": ["api","v1","count"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Summarize the following document in three concise bullet points:\\n\\n{{your_document_here}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Count tokens (OpenAI only)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/api/v1/count", "host": ["{{baseUrl}}"], "path": ["api","v1","count"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Your prompt text here\",\n  \"provider\": \"openai\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Count tokens (single model)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/api/v1/count", "host": ["{{baseUrl}}"], "path": ["api","v1","count"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Your prompt text here\",\n  \"provider\": \"anthropic\",\n  \"model\": \"claude-sonnet-4-6\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Quick count (GET)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/count?text=Hello+world",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","v1","count"],
+          "query": [{ "key": "text", "value": "Hello world" }]
+        }
+      }
+    },
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api","health"] }
+      }
+    },
+    {
+      "name": "Detailed health",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/health-detail", "host": ["{{baseUrl}}"], "path": ["api","health-detail"] }
+      }
+    }
+  ]
+}

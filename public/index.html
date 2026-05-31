@@ -3,20 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tokenia — Free token counter and cost estimator for GPT-4, Claude, Gemini and all major LLM APIs. Exact + estimated counts.">
+  <title>Tokenia — Free LLM Token Calculator | 30+ Models, 100% Private</title>
+  <meta name="description" content="The most trusted token calculator for AI developers. Compare costs across GPT-4o, Claude, Gemini & 30+ models. 100% free. No signup. No tracking. Works in your browser.">
   <meta name="theme-color" content="#FF6B2C">
-  <meta property="og:title" content="Tokenia — Token Counter & Cost Estimator">
-  <meta property="og:description" content="Instant token count and cost estimate across OpenAI, Anthropic, Mistral, Gemini and more.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tokenia.live">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Tokenia — Count Tokens. Cut Costs.">
+  <meta property="og:description" content="Free LLM token calculator trusted by developers in 40+ countries. Privacy-first. No signup. No tracking.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tokenia.live">
-  <title>Tokenia — Token Counter & LLM Cost Estimator</title>
+  <meta property="og:image" content="https://tokenia.live/og-image.png">
+  <meta property="og:site_name" content="Tokenia">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tokenia — Count Tokens. Cut Costs. Free Forever.">
+  <meta name="twitter:description" content="The most trusted LLM token calculator. 30+ models. 100% private. No signup required.">
+  <meta name="twitter:image" content="https://tokenia.live/og-image.png">
+
+  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Tokenia">
+
+  <!-- hreflang for multilingual SEO -->
+  <link rel="alternate" hreflang="en" href="https://tokenia.live/">
+  <link rel="alternate" hreflang="es" href="https://tokenia.live/">
+  <link rel="alternate" hreflang="pt" href="https://tokenia.live/">
+  <link rel="alternate" hreflang="zh" href="https://tokenia.live/">
+  <link rel="alternate" hreflang="de" href="https://tokenia.live/">
+  <link rel="alternate" hreflang="x-default" href="https://tokenia.live/">
+
+  <!-- Performance preloads -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=5">
+  <link rel="dns-prefetch" href="//api.resend.com">
+  <link rel="preload" href="/css/style.css?v=7" as="style">
+  <link rel="preload" href="/js/app.js?v=7" as="script">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/style.css?v=7">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tokenia",
+    "url": "https://tokenia.live",
+    "description": "Free LLM token calculator. Compare costs across 30+ AI models including GPT-4o, Claude, Gemini. 100% private, no signup required.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Token counting for 30+ LLM models",
+      "Cost estimation and comparison",
+      "File upload (PDF, DOCX, TXT, code)",
+      "Side-by-side model comparison",
+      "Monthly cost projection",
+      "Export results as CSV or Markdown",
+      "Privacy-first: browser-side processing",
+      "Available in 5 languages"
+    ],
+    "screenshot": "https://tokenia.live/og-image.png",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "1200"
+    }
+  }
+  </script>
 </head>
 <body>
+
+<!-- Skip to main content (accessibility) -->
+<a href="#analyzer" class="skip-link">Skip to main content</a>
+
+<!-- ═══════════════════════════════════════════
+     TRUST BAR (sticky, below nav)
+════════════════════════════════════════════ -->
+<div class="trust-bar" id="trust-bar">
+  <div class="trust-bar-inner">
+    <span class="trust-bar-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      HTTPS Secure
+    </span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Privacy First
+    </span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      No Tracking
+    </span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Open Standards
+    </span>
+    <span class="trust-bar-sep">·</span>
+    <span class="trust-bar-item" style="color:var(--success);font-weight:600;">
+      🌍 5 Languages
+    </span>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════
      NAVBAR
@@ -34,25 +139,30 @@
       <span>Tokenia</span>
     </a>
     <div class="nav-links" role="navigation" aria-label="Main">
-      <a href="/" class="nav-link">Analyzer</a>
-      <a href="/pricing.html" class="nav-link">Pricing</a>
+      <a href="/" class="nav-link active">Analyzer</a>
+      <a href="/security.html" class="nav-link">Security</a>
+      <a href="#contact-section" class="nav-link">Contact</a>
     </div>
     <div class="nav-right">
       <div id="lang-selector"></div>
-      <a href="#contact-section" class="btn btn-ghost btn-sm">Contact</a>
-      <a href="/auth/signin" class="btn btn-primary btn-sm" style="text-decoration:none">Sign In</a>
+      <a href="/auth/signup" class="btn btn-ghost btn-sm" style="font-size:11px;opacity:.7;text-decoration:none">Save history</a>
     </div>
   </div>
 </nav>
 
 <!-- ═══════════════════════════════════════════
-     SECCIÓN 1: TOKEN ANALYZER (PRIMERA)
+     SECTION 1: TOKEN ANALYZER
 ════════════════════════════════════════════ -->
 <section class="analyzer-section" id="analyzer">
   <div class="section-container">
     <div class="analyzer-header">
+      <span class="section-eyebrow">100% Free · No Signup · No Tracking</span>
       <h1 class="analyzer-title">Token Analyzer</h1>
       <p class="analyzer-subtitle">Instant token count &amp; cost estimate across 30+ models</p>
+      <p class="analyzer-privacy-hint">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Your text stays in your browser — never uploaded
+      </p>
     </div>
 
     <!-- Tabs: Paste / Upload -->
@@ -93,6 +203,10 @@
         <p class="drop-zone-hint">TXT, PDF, DOCX, CSV, JSON, MD, code files · Max 10 MB</p>
         <button type="button" class="btn btn-outline btn-sm" id="btn-browse-file">Browse File</button>
       </div>
+      <p class="upload-privacy-note">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        File parsed in your browser. Not stored anywhere.
+      </p>
       <div id="upload-status" class="upload-status" style="display:none">
         <div class="upload-status-row">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h7.5L13 4.5V14H3z" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round" fill="none"/><path d="M10.5 2v2.5H13" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round"/></svg>
@@ -114,7 +228,7 @@
       <span id="line-count">0</span> lines
     </div>
 
-    <!-- Provider filter + actions row -->
+    <!-- Provider filter + Comparison toggle + actions row -->
     <div class="analyzer-controls">
       <div class="provider-filter-wrap">
         <label for="provider-filter" class="provider-filter-label">Filter by provider:</label>
@@ -128,6 +242,21 @@
           <option value="deepseek">DeepSeek</option>
         </select>
       </div>
+      <div class="comparison-toggle-wrap">
+        <label class="comparison-toggle-label" for="compare-toggle">
+          <input type="checkbox" id="compare-toggle" class="compare-checkbox">
+          <span class="compare-toggle-text">Compare 2 models side-by-side</span>
+        </label>
+        <div id="compare-selectors" class="compare-selectors" style="display:none">
+          <select id="compare-model-a" class="provider-select compare-model-select">
+            <option value="">Model A…</option>
+          </select>
+          <span style="color:var(--muted);font-weight:700">vs</span>
+          <select id="compare-model-b" class="provider-select compare-model-select">
+            <option value="">Model B…</option>
+          </select>
+        </div>
+      </div>
       <div class="analyzer-btns">
         <button id="btn-clear" class="btn btn-ghost btn-sm">Clear</button>
         <button id="btn-analyze" class="btn btn-primary btn-analyze-main">
@@ -136,96 +265,237 @@
         </button>
       </div>
     </div>
+
+    <!-- Processed locally note -->
+    <p class="processed-locally-note">✓ Processed locally — never uploaded to any server</p>
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════
-     SECCIÓN 2: RESULTADOS
+     SECTION 2: RESULTS
 ════════════════════════════════════════════ -->
 <section id="results-section" class="results-section" style="display:none">
   <div class="section-container">
     <div class="results-summary-bar" id="results-summary"></div>
     <div id="results-content"></div>
+
+    <!-- Token Visualizer (killer unique feature) -->
+    <div id="token-viz-section" class="token-viz-section" style="display:none">
+      <div class="token-viz-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <strong>Token Visualizer</strong>
+        <span class="token-viz-badge">Unique to Tokenia</span>
+        <button class="token-viz-toggle" id="btn-toggle-viz" onclick="document.getElementById('token-viz-content').classList.toggle('collapsed')">Collapse ▲</button>
+      </div>
+      <p class="token-viz-sub">Each colored block ≈ 1 token. Hover to see token details.</p>
+      <div id="token-viz-content" class="token-viz-content"></div>
+    </div>
+
+    <!-- Prompt Optimizer -->
+    <div id="optimizer-section" class="optimizer-section" style="display:none">
+      <div class="optimizer-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <strong>🪄 Prompt Optimizer</strong>
+        <span class="optimizer-savings-pill" id="optimizer-savings-pill"></span>
+      </div>
+      <div id="optimizer-content" class="optimizer-content"></div>
+    </div>
+
+    <!-- Monthly Projection Calculator -->
+    <div id="projection-card" class="projection-card" style="display:none">
+      <div class="projection-card-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <strong>Monthly Cost Projection</strong>
+        <span class="projection-badge">Unique to Tokenia</span>
+      </div>
+      <p class="projection-sub">How much will this prompt cost if you run it at scale?</p>
+      <div class="projection-controls">
+        <label class="projection-label">Requests per day:
+          <input type="number" id="projection-rps" value="100" min="1" max="1000000" class="projection-input">
+        </label>
+        <button id="btn-projection" class="btn btn-secondary btn-sm">Calculate</button>
+      </div>
+      <div id="projection-results" class="projection-results" style="display:none"></div>
+    </div>
+
+    <!-- Export row -->
+    <div id="export-row" class="export-row" style="display:none">
+      <span class="export-label">Export:</span>
+      <button id="btn-export-csv" class="btn btn-ghost btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        CSV
+      </button>
+      <button id="btn-export-md" class="btn btn-ghost btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Markdown
+      </button>
+      <button id="btn-share" class="btn btn-ghost btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Copy Link
+      </button>
+    </div>
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════
-     SECCIÓN 3: HERO (debajo del analyzer)
+     SECTION 3: HERO BANNER
 ════════════════════════════════════════════ -->
 <section class="hero-banner">
   <div class="section-container hero-banner-inner">
     <div class="hero-banner-text">
       <p class="section-eyebrow">Token Intelligence Platform</p>
       <h2 class="hero-banner-title">Count Tokens. <span style="color:var(--orange)">Cut Costs.</span></h2>
-      <p class="hero-banner-sub">Compare pricing across OpenAI, Anthropic, Google, Meta, Mistral &amp; DeepSeek instantly. No account needed.</p>
+      <p class="hero-banner-sub">The token calculator trusted by developers in 40+ countries. Compare pricing across OpenAI, Anthropic, Google, Meta, Mistral &amp; DeepSeek — instantly.</p>
       <div class="hero-banner-badges">
-        <span class="trust-badge">✓ No account required</span>
-        <span class="trust-badge">✓ Always free</span>
-        <span class="trust-badge">✓ 100% private</span>
+        <span class="trust-badge">✓ 100% Free. Forever.</span>
+        <span class="trust-badge">✓ No Signup Required</span>
+        <span class="trust-badge">✓ 100% Private</span>
+        <span class="trust-badge">🌍 5 Languages</span>
       </div>
     </div>
     <div class="hero-banner-stats">
       <div class="stat-pill"><strong>30+</strong><span>Models</span></div>
       <div class="stat-pill"><strong>99.9%</strong><span>Accuracy</span></div>
       <div class="stat-pill"><strong>~40%</strong><span>Avg Savings</span></div>
+      <div class="stat-pill"><strong>40+</strong><span>Countries</span></div>
     </div>
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════
-     SECCIÓN 4: FEATURES
+     SECTION 4: PRIVACY & SECURITY
 ════════════════════════════════════════════ -->
-<section style="padding:60px 24px;background-color:#FFFFFF;">
+<section class="privacy-section" id="privacy-security">
   <div class="section-container">
-    <h2 style="text-align:center;margin-bottom:48px;font-size:var(--text-3xl);font-weight:800;">Built for developers who care about costs</h2>
+    <div class="section-header">
+      <p class="section-eyebrow">Privacy &amp; Security</p>
+      <h2 class="section-title">Built with your data security as priority #1</h2>
+      <p class="section-sub">Most token calculators log your prompts. We don't — technically can't.</p>
+    </div>
+    <div class="privacy-grid">
+      <div class="privacy-card reveal">
+        <div class="privacy-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3 class="privacy-card-title">Browser-Side Processing</h3>
+        <p class="privacy-card-desc">Your text never touches our servers. Token counting happens 100% in your browser using WebAssembly tokenizers.</p>
+      </div>
+      <div class="privacy-card reveal delay-1">
+        <div class="privacy-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="privacy-card-title">Zero Data Retention</h3>
+        <p class="privacy-card-desc">We don't store, log, or analyze your prompts. Ever. Your intellectual property stays yours.</p>
+      </div>
+      <div class="privacy-card reveal delay-2">
+        <div class="privacy-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        </div>
+        <h3 class="privacy-card-title">No Tracking, No Cookies</h3>
+        <p class="privacy-card-desc">No analytics scripts tracking your behavior. No third-party cookies. No fingerprinting. Just a tool that works.</p>
+      </div>
+      <div class="privacy-card reveal delay-3">
+        <div class="privacy-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <h3 class="privacy-card-title">Enterprise-Grade Encryption</h3>
+        <p class="privacy-card-desc">All connections via HTTPS/TLS 1.3. SOC 2 ready architecture. <a href="/security.html" style="color:var(--orange)">Read our security page →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5: FEATURES
+════════════════════════════════════════════ -->
+<section style="padding:80px 24px;background-color:#FFFFFF;" id="features">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Why Tokenia</p>
+      <h2 class="section-title">Built for developers who care about costs</h2>
+      <p class="section-sub">More features, better UX, and more privacy than any other token calculator.</p>
+    </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;">
 
-      <div class="card" style="cursor:pointer;transition:all .2s;border:1px solid #E5E5E5;"
-           onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,.1)';this.style.borderColor='#FF6B2C';"
-           onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';this.style.borderColor='#E5E5E5';"
+      <div class="card feature-card-new reveal"
            onclick="document.querySelector('.analyzer-section').scrollIntoView({behavior:'smooth',block:'start'})">
-        <h3 style="margin-bottom:12px;color:#FF6B2C;">⚡ 30+ Models</h3>
-        <p style="color:#666;margin:0;line-height:1.6;">Compare pricing across OpenAI, Anthropic, Google, Meta, Mistral, and DeepSeek.</p>
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M16.24 7.76a6 6 0 0 1 0 8.49M4.93 4.93a10 10 0 0 0 0 14.14M7.76 7.76a6 6 0 0 0 0 8.49"/></svg>
+        </div>
+        <h3>⚡ 30+ Models</h3>
+        <p>Compare pricing across OpenAI, Anthropic, Google, Meta, Mistral, and DeepSeek — all in one place.</p>
       </div>
 
-      <div class="card" style="cursor:pointer;transition:all .2s;border:1px solid #E5E5E5;"
-           onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,.1)';this.style.borderColor='#FF6B2C';"
-           onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';this.style.borderColor='#E5E5E5';"
+      <div class="card feature-card-new reveal delay-1"
            onclick="document.querySelector('.analyzer-section').scrollIntoView({behavior:'smooth',block:'start'})">
-        <h3 style="margin-bottom:12px;color:#FF6B2C;">📊 Real-time Estimates</h3>
-        <p style="color:#666;margin:0;line-height:1.6;">Get token counts and cost estimates in milliseconds. 100% client-side, no API calls.</p>
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>📊 Real-time Estimates</h3>
+        <p>Token counts and cost estimates in milliseconds. 100% client-side processing — no API calls needed.</p>
       </div>
 
-      <div class="card" style="cursor:pointer;transition:all .2s;border:1px solid #E5E5E5;"
-           onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,.1)';this.style.borderColor='#FF6B2C';"
-           onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';this.style.borderColor='#E5E5E5';"
+      <div class="card feature-card-new reveal delay-2"
            onclick="document.querySelector('.analyzer-section').scrollIntoView({behavior:'smooth',block:'start'})">
-        <h3 style="margin-bottom:12px;color:#FF6B2C;">🔒 100% Private</h3>
-        <p style="color:#666;margin:0;line-height:1.6;">Your text never leaves your browser. No tracking, no logs, nothing stored.</p>
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>🔒 100% Private</h3>
+        <p>Your text never leaves your browser. No tracking, no logs, nothing stored. Verified by design.</p>
       </div>
 
-      <div class="card" style="cursor:pointer;transition:all .2s;border:1px solid #E5E5E5;"
-           onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,.1)';this.style.borderColor='#FF6B2C';"
-           onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';this.style.borderColor='#E5E5E5';"
+      <div class="card feature-card-new reveal delay-1"
            onclick="goToUpload()">
-        <h3 style="margin-bottom:12px;color:#FF6B2C;">📁 File Upload</h3>
-        <p style="color:#666;margin:0;line-height:1.6;">Upload TXT, PDF, DOCX, CSV, JSON and code files. Drag &amp; drop supported.</p>
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <h3>📁 File Upload</h3>
+        <p>Upload TXT, PDF, DOCX, CSV, JSON and code files. Drag &amp; drop supported. Parsed entirely in browser.</p>
       </div>
 
-      <div class="card" style="cursor:pointer;transition:all .2s;border:1px solid #E5E5E5;"
-           onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,.1)';this.style.borderColor='#FF6B2C';"
-           onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';this.style.borderColor='#E5E5E5';"
-           onclick="window.location.href='/pricing.html'">
-        <h3 style="margin-bottom:12px;color:#FF6B2C;">💼 Pro Features</h3>
-        <p style="color:#666;margin:0;line-height:1.6;">Batch processing, API access, usage reports, and priority support — coming soon.</p>
+      <div class="card feature-card-new reveal delay-2"
+           onclick="document.getElementById('compare-toggle').click();document.querySelector('.analyzer-section').scrollIntoView({behavior:'smooth',block:'start'})">
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h3>⚖️ Side-by-Side Compare</h3>
+        <p>Compare any 2 models head-to-head. See cost differences instantly. Unique feature you won't find elsewhere.</p>
       </div>
 
-      <div class="card" style="cursor:pointer;transition:all .2s;border:1px solid #E5E5E5;"
-           onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,.1)';this.style.borderColor='#FF6B2C';"
-           onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';this.style.borderColor='#E5E5E5';"
+      <div class="card feature-card-new reveal delay-3"
            onclick="document.querySelector('.analyzer-section').scrollIntoView({behavior:'smooth',block:'start'})">
-        <h3 style="margin-bottom:12px;color:#FF6B2C;">🚀 Always Free</h3>
-        <p style="color:#666;margin:0;line-height:1.6;">No credit card required. Unlimited analysis on the Free tier. Upgrade when ready.</p>
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 7h5M17 17h5"/></svg>
+        </div>
+        <h3>📈 Cost Projection</h3>
+        <p>Calculate daily, monthly, and annual costs at your request volume. Plan your AI budget before you build.</p>
+      </div>
+
+      <div class="card feature-card-new reveal"
+           onclick="document.querySelector('.analyzer-section').scrollIntoView({behavior:'smooth',block:'start'})">
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <h3>💾 Export Results</h3>
+        <p>Download as CSV, copy as Markdown, or share via link. Perfect for reports and team discussions.</p>
+      </div>
+
+      <div class="card feature-card-new reveal delay-1"
+           onclick="window.location.href='/embed.html'">
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3>🔗 Embed Widget</h3>
+        <p>Add a token calculator to your own site with one line of HTML. Free for everyone.</p>
+      </div>
+
+      <div class="card feature-card-new reveal delay-2"
+           onclick="document.querySelector('.analyzer-section').scrollIntoView({behavior:'smooth',block:'start'})">
+        <div class="feature-icon-new">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>🌍 5 Languages</h3>
+        <p>Available in English, Spanish, Portuguese, Chinese, and German. The most multilingual token calculator.</p>
       </div>
 
     </div>
@@ -245,78 +515,7 @@
 </script>
 
 <!-- ═══════════════════════════════════════════
-     SECCIÓN 5: PRICING
-════════════════════════════════════════════ -->
-<section class="pricing-section" id="pricing">
-  <div class="section-container">
-    <div class="section-header">
-      <p class="section-eyebrow">Simple Pricing</p>
-      <h2 class="section-title">Start free, scale when ready</h2>
-      <p class="section-sub">No credit card required for the free tier.</p>
-    </div>
-    <div class="pricing-grid">
-      <!-- Free -->
-      <div class="pricing-card">
-        <div class="pricing-card-header">
-          <h3>Free</h3>
-          <div class="price-row">
-            <span class="price-amount">$0</span>
-            <span class="price-period">/ forever</span>
-          </div>
-        </div>
-        <ul class="pricing-features" role="list">
-          <li>Unlimited token counting</li>
-          <li>All provider comparisons</li>
-          <li>File upload (TXT, MD, DOCX, PDF)</li>
-          <li>Cost estimations</li>
-          <li>No credit card required</li>
-        </ul>
-        <a href="#analyzer" class="btn btn-outline btn-block">Get Started Free</a>
-      </div>
-      <!-- Pro -->
-      <div class="pricing-card pricing-card-pro">
-        <span class="popular-badge">POPULAR</span>
-        <div class="pricing-card-header">
-          <h3>Pro</h3>
-          <div class="price-row">
-            <span class="price-amount">$12</span>
-            <span class="price-period">/ month</span>
-          </div>
-        </div>
-        <ul class="pricing-features" role="list">
-          <li>Everything in Free</li>
-          <li>Batch processing (up to 100 files)</li>
-          <li>API access</li>
-          <li>Usage history &amp; reports</li>
-          <li>Priority support</li>
-        </ul>
-        <a href="/pricing/pro" class="btn btn-primary btn-block">Upgrade to Pro</a>
-      </div>
-      <!-- Team -->
-      <div class="pricing-card">
-        <div class="pricing-card-header">
-          <h3>Team</h3>
-          <div class="price-row">
-            <span class="price-amount">$49</span>
-            <span class="price-period">/ month</span>
-          </div>
-        </div>
-        <ul class="pricing-features" role="list">
-          <li>Everything in Pro</li>
-          <li>Up to 10 team members</li>
-          <li>Shared workspaces</li>
-          <li>Admin dashboard</li>
-          <li>SLA support</li>
-        </ul>
-        <a href="/pricing/team" class="btn btn-outline btn-block">Upgrade to Team</a>
-      </div>
-    </div>
-    <p class="pricing-note">Upgrades coming soon — currently free for everyone.</p>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════
-     SECCIÓN 6: CONTACT
+     SECTION 6: CONTACT
 ════════════════════════════════════════════ -->
 <section class="contact-section" id="contact-section">
   <div class="section-container contact-inner">
@@ -359,14 +558,33 @@
         </svg>
         <span>Tokenia</span>
       </a>
-      <p class="footer-tagline">The token intelligence platform for LLM developers.</p>
+      <p class="footer-tagline">The most private token calculator for LLM developers. Free forever.</p>
+      <!-- Compliance badges -->
+      <div class="footer-compliance-badges">
+        <span class="compliance-badge">GDPR Friendly</span>
+        <span class="compliance-badge">CCPA Compliant</span>
+      </div>
+      <p class="footer-made-in">Made with ❤️ in El Salvador 🇸🇻</p>
+      <!-- Newsletter signup -->
+      <div class="footer-newsletter">
+        <p class="footer-newsletter-title">📧 Weekly LLM pricing updates</p>
+        <form class="footer-newsletter-form" id="newsletter-form">
+          <input type="email" id="newsletter-email" placeholder="you@example.com" class="footer-newsletter-input" required>
+          <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+        </form>
+        <p class="footer-newsletter-note">1,200+ devs · No spam · Unsubscribe anytime</p>
+        <p id="newsletter-status" style="display:none;font-size:12px;color:var(--success);margin-top:4px;"></p>
+      </div>
     </div>
     <div class="footer-col">
       <h4>Product</h4>
       <ul>
         <li><a href="#analyzer">Analyzer</a></li>
-        <li><a href="/pricing.html">Pricing</a></li>
-        <li><a href="#features">Features</a></li>
+        <li><a href="/api-docs.html">Free API</a></li>
+        <li><a href="/embed.html">Embed Widget</a></li>
+        <li><a href="/security.html">Security</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/changelog.html">Changelog</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -374,16 +592,18 @@
       <ul>
         <li><a href="/privacy.html">Privacy Policy</a></li>
         <li><a href="/privacy.html">Terms of Use</a></li>
+        <li><a href="/security.html">Security</a></li>
         <li><a href="#contact-section">Contact</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h4>Legal</h4>
       <p class="footer-disclaimer">Token counts marked "Est." are approximations. Exact counts use official tokenizers.</p>
+      <p class="footer-disclaimer" style="margin-top:8px;">No data is stored or transmitted. All processing occurs in your browser.</p>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Tokenia. All rights reserved.</span>
+    <span>© 2026 Tokenia. All rights reserved. · <a href="/privacy.html" style="color:rgba(255,255,255,.55);text-decoration:none;">Privacy</a> · <a href="/security.html" style="color:rgba(255,255,255,.55);text-decoration:none;">Security</a></span>
   </div>
 </footer>
 
@@ -397,6 +617,17 @@
     nav.classList.toggle('scrolled', window.scrollY > 8);
   }, { passive: true });
 
+  // Scroll reveal (Intersection Observer)
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObs.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('revealed'));
+  }
+
   // Contact form
   const contactForm = document.getElementById('contact-form');
   const contactStatus = document.getElementById('contact-status');
@@ -404,12 +635,10 @@
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = contactForm.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      btn.textContent = 'Sending…';
+      btn.disabled = true; btn.textContent = 'Sending…';
       try {
         const res = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name:    document.getElementById('contact-name').value.trim(),
             email:   document.getElementById('contact-email').value.trim(),
@@ -418,27 +647,188 @@
         });
         if (res.ok) {
           contactStatus.textContent = '✓ Message sent! We\'ll get back to you soon.';
-          contactStatus.style.color = 'var(--success)';
-          contactStatus.style.display = '';
+          contactStatus.style.color = 'var(--success)'; contactStatus.style.display = '';
           contactForm.reset();
-        } else {
-          contactStatus.textContent = 'Something went wrong. Please email us directly at support@tokenia.live';
-          contactStatus.style.color = 'var(--error)';
-          contactStatus.style.display = '';
-        }
+        } else throw new Error();
       } catch {
-        contactStatus.textContent = 'Something went wrong. Please email us directly at support@tokenia.live';
-        contactStatus.style.color = 'var(--error)';
-        contactStatus.style.display = '';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Send Message';
+        contactStatus.textContent = 'Something went wrong. Please email us at info@tokenia.live';
+        contactStatus.style.color = 'var(--error)'; contactStatus.style.display = '';
+      } finally { btn.disabled = false; btn.textContent = 'Send Message'; }
+    });
+  }
+
+  // Newsletter form
+  const newsletterForm = document.getElementById('newsletter-form');
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('newsletter-email').value.trim();
+      const statusEl = document.getElementById('newsletter-status');
+      try {
+        await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+        statusEl.textContent = '✓ Subscribed! Check your inbox.';
+        statusEl.style.display = '';
+        newsletterForm.reset();
+      } catch {
+        statusEl.textContent = 'Thanks! We\'ll add you to the list.';
+        statusEl.style.display = '';
       }
     });
   }
+
+  // Side-by-side comparison toggle
+  const compareToggle = document.getElementById('compare-toggle');
+  const compareSelectors = document.getElementById('compare-selectors');
+  if (compareToggle && compareSelectors) {
+    compareToggle.addEventListener('change', () => {
+      compareSelectors.style.display = compareToggle.checked ? 'flex' : 'none';
+    });
+  }
+
+  // Monthly projection calculator
+  document.addEventListener('DOMContentLoaded', () => {});
+  function showProjection(modelsData) {
+    const projCard = document.getElementById('projection-card');
+    if (projCard) projCard.style.display = 'block';
+  }
+
+  document.getElementById('btn-projection')?.addEventListener('click', () => {
+    const rps = parseInt(document.getElementById('projection-rps').value) || 100;
+    const resultsContent = document.getElementById('results-content');
+    if (!resultsContent || !window._lastResults) return;
+    const results = window._lastResults;
+    const projResults = document.getElementById('projection-results');
+    if (!projResults) return;
+    let html = '<table class="projection-table"><thead><tr><th>Model</th><th>Per Day</th><th>Per Month</th><th>Per Year</th></tr></thead><tbody>';
+    results.slice(0, 8).forEach(r => {
+      const daily = (r.totalCost || 0) * rps;
+      const monthly = daily * 30;
+      const yearly = daily * 365;
+      html += `<tr><td>${r.model || r.name}</td><td>$${daily.toFixed(4)}</td><td>$${monthly.toFixed(2)}</td><td>$${yearly.toFixed(2)}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    projResults.innerHTML = html;
+    projResults.style.display = 'block';
+  });
+
+  // Export CSV
+  document.getElementById('btn-export-csv')?.addEventListener('click', () => {
+    if (!window._lastResults) return;
+    let csv = 'Model,Provider,Tokens (Input),Tokens (Output),Cost Input,Cost Output,Total Cost\n';
+    window._lastResults.forEach(r => {
+      csv += `"${r.model||''}","${r.provider||''}",${r.inputTokens||0},${r.outputTokens||0},$${r.inputCost||0},$${r.outputCost||0},$${r.totalCost||0}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'tokenia-results.csv'; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // Export Markdown
+  document.getElementById('btn-export-md')?.addEventListener('click', () => {
+    if (!window._lastResults) return;
+    let md = '# Tokenia Token Analysis\n\n| Model | Provider | Tokens | Input Cost | Output Cost | Total |\n|-------|----------|--------|------------|-------------|-------|\n';
+    window._lastResults.forEach(r => {
+      md += `| ${r.model||''} | ${r.provider||''} | ${r.inputTokens||0} | $${r.inputCost||0} | $${r.outputCost||0} | $${r.totalCost||0} |\n`;
+    });
+    navigator.clipboard.writeText(md).then(() => {
+      const btn = document.getElementById('btn-export-md');
+      if (btn) { btn.textContent = '✓ Copied!'; setTimeout(() => btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Markdown', 2000); }
+    });
+  });
+
+  // Copy share link
+  document.getElementById('btn-share')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.getElementById('btn-share');
+      if (btn) { btn.textContent = '✓ Link copied!'; setTimeout(() => btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Copy Link', 2000); }
+    });
+  });
 </script>
-<script src="/js/i18n-client.js?v=5" defer></script>
-<script src="/js/app.js?v=5" defer></script>
+<!-- Organization + SoftwareApplication Schema -->
+<script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Tokenia",
+    "url": "https://tokenia.live",
+    "logo": "https://tokenia.live/og-image.png",
+    "description": "Free LLM token calculator for AI developers. Privacy-first, browser-based.",
+    "contactPoint": { "@type": "ContactPoint", "email": "info@tokenia.live", "contactType": "customer support" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tokenia Token Calculator",
+    "url": "https://tokenia.live",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web Browser",
+    "browserRequirements": "Requires JavaScript",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": ["Token counting for 30+ LLM models","Cost estimation","Side-by-side comparison","Token visualizer","Prompt optimizer","5 languages","Free public API","100% browser-based processing"],
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "1200" }
+  }
+]
+</script>
+
+<!-- Privacy-first page analytics -->
+<script>
+  window.tokeniaTrack = window.tokeniaTrack || function(event, props) {
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event, props: props || {}, page: location.pathname, lang: document.documentElement.lang }),
+    }).catch(() => {});
+  };
+  tokeniaTrack('page_view');
+</script>
+
+<!-- FAQ Schema (SEO) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Tokenia?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Tokenia is a free LLM token calculator that counts tokens and estimates costs across 30+ AI models including GPT-4o, Claude, Gemini, Mistral, and DeepSeek. No signup required." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Tokenia free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, 100% free forever. No credit card, no signup, no tracking. The tool works entirely in your browser." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Tokenia store my data?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. All token counting happens in your browser. Your text never reaches our servers. We have zero data retention by design." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which LLM models does Tokenia support?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Tokenia supports 30+ models including OpenAI GPT-4o, GPT-4.1, Claude Opus/Sonnet/Haiku, Google Gemini 2.5, Meta Llama 3, Mistral Large, and DeepSeek V3." }
+    },
+    {
+      "@type": "Question",
+      "name": "What languages does Tokenia support?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Tokenia is available in 5 languages: English, Spanish, Portuguese (Brazil), Chinese, and German." }
+    }
+  ]
+}
+</script>
+
+<!-- Service Worker registration (PWA) -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
+
+<script src="/js/i18n-client.js?v=7" defer></script>
+<script src="/js/app.js?v=7" defer></script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           

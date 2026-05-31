@@ -1,0 +1,79 @@
+[
+  {
+    "date": "2026-05-01",
+    "provider": "OpenAI",
+    "model": "GPT-4.1",
+    "oldInputPer1M": null,
+    "newInputPer1M": 2.00,
+    "oldOutputPer1M": null,
+    "newOutputPer1M": 8.00,
+    "changePct": null,
+    "note": "New model launch"
+  },
+  {
+    "date": "2026-03-01",
+    "provider": "Anthropic",
+    "model": "Claude Opus 4.6",
+    "oldInputPer1M": 15.00,
+    "newInputPer1M": 15.00,
+    "oldOutputPer1M": 75.00,
+    "newOutputPer1M": 75.00,
+    "changePct": 0,
+    "note": "New model, same price tier as Opus 4"
+  },
+  {
+    "date": "2026-01-15",
+    "provider": "DeepSeek",
+    "model": "DeepSeek V3 Flash",
+    "oldInputPer1M": null,
+    "newInputPer1M": 0.07,
+    "oldOutputPer1M": null,
+    "newOutputPer1M": 0.28,
+    "changePct": null,
+    "note": "New ultra-low-cost model launch"
+  },
+  {
+    "date": "2025-12-01",
+    "provider": "Google",
+    "model": "Gemini 2.5 Flash",
+    "oldInputPer1M": 0.30,
+    "newInputPer1M": 0.15,
+    "oldOutputPer1M": 1.20,
+    "newOutputPer1M": 0.60,
+    "changePct": -50,
+    "note": "50% price reduction"
+  },
+  {
+    "date": "2025-11-01",
+    "provider": "OpenAI",
+    "model": "GPT-4o mini",
+    "oldInputPer1M": 0.30,
+    "newInputPer1M": 0.15,
+    "oldOutputPer1M": 1.20,
+    "newOutputPer1M": 0.60,
+    "changePct": -50,
+    "note": "50% price cut across the board"
+  },
+  {
+    "date": "2025-09-01",
+    "provider": "Mistral",
+    "model": "Mistral Small 3",
+    "oldInputPer1M": 0.20,
+    "newInputPer1M": 0.10,
+    "oldOutputPer1M": 0.60,
+    "newOutputPer1M": 0.30,
+    "changePct": -50,
+    "note": "Price halved following competition"
+  },
+  {
+    "date": "2025-07-01",
+    "provider": "Anthropic",
+    "model": "Claude Haiku 4.5",
+    "oldInputPer1M": null,
+    "newInputPer1M": 0.80,
+    "oldOutputPer1M": null,
+    "newOutputPer1M": 4.00,
+    "changePct": null,
+    "note": "New Haiku generation launch"
+  }
+]

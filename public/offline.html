@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline — Tokenia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #FAFAFA; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .container { text-align: center; max-width: 480px; }
+    .logo { display: inline-flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 800; color: #0A0A0A; margin-bottom: 32px; text-decoration: none; }
+    h1 { font-size: 28px; font-weight: 900; color: #0A0A0A; margin-bottom: 12px; }
+    p { font-size: 16px; color: #525252; line-height: 1.6; margin-bottom: 24px; }
+    .good-news { background: #FFF4ED; border: 1.5px solid rgba(255,107,44,.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; text-align: left; }
+    .good-news h3 { font-size: 15px; font-weight: 700; color: #FF6B2C; margin-bottom: 8px; }
+    .good-news ul { list-style: none; padding: 0; }
+    .good-news li { font-size: 14px; color: #525252; padding: 4px 0; }
+    .good-news li::before { content: '✓ '; color: #FF6B2C; font-weight: 700; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; background: #FF6B2C; color: #fff; border: none; border-radius: 10px; padding: 12px 24px; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all .15s; }
+    .btn:hover { background: #E55A1F; transform: translateY(-1px); }
+    .status { font-size: 12px; color: #A3A3A3; margin-top: 16px; }
+    #connectivity { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f87171; margin-right: 4px; }
+    #connectivity.online { background: #4ade80; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="logo">
+      <svg width="36" height="36" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="#FF6B2C"/><path d="M5 14h4l2-5.5 3.5 11 2-7.5 1.5 2H23" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Tokenia
+    </a>
+    <h1>You're offline</h1>
+    <p>No internet connection right now. But the good news — Tokenia's core features still work offline!</p>
+    <div class="good-news">
+      <h3>✅ Still available offline:</h3>
+      <ul>
+        <li>Token counting (browser-side estimator)</li>
+        <li>Cost estimates for all 30+ cached models</li>
+        <li>Token Visualizer</li>
+        <li>Prompt Optimizer</li>
+        <li>Model comparison</li>
+        <li>Export as CSV or Markdown</li>
+      </ul>
+    </div>
+    <a href="/" class="btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h4v-6h6v6h4V10"/></svg>
+      Go to Analyzer
+    </a>
+    <p class="status"><span id="connectivity"></span> <span id="connectivity-text">Checking connection…</span></p>
+  </div>
+  <script>
+    function checkConnectivity() {
+      const dot  = document.getElementById('connectivity');
+      const text = document.getElementById('connectivity-text');
+      if (navigator.onLine) {
+        dot.classList.add('online');
+        text.textContent = 'Connection restored! Redirecting…';
+        setTimeout(() => window.location.href = '/', 1500);
+      } else {
+        dot.classList.remove('online');
+        text.textContent = 'No connection detected';
+      }
+    }
+    window.addEventListener('online', checkConnectivity);
+    setInterval(checkConnectivity, 3000);
+    checkConnectivity();
+  </script>
+</body>
+</html>
