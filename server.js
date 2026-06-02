@@ -181,6 +181,23 @@ app.get('/pricing/team',   (_req, res) => res.redirect(301, '/'));
 app.get('/security',   (_req, res) => res.sendFile(path.join(__dirname, 'public/security.html')));
 app.get('/privacy',    (_req, res) => res.sendFile(path.join(__dirname, 'public/privacy.html')));
 app.get('/embed',      (_req, res) => res.sendFile(path.join(__dirname, 'public/embed.html')));
+// /widget — embeddable analyzer (frameable by any site)
+// X-Frame-Options is removed and CSP frame-ancestors is relaxed ONLY for this route.
+// All other routes keep the default helmet-enforced DENY.
+app.get('/widget', (_req, res) => {
+  res.removeHeader('X-Frame-Options');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; " +
+    "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; " +
+    "img-src 'self' data:; " +
+    "connect-src 'self' https://*.supabase.co; " +
+    "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; " +
+    "frame-ancestors *"
+  );
+  res.sendFile(path.join(__dirname, 'public/widget.html'));
+});
 app.get('/api-docs',   (_req, res) => res.sendFile(path.join(__dirname, 'public/api-docs.html')));
 app.get('/status',     (_req, res) => res.sendFile(path.join(__dirname, 'public/status.html')));
 app.get('/changelog',  (_req, res) => res.sendFile(path.join(__dirname, 'public/changelog.html')));

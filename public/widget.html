@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Calculator — Powered by Tokenia</title>
+  <!-- noindex: prevent duplicate content with home page -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#FF6B2C">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Styles (same as main site) -->
+  <link rel="stylesheet" href="/css/style.css?v=7">
+
+  <style>
+    /* Widget-specific overrides: no chrome around the tool */
+    html, body { margin: 0; padding: 0; background: var(--bg, #fff); }
+    .analyzer-section { padding-top: 16px !important; }
+    .widget-attribution {
+      text-align: center;
+      padding: 10px 16px 14px;
+      font-size: 11px;
+      color: var(--muted, #999);
+    }
+    .widget-attribution a {
+      color: var(--orange, #FF6B2C);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .widget-attribution a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1: TOKEN ANALYZER
+════════════════════════════════════════════ -->
+<section class="analyzer-section" id="analyzer">
+  <div class="section-container">
+    <div class="analyzer-header">
+      <span class="section-eyebrow">100% Free · No Signup · No Tracking</span>
+      <h1 class="analyzer-title">Token Analyzer</h1>
+      <p class="analyzer-subtitle">Instant token count &amp; cost estimate across 30+ models</p>
+      <p class="analyzer-privacy-hint">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Your text is sent over HTTPS — never stored or logged
+      </p>
+    </div>
+
+    <!-- Tabs: Paste / Upload -->
+    <div class="analyzer-tab-bar" role="tablist">
+      <button class="atab atab-active" data-atab="paste" role="tab" aria-selected="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="1.5" rx=".75" fill="currentColor"/><rect x="1" y="5.5" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="1" y="9" width="10.5" height="1.5" rx=".75" fill="currentColor"/></svg>
+        Paste Text
+      </button>
+      <button class="atab" data-atab="upload" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 1.5h5.5L11 4v8.5H3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M8.5 1.5V4H11" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Upload File
+      </button>
+    </div>
+
+    <!-- Tab: Paste Text -->
+    <div id="atab-paste" class="atab-panel atab-panel-active">
+      <textarea
+        id="text-input"
+        class="main-textarea analyzer-textarea"
+        placeholder="Paste your prompt, document, or any text here…"
+        spellcheck="false"
+        aria-label="Text input for token analysis"
+      ></textarea>
+    </div>
+
+    <!-- Tab: Upload File -->
+    <div id="atab-upload" class="atab-panel" style="display:none">
+      <input type="file" id="file-input" class="sr-only"
+        accept=".txt,.pdf,.doc,.docx,.csv,.json,.md,.py,.js,.ts">
+      <div id="drop-zone" class="drop-zone" role="button" tabindex="0"
+           aria-label="Click or drag a file here to upload">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="var(--orange-dim)"/>
+          <path d="M20 10v16M14 18l6-8 6 8" stroke="var(--orange)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11 30h18" stroke="var(--orange)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p class="drop-zone-title">Click to upload or drag &amp; drop</p>
+        <p class="drop-zone-hint">TXT, PDF, DOCX, CSV, JSON, MD, code files · Max 10 MB</p>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-browse-file">Browse File</button>
+      </div>
+      <p class="upload-privacy-note">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        File sent over HTTPS for parsing. Content never stored.
+      </p>
+      <div id="upload-status" class="upload-status" style="display:none">
+        <div class="upload-status-row">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h7.5L13 4.5V14H3z" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round" fill="none"/><path d="M10.5 2v2.5H13" stroke="var(--orange)" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <span id="upload-filename" class="upload-filename"></span>
+          <button type="button" id="btn-remove-file" class="btn-icon" aria-label="Remove file">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><line x1="1" y1="1" x2="10" y2="10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="1" x2="1" y2="10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="upload-progress-bar"><div id="upload-progress-fill" class="upload-progress-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="textarea-stats">
+      <span id="char-count">0</span> chars
+      <span class="stats-sep">·</span>
+      <span id="word-count">0</span> words
+      <span class="stats-sep">·</span>
+      <span id="line-count">0</span> lines
+    </div>
+
+    <!-- Provider filter + Comparison toggle + actions row -->
+    <div class="analyzer-controls">
+      <div class="provider-filter-wrap">
+        <label for="provider-filter" class="provider-filter-label">Filter by provider:</label>
+        <select id="provider-filter" class="provider-select">
+          <option value="all">All Providers</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="google">Google</option>
+          <option value="meta">Meta / Llama</option>
+          <option value="mistral">Mistral</option>
+          <option value="deepseek">DeepSeek</option>
+        </select>
+      </div>
+      <div class="comparison-toggle-wrap">
+        <label class="comparison-toggle-label" for="compare-toggle">
+          <input type="checkbox" id="compare-toggle" class="compare-checkbox">
+          <span class="compare-toggle-text">Compare 2 models side-by-side</span>
+        </label>
+        <div id="compare-selectors" class="compare-selectors" style="display:none">
+          <select id="compare-model-a" class="provider-select compare-model-select">
+            <option value="">Model A…</option>
+          </select>
+          <span style="color:var(--muted);font-weight:700">vs</span>
+          <select id="compare-model-b" class="provider-select compare-model-select">
+            <option value="">Model B…</option>
+          </select>
+        </div>
+      </div>
+      <div class="analyzer-btns">
+        <button id="btn-clear" class="btn btn-ghost btn-sm">Clear</button>
+        <button id="btn-analyze" class="btn btn-primary btn-analyze-main">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3 7.5L6.5 11l5.5-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Analyze Tokens
+        </button>
+      </div>
+    </div>
+
+    <!-- Processed locally note -->
+    <p class="processed-locally-note">✓ Sent over HTTPS — never stored or logged</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2: RESULTS
+════════════════════════════════════════════ -->
+<section id="results-section" class="results-section" style="display:none">
+  <div class="section-container">
+    <div class="results-summary-bar" id="results-summary"></div>
+    <div id="results-content"></div>
+
+    <!-- Token Visualizer -->
+    <div id="token-viz-section" class="token-viz-section" style="display:none">
+      <div class="token-viz-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <strong>Token Visualizer</strong>
+        <span class="token-viz-badge">Unique to Tokenia</span>
+        <button class="token-viz-toggle" id="btn-toggle-viz" onclick="document.getElementById('token-viz-content').classList.toggle('collapsed')">Collapse ▲</button>
+      </div>
+      <p class="token-viz-sub">Each colored block ≈ 1 token. Hover to see token details.</p>
+      <div id="token-viz-content" class="token-viz-content"></div>
+    </div>
+
+    <!-- Prompt Optimizer -->
+    <div id="optimizer-section" class="optimizer-section" style="display:none">
+      <div class="optimizer-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <strong>🪄 Prompt Optimizer</strong>
+        <span class="optimizer-savings-pill" id="optimizer-savings-pill"></span>
+      </div>
+      <div id="optimizer-content" class="optimizer-content"></div>
+    </div>
+
+    <!-- Monthly Projection Calculator -->
+    <div id="projection-card" class="projection-card" style="display:none">
+      <div class="projection-card-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <strong>Monthly Cost Projection</strong>
+        <span class="projection-badge">Unique to Tokenia</span>
+      </div>
+      <p class="projection-sub">How much will this prompt cost if you run it at scale?</p>
+      <div class="projection-controls">
+        <label class="projection-label">Requests per day:
+          <input type="number" id="projection-rps" value="100" min="1" max="1000000" class="projection-input">
+        </label>
+        <button id="btn-projection" class="btn btn-secondary btn-sm">Calculate</button>
+      </div>
+      <div id="projection-results" class="projection-results" style="display:none"></div>
+    </div>
+
+    <!-- Export row -->
+    <div id="export-row" class="export-row" style="display:none">
+      <span class="export-label">Export:</span>
+      <button id="btn-export-csv" class="btn btn-ghost btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        CSV
+      </button>
+      <button id="btn-export-md" class="btn btn-ghost btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Markdown
+      </button>
+      <button id="btn-share" class="btn btn-ghost btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Copy Link
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Attribution -->
+<div class="widget-attribution">
+  <a href="https://tokenia.live" target="_blank" rel="noopener">Powered by Tokenia</a>
+  — Free &amp; Private Token Calculator
+</div>
+
+<script src="/js/i18n-client.js?v=7"></script>
+<script src="/js/app.js?v=7"></script>
+</body>
+</html>
