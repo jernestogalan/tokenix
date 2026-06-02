@@ -900,7 +900,7 @@ function toggleShortcutsModal() {
 
 /* ── Onboarding tour (first visit only) ──────────────────────────────── */
 const TOUR_STEPS = [
-  { selector: '#text-input',      title: '1/4 — Paste your prompt',    body: 'Paste any text — prompts, documents, code. Everything stays in your browser.' },
+  { selector: '#text-input',      title: '1/4 — Paste your prompt',    body: 'Paste any text — prompts, documents, code. Sent over HTTPS, never stored.' },
   { selector: '#btn-analyze',     title: '2/4 — Analyze it',           body: 'Click Analyze (or press ⌘+Enter) to see token counts across 30+ models instantly.' },
   { selector: '#provider-filter', title: '3/4 — Filter by provider',   body: 'Focus on OpenAI, Anthropic, Google, or all providers at once.' },
   { selector: '#lang-selector',   title: '4/4 — Switch language',      body: 'Tokenia works in 5 languages: EN, ES, PT, ZH, DE. Try ⌘+L to cycle.' },
