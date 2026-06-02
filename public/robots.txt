@@ -2,7 +2,9 @@ User-agent: *
 Allow: /
 
 Disallow: /auth/
+Disallow: /dashboard
 Disallow: /dashboard.html
 Disallow: /api/
+Disallow: /admin/
 
 Sitemap: https://tokenia.live/sitemap.xml

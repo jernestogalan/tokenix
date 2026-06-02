@@ -93,8 +93,9 @@ app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), asyn
   res.json({ received: true });
 });
 
-// ── Helmet with Tailwind CDN + Supabase CSP ───────────────────────────────────
+// ── Helmet — hardened security headers ───────────────────────────────────────
 app.use(helmet({
+  // Content-Security-Policy
   contentSecurityPolicy: {
     directives: {
       defaultSrc:  ["'self'"],
@@ -103,14 +104,43 @@ app.use(helmet({
       imgSrc:      ["'self'", 'data:'],
       connectSrc:  [
         "'self'",
-        // Allow Supabase auth + REST API calls from the browser
         process.env.SUPABASE_URL || '',
         '*.supabase.co',
       ].filter(Boolean),
       fontSrc:     ["'self'", 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
+      frameAncestors: ["'none'"],   // replaces X-Frame-Options for modern browsers
     },
   },
+  // HSTS — 1 year, include subdomains, preload-ready
+  hsts: {
+    maxAge:            31536000,
+    includeSubDomains: true,
+    preload:           true,
+  },
+  // Referrer policy — don't leak path to third parties
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 }));
+
+// Permissions-Policy — disable features we don't use
+app.use((_req, res, next) => {
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()'
+  );
+  next();
+});
+
+// ── Force HTTPS in production ─────────────────────────────────────────────────
+if (IS_PRODUCTION) {
+  app.use((req, res, next) => {
+    // Railway sets X-Forwarded-Proto; trust the first proxy
+    const proto = req.headers['x-forwarded-proto'];
+    if (proto && proto.split(',')[0].trim() !== 'https') {
+      return res.redirect(301, `https://${req.headers.host}${req.url}`);
+    }
+    next();
+  });
+}
 
 app.use(compression({ level: 6, threshold: 1024 }));
 app.use(IS_PRODUCTION ? morgan('combined') : morgan('dev'));
@@ -147,11 +177,13 @@ app.get('/pricing',        (_req, res) => res.redirect(301, '/'));
 app.get('/pricing/pro',    (_req, res) => res.redirect(301, '/'));
 app.get('/pricing/team',   (_req, res) => res.redirect(301, '/'));
 
-// New pages
+// Pages (clean URLs — no .html extension needed)
 app.get('/security',   (_req, res) => res.sendFile(path.join(__dirname, 'public/security.html')));
+app.get('/privacy',    (_req, res) => res.sendFile(path.join(__dirname, 'public/privacy.html')));
 app.get('/embed',      (_req, res) => res.sendFile(path.join(__dirname, 'public/embed.html')));
 app.get('/api-docs',   (_req, res) => res.sendFile(path.join(__dirname, 'public/api-docs.html')));
 app.get('/status',     (_req, res) => res.sendFile(path.join(__dirname, 'public/status.html')));
+app.get('/changelog',  (_req, res) => res.sendFile(path.join(__dirname, 'public/changelog.html')));
 app.get('/sitemap.xml',(_req, res) => res.sendFile(path.join(__dirname, 'public/sitemap.xml')));
 app.get('/robots.txt', (_req, res) => res.sendFile(path.join(__dirname, 'public/robots.txt')));
 
@@ -647,7 +679,7 @@ app.post('/api/report', async (req, res) => {
 });
 
 // POST /api/newsletter — newsletter subscription via Resend Audiences
-const RESEND_API_KEY      = process.env.RESEND_API_KEY || 're_3A4z2c4k_FerCkBmhS3tmf1nS9cJB7CvX';
+const RESEND_API_KEY      = process.env.RESEND_API_KEY || '';
 const RESEND_AUDIENCE_ID  = process.env.RESEND_AUDIENCE_ID || '';
 const NEWSLETTER_CSV_PATH = path.join(__dirname, 'data', 'newsletter-subscribers.csv');
 
@@ -1150,4 +1182,7 @@ app.listen(PORT, () => {
     credits:  CREDITS_ENABLED,
     history:  HISTORY_ENABLED,
     projects: PROJECTS_ENABLED,
-    redis:  
+    redis:    isRedisReady(),
+    paid:     PAID_FEATURES_ENABLED,
+  });
+});

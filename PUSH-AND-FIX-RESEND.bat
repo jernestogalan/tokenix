@@ -5,7 +5,14 @@ echo  Tokenia — PUSH v8 + FIX Resend (All-in-one)
 echo ================================================================
 cd /d "%~dp0"
 
-set RESEND_KEY=re_3A4z2c4k_FerCkBmhS3tmf1nS9cJB7CvX
+REM ⚠️  Set your Resend API key here (or set RESEND_KEY as an env variable before running)
+REM     Do NOT commit a real key to this file.
+if "%RESEND_KEY%"=="" (
+    echo ERROR: RESEND_KEY env variable not set. Set it before running this script.
+    echo   Example: set RESEND_KEY=re_xxxxxxxxxxxx
+    pause
+    exit /b 1
+)
 
 REM ── STEP 1: Git push ──────────────────────────────────────────────
 echo.

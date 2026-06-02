@@ -3,24 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tokenia Privacy Policy — how we handle your data.">
+  <meta name="description" content="Tokenia Privacy Policy — exactly what data we collect, how we process your text, and your rights.">
   <title>Privacy Policy — Tokenia</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23FF6B2C'/><path d='M8 16h4l2-5 3 10 2-7 1.5 2H24' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=4">
+  <link rel="stylesheet" href="/css/style.css?v=7">
   <style>
     .prose { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
     .prose h1 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
     .prose .meta { color: var(--muted); font-size: 0.875rem; margin-bottom: 2.5rem; }
-    .prose h2 { font-size: 1.2rem; font-weight: 700; color: var(--text); margin: 2rem 0 0.75rem; }
+    .prose h2 { font-size: 1.2rem; font-weight: 700; color: var(--text); margin: 2rem 0 0.75rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+    .prose h2:first-of-type { border-top: none; padding-top: 0; }
     .prose p, .prose li { font-size: 0.975rem; line-height: 1.75; color: var(--text-dim); }
     .prose ul { padding-left: 1.4rem; margin: 0.5rem 0 1rem; }
     .prose li { margin-bottom: 0.35rem; }
     .prose a { color: var(--orange); text-decoration: none; }
     .prose a:hover { text-decoration: underline; }
     .prose hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .prose code { background: var(--surface); padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
+    .prose table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+    .prose th { text-align: left; padding: 8px 12px; background: var(--surface); font-weight: 600; }
+    .prose td { padding: 8px 12px; border-top: 1px solid var(--border); vertical-align: top; }
   </style>
 </head>
 <body>
@@ -38,12 +43,12 @@
       <span>Tokenia</span>
     </a>
     <div class="nav-links">
-      <a href="/#demo"     class="nav-link">Analyzer</a>
-      <a href="/pricing.html" class="nav-link">Pricing</a>
+      <a href="/#analyzer" class="nav-link">Analyzer</a>
+      <a href="/security" class="nav-link">Security</a>
+      <a href="/#contact-section" class="nav-link">Contact</a>
     </div>
     <div class="nav-right">
-      <div id="lang-selector"></div>
-      <a href="/#demo" class="btn btn-primary btn-sm">Try Free</a>
+      <a href="/#analyzer" class="btn btn-primary btn-sm">Try Free</a>
     </div>
   </div>
 </nav>
@@ -51,61 +56,95 @@
 <main style="padding-top:var(--nav-h)">
   <div class="prose">
     <h1>Privacy Policy</h1>
-    <p class="meta">Last updated: January 2025 · <strong>Beta</strong></p>
+    <p class="meta">Last updated: June 2026 · Effective immediately · Contact: <a href="mailto:info@tokenia.live">info@tokenia.live</a></p>
 
-    <p>Tokenia ("we", "us", "our") operates tokenia.live. This Privacy Policy explains how we handle information when you use our token counting and cost estimation service.</p>
+    <p>Tokenia ("we", "us", "our") operates <a href="https://tokenia.live">tokenia.live</a>. This Privacy Policy describes exactly what happens to your data when you use our token counting and cost estimation service. We've written it to be specific and honest, not boilerplate.</p>
 
-    <h2>1. Data We Collect</h2>
-    <p>We collect only what is strictly necessary to operate the service:</p>
-    <ul>
-      <li><strong>Text you submit for analysis.</strong> This is processed in memory only and is not retained, logged, or stored after the API call completes.</li>
-      <li><strong>Files you upload.</strong> File content is extracted, analyzed, and immediately discarded. We do not store file contents.</li>
-      <li><strong>Account data (optional).</strong> If you create an account, we store your email address and hashed password via Supabase. You can delete your account at any time.</li>
-      <li><strong>Anonymous usage statistics.</strong> We may collect aggregate, non-identifiable metrics (e.g. page views, feature usage counts) to improve the service.</li>
-    </ul>
+    <h2>1. What We Collect and Why</h2>
 
-    <h2>2. How We Use Data</h2>
-    <ul>
-      <li>To provide and improve the token analysis service.</li>
-      <li>To authenticate users if they choose to create an account.</li>
-      <li>To respond to support requests.</li>
-    </ul>
-    <p>We do not sell, rent, or share your data with third parties for advertising purposes.</p>
+    <table>
+      <thead><tr><th>Data</th><th>How</th><th>Retained?</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Text you submit for analysis</strong></td>
+          <td>Sent via HTTPS POST to our server for tokenization</td>
+          <td>No — discarded after the response. Never written to disk or database.</td>
+        </tr>
+        <tr>
+          <td><strong>Files you upload</strong></td>
+          <td>Transmitted over HTTPS; parsed server-side (PDF/DOCX in memory)</td>
+          <td>No — file buffer discarded immediately after text extraction.</td>
+        </tr>
+        <tr>
+          <td><strong>Server access logs</strong></td>
+          <td>Standard HTTP logging (IP, method, path, status, bytes)</td>
+          <td>Yes — rotated every 30 days. Does not include request body.</td>
+        </tr>
+        <tr>
+          <td><strong>First-party analytics</strong></td>
+          <td>Event name, page URL, language, country (no text content)</td>
+          <td>Yes — rotated every 30 days. Session is a one-way hash of IP + UA + date.</td>
+        </tr>
+        <tr>
+          <td><strong>Newsletter email</strong> (optional)</td>
+          <td>You enter it voluntarily in the footer form</td>
+          <td>Yes — stored in Resend Audiences until you unsubscribe.</td>
+        </tr>
+        <tr>
+          <td><strong>Account email + history</strong> (optional)</td>
+          <td>Only if you create a free account</td>
+          <td>Yes — stored in Supabase. Delete via account settings or email us.</td>
+        </tr>
+      </tbody>
+    </table>
 
-    <h2>3. Text and File Privacy</h2>
-    <p>Your prompts, documents, and code files are never stored on our servers. All analysis happens in memory during the API request and the content is immediately discarded. We have no access to your text after the response is returned to your browser.</p>
+    <h2>2. Your Text is Never Stored</h2>
+    <p>When you paste text or upload a file, it travels over HTTPS to our server, is processed by the tokenizer in memory, and the result is returned to your browser. No part of your text is written to a database, log file, or any persistent storage. The server logs record only the HTTP method, path, status code, and byte count — not the content of your request.</p>
+    <p>This applies to all inputs: prompts, documents, code, and any other text you analyze.</p>
+
+    <h2>3. First-Party Analytics</h2>
+    <p>We use our own lightweight analytics (no Google Analytics, no Meta Pixel, no third-party trackers). When you interact with the tool, we record events like <code>page_view</code> or <code>analyze_click</code> along with: the page URL (without query parameters), your browser language, your country (from Cloudflare headers), and a 16-character session hash derived from a one-way hash of your IP + User-Agent + date. This hash cannot be reversed. We use it only to count unique sessions, not to track individuals across days.</p>
 
     <h2>4. Cookies and Local Storage</h2>
-    <p>We use minimal browser storage:</p>
     <ul>
-      <li><strong>sessionStorage:</strong> Your language preference (e.g. <code>tokenia_lang</code>) is stored for the duration of your browser session.</li>
-      <li>We do not use advertising cookies or third-party tracking.</li>
+      <li>We do not set any cookies.</li>
+      <li>We use <code>localStorage</code> to remember your language preference (<code>tokenia_lang</code>) and any settings you configure. This data never leaves your browser.</li>
+      <li>No advertising cookies. No cross-site tracking.</li>
     </ul>
 
     <h2>5. Third-Party Services</h2>
     <ul>
-      <li><strong>Supabase</strong> — for optional user authentication and account management.</li>
-      <li><strong>Railway</strong> — our hosting provider. Your IP address may appear in their server logs per standard HTTP logging.</li>
-      <li><strong>Google Fonts</strong> — the Inter typeface is loaded from Google's CDN. Google's privacy policy applies to that request.</li>
+      <li><strong>Railway</strong> — hosting provider. Your IP may appear in their infrastructure logs per standard operation. <a href="https://railway.app/legal/privacy" target="_blank" rel="noopener">Railway Privacy Policy</a>.</li>
+      <li><strong>Supabase</strong> — used only if you create an account. Stores email and analysis history. <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Supabase Privacy Policy</a>.</li>
+      <li><strong>Resend</strong> — used to send transactional emails (account confirmation, password reset) and the optional newsletter. <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener">Resend Privacy Policy</a>.</li>
+      <li><strong>Google Fonts</strong> — the Inter typeface is loaded from Google's CDN. A request is made to Google's servers on page load. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</li>
     </ul>
 
     <h2>6. Security</h2>
-    <p>We use HTTPS for all data transmission. Passwords are hashed and never stored in plaintext. We follow industry standard practices to protect your account data.</p>
+    <p>All connections use HTTPS/TLS. Security headers are enforced on every response: HSTS (1 year, includeSubDomains), Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy. See our <a href="/security">Security page</a> for the full technical breakdown.</p>
 
     <h2>7. Your Rights</h2>
-    <p>You may request deletion of your account and associated data at any time by emailing <a href="mailto:info@tokenia.live">info@tokenia.live</a>. Since we do not store text inputs, there is no text data to delete beyond what session memory holds.</p>
+    <ul>
+      <li><strong>Delete your account:</strong> Email <a href="mailto:info@tokenia.live">info@tokenia.live</a> — we'll delete your Supabase account and all stored history within 7 days.</li>
+      <li><strong>Unsubscribe from newsletter:</strong> Every email includes an unsubscribe link. You can also email us.</li>
+      <li><strong>Access your data:</strong> Email us and we'll provide a copy of everything we have associated with your account.</li>
+      <li><strong>Regarding your text inputs:</strong> We don't store them, so there is nothing to retrieve or delete.</li>
+    </ul>
 
-    <h2>8. Children</h2>
-    <p>Tokenia is not directed at children under 13. We do not knowingly collect data from children.</p>
+    <h2>8. Data Transfers</h2>
+    <p>Our server runs in the US (Railway, AWS us-east-1). If you access Tokenia from outside the US, your text is transmitted to US servers for processing and then discarded. No text is retained after the response.</p>
 
-    <h2>9. Changes to This Policy</h2>
-    <p>We will post any changes to this page and update the "Last updated" date. Continued use of the service after changes constitutes acceptance.</p>
+    <h2>9. Children</h2>
+    <p>Tokenia is not directed at children under 13. We do not knowingly collect personal data from children.</p>
 
-    <h2>10. Contact</h2>
-    <p>Questions? Email us at <a href="mailto:info@tokenia.live">info@tokenia.live</a>.</p>
+    <h2>10. Changes to This Policy</h2>
+    <p>We will post any material changes to this page and update the "Last updated" date. The current version is always at <a href="https://tokenia.live/privacy">tokenia.live/privacy</a>.</p>
+
+    <h2>11. Contact</h2>
+    <p>Questions about this policy? Email <a href="mailto:info@tokenia.live">info@tokenia.live</a>. For security vulnerabilities, use subject line "Security Disclosure".</p>
 
     <hr>
-    <p style="font-size:0.85rem;color:var(--muted)">This policy is provided in good faith for a beta product. It will be reviewed by legal counsel prior to commercial launch.</p>
+    <p style="font-size:0.85rem;color:var(--muted)">This policy reflects how Tokenia actually works as verified in our source code. It has not been reviewed by legal counsel — if you have compliance-specific requirements, please contact us before relying on it.</p>
   </div>
 </main>
 
@@ -122,24 +161,27 @@
         </svg>
         <span>Tokenia</span>
       </a>
+      <p class="footer-made-in">Made with ❤️ in El Salvador 🇸🇻</p>
     </div>
     <div class="footer-col">
       <h4>Product</h4>
       <ul>
-        <li><a href="/#demo">Analyzer</a></li>
-        <li><a href="/pricing.html">Pricing</a></li>
+        <li><a href="/#analyzer">Analyzer</a></li>
+        <li><a href="/embed">Embed Widget</a></li>
+        <li><a href="/security">Security</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h4>Legal</h4>
       <ul>
-        <li><a href="/privacy.html">Privacy Policy</a></li>
+        <li><a href="/privacy">Privacy Policy</a></li>
+        <li><a href="/security">Security</a></li>
         <li><a href="mailto:info@tokenia.live">Contact</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 Tokenia. All rights reserved.</span>
+    <span>© 2026 Tokenia. All rights reserved. · <a href="/privacy" style="color:rgba(255,255,255,.55);text-decoration:none;">Privacy</a> · <a href="/security" style="color:rgba(255,255,255,.55);text-decoration:none;">Security</a></span>
   </div>
 </footer>
 
@@ -151,6 +193,5 @@
     }, { passive: true });
   })();
 </script>
-<script src="/js/i18n-client.js?v=4" defer></script>
 </body>
 </html>

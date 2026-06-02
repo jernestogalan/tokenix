@@ -61,13 +61,13 @@ const TRANSLATIONS = {
       team_f4:"Admin dashboard", team_f5:"SLA support", team_cta:"Coming Soon",
       coming_soon_note:"Upgrades coming soon — currently free for everyone."
     },
-    testimonials: { badge:"What Users Say", title:"Trusted by developers worldwide" },
+    testimonials: { badge:"What Developers Say", title:"Built for developers who care about AI costs" },
     cta: { title:"Start counting tokens for free", subtitle:"No account required. Paste text and get results instantly.", btn:"Try Tokenia Free" },
     footer: {
       tagline:"The token intelligence platform for LLM developers.",
       product:"Product", analyzer:"Analyzer", pricing:"Pricing", docs:"Docs",
       company:"Company", privacy:"Privacy Policy", terms:"Terms of Use", contact:"Contact", legal:"Legal",
-      copyright:"© 2025 Tokenia. All rights reserved.",
+      copyright:"© 2026 Tokenia. All rights reserved.",
       disclaimer:"Token counts marked “Est.” are approximations. Exact counts use official tokenizers."
     },
     chat: {
@@ -124,7 +124,7 @@ const TRANSLATIONS = {
       free_f4:"Estimativas de custo", free_f5:"Comparação lado a lado", free_cta:"Começar Agora",
       coming_soon_note:"100% grátis para sempre. Sem planos pagos."
     },
-    testimonials: { badge:"O que os usuários dizem", title:"Confiado por desenvolvedores no mundo todo" },
+    testimonials: { badge:"O que dizem os devs", title:"Feito para devs que controlam custos de IA" },
     cta: { title:"Comece a contar tokens de graça", subtitle:"Sem conta necessária. Cole o texto e obtenha resultados instantaneamente.", btn:"Usar Tokenia Grátis" },
     footer: {
       tagline:"A calculadora de tokens mais privada para desenvolvedores de LLM. Gratuita para sempre.",
@@ -193,7 +193,7 @@ const TRANSLATIONS = {
       team_f4:"Panel de administración", team_f5:"Soporte con SLA", team_cta:"Próximamente",
       coming_soon_note:"Actualizaciones próximamente — actualmente gratis para todos."
     },
-    testimonials: { badge:"Lo que dicen los usuarios", title:"Confiado por desarrolladores en todo el mundo" },
+    testimonials: { badge:"Lo que dicen los devs", title:"Para desarrolladores que controlan costos de IA" },
     cta: { title:"Comienza a contar tokens gratis", subtitle:"Sin cuenta requerida. Pega texto y obtén resultados al instante.", btn:"Probar Tokenia Gratis" },
     footer: {
       tagline:"La plataforma de inteligencia de tokens para desarrolladores de LLM.",
@@ -262,7 +262,7 @@ const TRANSLATIONS = {
       team_f4:"管理员控制台", team_f5:"SLA 支持", team_cta:"即将推出",
       coming_soon_note:"升级功能即将推出——目前所有人免费使用。"
     },
-    testimonials: { badge:"用户评价", title:"全球开发者的信赖之选" },
+    testimonials: { badge:"开发者反馈", title:"为关注 AI 成本的开发者而生" },
     cta: { title:"免费开始计算 Token", subtitle:"无需注册账户，粘贴文本即可获得结果。", btn:"免费试用 Tokenia" },
     footer: {
       tagline:"面向 LLM 开发者的 Token 智能平台。",
@@ -331,7 +331,7 @@ const TRANSLATIONS = {
       team_f4:"Admin-Dashboard", team_f5:"SLA-Support", team_cta:"Demnächst verfügbar",
       coming_soon_note:"Upgrades kommen bald — derzeit für alle kostenlos."
     },
-    testimonials: { badge:"Was Nutzer sagen", title:"Vertraut von Entwicklern weltweit" },
+    testimonials: { badge:"Was Devs sagen", title:"Für Entwickler, die KI-Kosten im Griff haben wollen" },
     cta: { title:"Kostenlos mit Token-Zählung beginnen", subtitle:"Kein Konto erforderlich. Text einfügen und sofort Ergebnisse erhalten.", btn:"Tokenia kostenlos testen" },
     footer: {
       tagline:"Die Token-Intelligenz-Plattform für LLM-Entwickler.",
@@ -444,10 +444,10 @@ const FAQ = [
   {
     keywords: ['api','access','integration','endpoint','key','pro','batch','batches','api access','api key','acceso api','api-zugang','api 访问'],
     answer: {
-      en: "API access and batch processing are part of our upcoming Pro plan ($12/mo). The API will let you integrate token counting directly into your CI/CD pipelines, apps, or monitoring tools. Sign up for the waitlist and you'll be notified when it launches.",
-      es: "El acceso a la API y el procesamiento por lotes son parte de nuestro próximo plan Pro ($12/mes). La API te permitirá integrar el conteo de tokens directamente en tus pipelines CI/CD, aplicaciones o herramientas de monitoreo. Regístrate en la lista de espera y te notificaremos cuando se lance.",
-      zh: "API 访问和批量处理是我们即将推出的专业版计划（$12/月）的功能。API 将允许您将 Token 计数直接集成到 CI/CD 流水线、应用程序或监控工具中。加入候补名单，发布时我们将通知您。",
-      de: "API-Zugang und Stapelverarbeitung sind Teil des kommenden Pro-Plans ($12/Monat). Die API ermöglicht die Integration von Token-Zählungen direkt in CI/CD-Pipelines, Apps oder Monitoring-Tools. Für die Warteliste anmelden und bei Launch benachrichtigt werden."
+      en: "A public REST API is available at /api/v1/count — free, no key required, up to 100 requests/hour. For higher limits or batch processing, email us at info@tokenia.live.",
+      es: "Hay una API REST pública disponible en /api/v1/count — gratuita, sin clave, hasta 100 solicitudes/hora. Para límites más altos o procesamiento en lotes, escríbenos a info@tokenia.live.",
+      zh: "公共 REST API 可通过 /api/v1/count 访问——免费、无需密钥，每小时最多 100 次请求。如需更高限额或批量处理，请发邮件至 info@tokenia.live。",
+      de: "Eine öffentliche REST-API ist unter /api/v1/count verfügbar — kostenlos, kein Key erforderlich, bis zu 100 Anfragen/Stunde. Für höhere Limits oder Stapelverarbeitung: info@tokenia.live."
     }
   },
   {

@@ -15,7 +15,7 @@ Do this **after** Resend shows `mail.tokenia.live` as **Verified** (green checkm
 | **SMTP Host** | smtp.resend.com | smtp.resend.com *(no change)* |
 | **SMTP Port** | 465 | 465 *(no change)* |
 | **SMTP User** | resend | resend *(no change)* |
-| **SMTP Password** | (your API key) | re_3A4z2c4k_FerCkBmhS3tmf1nS9cJB7CvX *(no change)* |
+| **SMTP Password** | (your Resend API key) | *(same key — find it in your Resend dashboard → API Keys)* |
 | **Sender name** | Tokenia | Tokenia *(no change)* |
 | **Sender email** | `info@tokenia.live` | **`noreply@mail.tokenia.live`** ← CHANGE THIS |
 
