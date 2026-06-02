@@ -678,9 +678,8 @@ app.post('/api/report', async (req, res) => {
   }
 });
 
-// POST /api/newsletter — newsletter subscription via Resend Audiences
+// POST /api/newsletter — newsletter subscription via Resend Contacts (global API, no audience_id)
 const RESEND_API_KEY      = process.env.RESEND_API_KEY || '';
-const RESEND_AUDIENCE_ID  = process.env.RESEND_AUDIENCE_ID || '';
 const NEWSLETTER_CSV_PATH = path.join(__dirname, 'data', 'newsletter-subscribers.csv');
 
 // Ensure CSV file exists
@@ -695,29 +694,32 @@ app.post('/api/newsletter', async (req, res) => {
   if (!email || !email.includes('@'))
     return res.status(400).json({ error: 'Valid email required.' });
 
-  // Try Resend Audiences first
+  // Add to Resend global contacts (no audience_id required)
   let resendOk = false;
-  if (RESEND_AUDIENCE_ID) {
-    try {
-      const resendRes = await fetch(`https://api.resend.com/audiences/${RESEND_AUDIENCE_ID}/contacts`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, unsubscribed: false }),
-      });
-      resendOk = resendRes.ok;
-      if (!resendOk) console.warn('[newsletter] Resend error:', resendRes.status);
-    } catch (err) {
-      console.warn('[newsletter] Resend fetch failed:', err.message);
+  try {
+    const resendRes = await fetch('https://api.resend.com/contacts', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, unsubscribed: false }),
+    });
+    resendOk = resendRes.ok;
+    if (!resendOk) {
+      const errBody = await resendRes.text().catch(() => '');
+      console.warn('[newsletter] Resend error:', resendRes.status, errBody);
     }
+  } catch (err) {
+    console.warn('[newsletter] Resend fetch failed:', err.message);
   }
 
-  // Always save to local CSV as fallback
-  try {
-    fs.appendFileSync(NEWSLETTER_CSV_PATH, `${email},${new Date().toISOString()},${lang || 'en'}\n`);
-  } catch {}
+  // CSV fallback — only on Resend failure (API error or network issue)
+  if (!resendOk) {
+    try {
+      fs.appendFileSync(NEWSLETTER_CSV_PATH, `${email},${new Date().toISOString()},${lang || 'en'}\n`);
+    } catch {}
+  }
 
   _leads.push({ email, source: 'newsletter', lang: lang || 'en', createdAt: new Date().toISOString() });
   console.log(`[newsletter] ${email} — resend:${resendOk}`);
