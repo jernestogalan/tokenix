@@ -333,7 +333,7 @@ function analyzeTokens() {
   const toggle = $('compare-toggle');
   if (toggle && toggle.checked) renderComparison();
 
-  // Optional server-side enhancement (exact tiktoken for OpenAI)
+  // Optional server-side enhancement (exact: tiktoken for OpenAI, DeepSeek-V3 tokenizer for DeepSeek)
   tryServerEnhancement(text);
 }
 
@@ -349,7 +349,7 @@ function renderResults(tokenCount) {
     summaryEl.innerHTML = `
       <span><strong>~${fmt(tokenCount)}</strong> tokens estimated</span>
       <span style="color:var(--border-md)">|</span>
-      <span style="color:var(--muted);font-size:var(--text-xs)">Based on ~4 chars/token heuristic · OpenAI models show exact counts when server is available</span>
+      <span style="color:var(--muted);font-size:var(--text-xs)">Based on ~4 chars/token heuristic · OpenAI &amp; DeepSeek models show exact counts when server is available</span>
     `;
   }
 
@@ -740,7 +740,7 @@ async function tryServerEnhancement(text) {
       summaryEl.innerHTML = `
         <span><strong>${fmt(maxTokens)}</strong> tokens</span>
         <span style="color:var(--border-md)">|</span>
-        <span style="color:var(--muted);font-size:var(--text-xs)">Server-enhanced · OpenAI = exact (tiktoken) · Others = ~estimated</span>
+        <span style="color:var(--muted);font-size:var(--text-xs)">Server-enhanced · OpenAI &amp; DeepSeek = exact · Others = ~estimated</span>
       `;
     }
 

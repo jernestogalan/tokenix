@@ -41,7 +41,7 @@ const TRANSLATIONS = {
     },
     features: {
       badge:"Why Tokenia", title:"Built for developers who care about costs",
-      f1_title:"Exact + Estimated", f1_desc:"Official tokenizers where available (tiktoken, Claude). Clearly labeled estimates for all others.",
+      f1_title:"Exact + Estimated", f1_desc:"Official tokenizers where available (tiktoken for OpenAI, DeepSeek-V3 for DeepSeek). Clearly labeled estimates for all others.",
       f2_title:"Multi-Provider", f2_desc:"Compare costs across OpenAI, Anthropic, Mistral, Cohere, Google and more in one view.",
       f3_title:"File Upload", f3_desc:"Analyze TXT, MD, PDF, DOCX and code files. Up to 10 MB. No data stored.",
       f4_title:"RAG & Retrieval", f4_desc:"Estimate retrieval costs, chunk sizes, and embedding token budgets for your RAG pipelines.",
@@ -110,7 +110,7 @@ const TRANSLATIONS = {
     },
     features: {
       badge:"Por que Tokenia", title:"Criado para desenvolvedores que se preocupam com custos",
-      f1_title:"Exato + Estimado", f1_desc:"Tokenizadores oficiais quando disponíveis (tiktoken, Claude). Estimativas claramente identificadas para os demais.",
+      f1_title:"Exato + Estimado", f1_desc:"Tokenizadores oficiais quando disponíveis (tiktoken para OpenAI, DeepSeek-V3 para DeepSeek). Estimativas claramente identificadas para os demais.",
       f2_title:"Múltiplos Provedores", f2_desc:"Compare custos entre OpenAI, Anthropic, Mistral, Cohere, Google e mais em uma única visualização.",
       f3_title:"Envio de Arquivos", f3_desc:"Analise TXT, MD, PDF, DOCX e arquivos de código. Até 10 MB. Nenhum dado armazenado.",
       f4_title:"RAG & Recuperação", f4_desc:"Estime custos de recuperação, tamanhos de chunks e orçamentos de tokens para seus pipelines RAG.",
@@ -173,7 +173,7 @@ const TRANSLATIONS = {
     },
     features: {
       badge:"Por qué Tokenia", title:"Creado para desarrolladores que cuidan los costos",
-      f1_title:"Exacto + Estimado", f1_desc:"Tokenizadores oficiales donde estén disponibles (tiktoken, Claude). Estimaciones claramente etiquetadas para los demás.",
+      f1_title:"Exacto + Estimado", f1_desc:"Tokenizadores oficiales donde estén disponibles (tiktoken para OpenAI, DeepSeek-V3 para DeepSeek). Estimaciones claramente etiquetadas para los demás.",
       f2_title:"Múltiples Proveedores", f2_desc:"Compara costos entre OpenAI, Anthropic, Mistral, Cohere, Google y más en una sola vista.",
       f3_title:"Subida de Archivos", f3_desc:"Analiza TXT, MD, PDF, DOCX y archivos de código. Hasta 10 MB. Sin almacenamiento de datos.",
       f4_title:"RAG & Recuperación", f4_desc:"Estima costos de recuperación, tamaños de chunk y presupuestos de tokens de embedding para tus pipelines RAG.",
@@ -242,7 +242,7 @@ const TRANSLATIONS = {
     },
     features: {
       badge:"为何选择 Tokenia", title:"专为关注成本的开发者构建",
-      f1_title:"精确 + 估算", f1_desc:"在可用时使用官方分词器（tiktoken、Claude），对其他模型提供清晰标注的估算值。",
+      f1_title:"精确 + 估算", f1_desc:"在可用时使用官方分词器（OpenAI 用 tiktoken，DeepSeek 用 DeepSeek-V3），对其他模型提供清晰标注的估算值。",
       f2_title:"多提供商支持", f2_desc:"在一个界面中比较 OpenAI、Anthropic、Mistral、Cohere、Google 等提供商的费用。",
       f3_title:"文件上传", f3_desc:"分析 TXT、MD、PDF、DOCX 及代码文件，最大 10 MB，不存储任何数据。",
       f4_title:"RAG 与检索", f4_desc:"为 RAG 流水线估算检索成本、分块大小和嵌入 Token 预算。",
@@ -311,7 +311,7 @@ const TRANSLATIONS = {
     },
     features: {
       badge:"Warum Tokenia", title:"Entwickelt für Entwickler, die Kosten im Blick haben",
-      f1_title:"Exakt + Geschätzt", f1_desc:"Offizielle Tokenizer wo verfügbar (tiktoken, Claude). Klar gekennzeichnete Schätzungen für alle anderen.",
+      f1_title:"Exakt + Geschätzt", f1_desc:"Offizielle Tokenizer wo verfügbar (tiktoken für OpenAI, DeepSeek-V3 für DeepSeek). Klar gekennzeichnete Schätzungen für alle anderen.",
       f2_title:"Multi-Anbieter", f2_desc:"Kosten von OpenAI, Anthropic, Mistral, Cohere, Google und mehr in einer Ansicht vergleichen.",
       f3_title:"Datei-Upload", f3_desc:"TXT, MD, PDF, DOCX und Code-Dateien analysieren. Bis zu 10 MB. Keine Datenspeicherung.",
       f4_title:"RAG & Retrieval", f4_desc:"Retrieval-Kosten, Chunk-Größen und Embedding-Token-Budgets für RAG-Pipelines schätzen.",
@@ -372,10 +372,10 @@ const FAQ = [
   {
     keywords: ['accurate','accuracy','exact','precise','estimation','estimated','est','tiktoken','official','tokenizer','precisión','exacto','genauigkeit','exakt','准确','精确','官方'],
     answer: {
-      en: "For OpenAI models (GPT-3.5, GPT-4, etc.) we use tiktoken — the official tokenizer — so counts are exact. For Anthropic's Claude, we use the official token counting API. For other models (Mistral, Gemini, Cohere) we use character-to-token ratios clearly labeled as 'Est.' so you always know the difference.",
-      es: "Para modelos de OpenAI (GPT-3.5, GPT-4, etc.) usamos tiktoken — el tokenizador oficial — por lo que los conteos son exactos. Para Claude de Anthropic, usamos la API oficial de conteo de tokens. Para otros modelos (Mistral, Gemini, Cohere) usamos ratios carácter-token, claramente etiquetados como 'Est.'.",
-      zh: "对于 OpenAI 模型（GPT-3.5、GPT-4 等），我们使用官方分词器 tiktoken，因此计数是精确的。对于 Anthropic 的 Claude，我们使用官方 Token 计数 API。对于其他模型（Mistral、Gemini、Cohere），我们使用字符与 Token 的比例进行估算，并清晰标注为"估算"。",
-      de: "Für OpenAI-Modelle (GPT-3.5, GPT-4 usw.) verwenden wir tiktoken — den offiziellen Tokenizer — daher sind die Zählungen exakt. Für Anthropics Claude nutzen wir die offizielle Token-Counting-API. Für andere Modelle (Mistral, Gemini, Cohere) verwenden wir Zeichen-zu-Token-Verhältnisse, klar mit 'Gesch.' gekennzeichnet."
+      en: "For OpenAI models (GPT-3.5, GPT-4, etc.) we use tiktoken — the official tokenizer — so counts are exact. For DeepSeek models we use the official DeepSeek-V3 tokenizer, so counts are exact too. For other models (Claude, Gemini, Llama, Mistral) we use calibrated character-to-token ratios clearly labeled as 'Est.' so you always know the difference.",
+      es: "Para modelos de OpenAI (GPT-3.5, GPT-4, etc.) usamos tiktoken — el tokenizador oficial — por lo que los conteos son exactos. Para modelos DeepSeek usamos el tokenizador oficial DeepSeek-V3, también exacto. Para otros modelos (Claude, Gemini, Llama, Mistral) usamos ratios carácter-token calibrados, claramente etiquetados como 'Est.'.",
+      zh: "对于 OpenAI 模型（GPT-3.5、GPT-4 等），我们使用官方分词器 tiktoken，因此计数是精确的。对于 DeepSeek 模型，我们使用官方 DeepSeek-V3 分词器，计数同样精确。对于其他模型（Claude、Gemini、Llama、Mistral），我们使用校准的字符与 Token 比例进行估算，并清晰标注为"估算"。",
+      de: "Für OpenAI-Modelle (GPT-3.5, GPT-4 usw.) verwenden wir tiktoken — den offiziellen Tokenizer — daher sind die Zählungen exakt. Für DeepSeek-Modelle verwenden wir den offiziellen DeepSeek-V3-Tokenizer, ebenfalls exakt. Für andere Modelle (Claude, Gemini, Llama, Mistral) verwenden wir kalibrierte Zeichen-zu-Token-Verhältnisse, klar mit 'Gesch.' gekennzeichnet."
     }
   },
   {

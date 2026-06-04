@@ -2,14 +2,17 @@
 /**
  * Tokenix - tokenizers/index.js
  *
- * OpenAI models: exact token count via gpt-tokenizer (pure-JS tiktoken port).
- * All others:    calibrated character/word heuristic, clearly labelled "estimated".
+ * OpenAI models:   exact token count via gpt-tokenizer (pure-JS tiktoken port).
+ * DeepSeek models: exact token count via the official DeepSeek-V3 tokenizer
+ *                  (see ./deepseek.js), with heuristic fallback if unavailable.
+ * All others:      calibrated character/word heuristic, clearly labelled "estimated".
  *
  * gpt-tokenizer CJS paths are used explicitly so this works on Node 18-22
  * regardless of how the runtime resolves ESM vs CJS conditional exports.
  */
 const path   = require('path');
 const MODELS = require('../config/models');
+const { countDeepSeekTokens } = require('./deepseek');
 
 // ── Lazy-load encoders once, cache for the lifetime of the process ────────────
 let encoders = null;
@@ -44,7 +47,7 @@ function countExact(text, encoding) {
   }
 }
 
-// ── Heuristic estimation (non-OpenAI, or OpenAI fallback) ─────────────────────
+// ── Heuristic estimation (non-exact providers, or exact-path fallback) ────────
 // Blends character-density and word-density estimates.
 // Ratio tuned per model family (chars per token, English prose):
 //   Anthropic BPE   ~3.8  |  Google SentencePiece ~4.0
@@ -68,12 +71,23 @@ function estimateTokens(text, provider) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function tokenizeAll(text) {
+  // DeepSeek: exact count via the real DeepSeek-V3 tokenizer (all current
+  // DeepSeek API models share it), computed once per call. Resolves to null
+  // if the tokenizer is unavailable → per-model heuristic fallback below,
+  // labelled exact:false (same fail-safe as the OpenAI/tiktoken path).
+  let deepseekExact = null;
+  if (MODELS.deepseek && MODELS.deepseek.tokenizer === 'exact') {
+    deepseekExact = await countDeepSeekTokens(text);
+  }
+
   const results = [];
   for (const [providerKey, provider] of Object.entries(MODELS)) {
     for (const [modelKey, model] of Object.entries(provider.models)) {
       let tokenCount, isExact;
 
-      if (provider.tokenizer === 'exact' && model.encoding) {
+      if (providerKey === 'deepseek' && deepseekExact !== null) {
+        tokenCount = deepseekExact; isExact = true;
+      } else if (provider.tokenizer === 'exact' && model.encoding) {
         const exact = countExact(text, model.encoding);
         if (exact !== null) {
           tokenCount = exact; isExact = true;

@@ -490,7 +490,10 @@ app.post('/api/count', upload.single('file'), checkUsageQuota, async (req, res) 
         inputCost:  cost ? cost.inputCost  : null,
         outputCost: cost ? cost.outputCost : null,
         totalCost:  cost ? cost.totalCost  : null,
-        precision:  cost ? cost.precision  : (r.exact ? 'exact' : 'estimated'),
+        // Runtime truth wins: if a tokenizer failed to load and we fell back to
+        // the heuristic, r.exact is false and the badge must say "estimated" —
+        // even when the provider is configured as exact (OpenAI/DeepSeek).
+        precision:  r.exact ? 'exact' : 'estimated',
       };
     });
 
@@ -1204,4 +1207,8 @@ app.listen(PORT, () => {
     redis:    isRedisReady(),
     paid:     PAID_FEATURES_ENABLED,
   });
+
+  // Warm the DeepSeek-V3 tokenizer so the first /api/count doesn't pay the
+  // ~7.5 MB load. Fire-and-forget; on failure counts fall back to estimates.
+  require('./src/tokenizers/deepseek').warmDeepSeekTokenizer();
 });
